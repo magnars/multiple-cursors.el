@@ -1,10 +1,10 @@
-* multiple-cursors.el
+# multiple-cursors.el
 
 An experiment in multiple cursors for emacs. Still very much in beta.
 
 The basic concept works, but there are definitely some kinks to work out.
 
-** Usage
+## Usage
 
 I've set up my key-bindings like so:
 
@@ -15,7 +15,7 @@ I've set up my key-bindings like so:
 
 To get out of multiple-cursors-mode, press `C-g`.
 
-** Contribute
+## Contribute
 
 There's plenty wrong with this implementation still. I'm actively trying things
 out, and also considering combining it with
@@ -29,7 +29,7 @@ You'll find the repo at:
 
     https://github.com/magnars/multiple-cursors.el
 
-** License
+## License
 
 Copyright (C) 2011 Magnar Sveen
 
