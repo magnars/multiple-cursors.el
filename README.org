@@ -1,0 +1,3 @@
+* multiple-cursors.el
+
+An experiment in multiple cursors for emacs. Still very much in beta.
