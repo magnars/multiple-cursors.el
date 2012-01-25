@@ -57,29 +57,39 @@
   :group 'multiple-cursors)
 
 (defun mc/make-cursor-overlay-at-eol (pos)
+  "Create overlay to look like cursor at end of line."
   (let ((overlay (make-overlay pos pos nil nil t)))
     (overlay-put overlay 'after-string (propertize " " 'face 'mc/cursor-face))
     overlay))
 
 (defun mc/make-cursor-overlay-inline (pos)
+  "Create overlay to look like cursor inside text."
   (let ((overlay (make-overlay pos (1+ pos) nil nil t)))
     (overlay-put overlay 'face 'mc/cursor-face)
     overlay))
 
 (defun mc/make-cursor-overlay-at-point ()
+  "Create overlay to look like cursor.
+Special case for end of line, because overlay over a newline
+highlights the entire width of the window."
   (if (eolp)
       (mc/make-cursor-overlay-at-eol (point))
     (mc/make-cursor-overlay-inline (point))))
 
 (defun mc/add-cursor-at-point ()
+  "Add a fake cursor where point is.
+Also makes a copy of the kill-ring to be used by this cursor."
   (let ((overlay (mc/make-cursor-overlay-at-point)))
     (overlay-put overlay 'type 'additional-cursor)
     (overlay-put overlay 'kill-ring kill-ring)
     (overlay-put overlay 'priority 100)))
 
-(setq mc--unsupported-cmds '())
+(defvar mc--unsupported-cmds '()
+  "List of commands that does not work well with multiple cursors.")
 
 (defmacro unsupported-cmd (cmd)
+  "Adds command to list of unsupported commands and prevents it
+from being executed if in multiple-cursors-mode."
   `(progn
      (push (quote ,cmd) mc--unsupported-cmds)
      (defadvice ,cmd (around unsupported-advice activate)
@@ -87,8 +97,10 @@
        (unless multiple-cursors-mode
          ad-do-it))))
 
+;; Commands that makes a giant mess of multiple cursors
 (unsupported-cmd yank-pop)
 
+;; Commands that should be mirrored by all cursors
 (setq mc--cmds '(self-insert-command
                  previous-line
                  next-line
@@ -109,6 +121,11 @@
                  move-start-of-line-or-prev-line))
 
 (defun mc/execute-command-for-all-cursors (cmd)
+  "Calls CMD interactively for each cursor.
+It works by moving point to the fake cursor, setting
+up the proper kill-ring, and then removing the cursor.
+After executing the command, it sets up a new fake
+cursor with updated info."
   (let ((current-kill-ring kill-ring))
     (save-excursion
       (mapc #'(lambda (o)
@@ -123,6 +140,14 @@
     (setq kill-ring current-kill-ring)))
 
 (defun mc/execute-this-command-for-all-cursors ()
+  "Used with post-command-hook to execute supported commands for
+all cursors. It also checks a list of explicitly unsupported
+commands that is prevented even for the original cursor, to
+inform about the lack of support.
+
+Commands that are neither supported nor explicitly unsupported
+is executed normally for point, but skipped for the fake
+cursors."
   (if (memq this-original-command mc--unsupported-cmds)
       (message "%S is not supported with multiple cursors" this-original-command)
     (if (not (memq this-original-command mc--cmds))
@@ -130,13 +155,18 @@
       (mc/execute-command-for-all-cursors this-original-command))))
 
 (defun mc/remove-additional-cursors ()
+  "Remove all fake cursors.
+Do not use to conclude editing with multiple cursors. For that
+you should disable multiple-cursors-mode."
   (mapc #'(lambda (o)
             (when (eq (overlay-get o 'type) 'additional-cursor)
               (delete-overlay o)))
         (overlays-in (point-min) (point-max))))
 
 (defvar mc/keymap nil
-  "Keymap while multiple cursors are active.")
+  "Keymap while multiple cursors are active.
+Main goal of the keymap is to rebind C-g to conclude multiple
+cursors editing.")
 (if mc/keymap
     nil
   (setq mc/keymap (make-sparse-keymap))
@@ -151,6 +181,12 @@
         (t (add-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t t))))
 
 (defun mc/add-multiple-cursors-to-region-lines ()
+  "Add one cursor to each line of the active region.
+Starts from mark and moves in straight down or up towards the
+line point is on.
+
+Could possibly be used to mark multiple regions with
+mark-multiple if point and mark is on different columns."
   (interactive)
   (when (not (use-region-p))
     (error "Mark a set of lines first."))
@@ -167,12 +203,14 @@
     (multiple-cursors-mode)))
 
 (defun mc/edit-ends-of-lines ()
+  "Add one cursor to the end of each line in the active region."
   (interactive)
   (mc/add-multiple-cursors-to-region-lines)
   (mc/execute-command-for-all-cursors 'end-of-line)
   (end-of-line))
 
 (defun mc/edit-beginnings-of-lines ()
+  "Add one cursor to the beginning of each line in the active region."
   (interactive)
   (mc/add-multiple-cursors-to-region-lines)
   (mc/execute-command-for-all-cursors 'beginning-of-line)
