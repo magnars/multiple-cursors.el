@@ -4,6 +4,10 @@ An experiment in multiple cursors for emacs. Still very much in beta.
 
 The basic concept works, but there are definitely some kinks to work out.
 
+This extension is dependent on the mark-multiple library.
+
+    https://github.com/magnars/mark-multiple.el
+
 ## Usage
 
 I've set up my key-bindings like so:
@@ -14,6 +18,10 @@ I've set up my key-bindings like so:
     (global-set-key (kbd "C-S-c C-a") 'mc/edit-beginnings-of-lines)
 
 To get out of multiple-cursors-mode, press `C-g`.
+
+You can also switch to multiple-cursors-mode by pressing C-g when in
+mark-multiple-mode. This is symmetrical to how pressing C-g with an active
+region deactivates it. Press C-g again to remove extra cursors.
 
 ## Contribute
 

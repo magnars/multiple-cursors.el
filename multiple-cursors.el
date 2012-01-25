@@ -24,6 +24,9 @@
 ;;
 ;; The basic concept works, but there are definitely some kinks to work out.
 
+;; This extension is dependent on the mark-multiple library.
+;;     https://github.com/magnars/mark-multiple.el
+
 ;; ** Usage
 
 ;; I've set up my key-bindings like so:
@@ -50,6 +53,8 @@
 ;;     https://github.com/magnars/multiple-cursors.el
 
 ;;; Code:
+
+(require 'mark-multiple)
 
 (defface mc/cursor-face
   '((t (:inverse-video t)))
@@ -120,7 +125,7 @@ from being executed if in multiple-cursors-mode."
                  move-end-of-line-or-next-line
                  move-start-of-line-or-prev-line))
 
-(defun mc/execute-command-for-all-cursors (cmd)
+(defun mc/execute-command-for-all-fake-cursors (cmd)
   "Calls CMD interactively for each cursor.
 It works by moving point to the fake cursor, setting
 up the proper kill-ring, and then removing the cursor.
@@ -152,7 +157,7 @@ cursors."
       (message "%S is not supported with multiple cursors" this-original-command)
     (if (not (memq this-original-command mc--cmds))
         (message "Skipping %S" this-original-command)
-      (mc/execute-command-for-all-cursors this-original-command))))
+      (mc/execute-command-for-all-fake-cursors this-original-command))))
 
 (defun mc/remove-additional-cursors ()
   "Remove all fake cursors.
@@ -206,17 +211,17 @@ mark-multiple if point and mark is on different columns."
   "Add one cursor to the end of each line in the active region."
   (interactive)
   (mc/add-multiple-cursors-to-region-lines)
-  (mc/execute-command-for-all-cursors 'end-of-line)
+  (mc/execute-command-for-all-fake-cursors 'end-of-line)
   (end-of-line))
 
 (defun mc/edit-beginnings-of-lines ()
   "Add one cursor to the beginning of each line in the active region."
   (interactive)
   (mc/add-multiple-cursors-to-region-lines)
-  (mc/execute-command-for-all-cursors 'beginning-of-line)
+  (mc/execute-command-for-all-fake-cursors 'beginning-of-line)
   (beginning-of-line))
 
-(defun mc/switch-to-cursors-from-mark-multiple ()
+(defun mc/switch-from-mark-multiple-to-cursors ()
   "Removes mark-multiple and switches to multiple cursors instead"
   (interactive)
   (let ((offset (- (point) (overlay-start mm/master))))
@@ -228,7 +233,7 @@ mark-multiple if point and mark is on different columns."
     (deactivate-mark)
     (multiple-cursors-mode)))
 
-(define-key mm/keymap (kbd "C-g") 'mc/switch-to-cursors-from-mark-multiple)
+(define-key mm/keymap (kbd "C-g") 'mc/switch-from-mark-multiple-to-cursors)
 
 (provide 'multiple-cursors)
 
