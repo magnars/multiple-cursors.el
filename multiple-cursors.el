@@ -97,7 +97,7 @@ from being executed if in multiple-cursors-mode."
        (unless multiple-cursors-mode
          ad-do-it))))
 
-;; Commands that makes a giant mess of multiple cursors
+;; Commands that make a giant mess of multiple cursors
 (unsupported-cmd yank-pop)
 
 ;; Commands that should be mirrored by all cursors
@@ -114,8 +114,8 @@ from being executed if in multiple-cursors-mode."
                  kill-region-or-backward-word
                  backward-kill-word
                  backward-delete-char-untabify
-                 delete-char
-                 delete-backward-char
+                 delete-char c-electric-delete-forward
+                 delete-backward-char c-electric-backspace
                  zap-to-char
                  move-end-of-line-or-next-line
                  move-start-of-line-or-prev-line))
@@ -215,6 +215,20 @@ mark-multiple if point and mark is on different columns."
   (mc/add-multiple-cursors-to-region-lines)
   (mc/execute-command-for-all-cursors 'beginning-of-line)
   (beginning-of-line))
+
+(defun mc/switch-to-cursors-from-mark-multiple ()
+  "Removes mark-multiple and switches to multiple cursors instead"
+  (interactive)
+  (let ((offset (- (point) (overlay-start mm/master))))
+    (save-excursion
+      (dolist (mirror mm/mirrors)
+        (goto-char (+ offset (overlay-start mirror)))
+        (mc/add-cursor-at-point)))
+    (mm/clear-all)
+    (deactivate-mark)
+    (multiple-cursors-mode)))
+
+(define-key mm/keymap (kbd "C-g") 'mc/switch-to-cursors-from-mark-multiple)
 
 (provide 'multiple-cursors)
 
