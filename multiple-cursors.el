@@ -1,6 +1,6 @@
 ;;; multiple-cursors.el --- An experiment in multiple cursors for emacs.
 
-;; Copyright (C) 2011 Magnar Sveen
+;; Copyright (C) 2012 Magnar Sveen
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
 ;; Keywords: editing cursors
@@ -41,7 +41,7 @@
 ;; ** Contribute
 
 ;; There's plenty wrong with this implementation still. I'm actively trying things
-;; out, and also considering combining it with
+;; out, and also working on combining it with
 ;; [mark-multiple.el](https://github.com/magnars/mark-multiple.el) to get a more
 ;; comprehensive tool.
 ;;
@@ -51,6 +51,24 @@
 ;; You'll find the repo at:
 ;;
 ;;     https://github.com/magnars/multiple-cursors.el
+
+;; ## Combining with mark-multiple
+;;
+;; Right now you can go from multiple marks to multiple cursors with C-g.
+;;
+;; The other way around is a bit more tricky:
+;;
+;;  * What to do about overlapping marks?
+;;  * Expanding the marks should be possible, for instance using `mark-word` or
+;;    `expand-region`
+;;  * Killing or copying needs to keep a kill-ring for each cursor.
+;;
+;; So basically `mark-multiple` isn't ready for prime time as a full blown multiple
+;; marks library. For this to work as expected, I think parts of mark-multiple
+;; needs to be rewritten, and possibly integrated into multiple-cursors.
+;;
+;; For now, mark-multiple is an excellent tool to place your cursors where you need
+;; them to be.
 
 ;;; Code:
 
@@ -90,7 +108,8 @@ Also makes a copy of the kill-ring to be used by this cursor."
     (overlay-put overlay 'priority 100)))
 
 (defvar mc--unsupported-cmds '()
-  "List of commands that does not work well with multiple cursors.")
+  "List of commands that does not work well with multiple cursors.
+Set up with the unsupported-cmd macro.")
 
 (defmacro unsupported-cmd (cmd)
   "Adds command to list of unsupported commands and prevents it
