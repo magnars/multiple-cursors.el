@@ -77,6 +77,18 @@
     (overlay-put overlay 'kill-ring kill-ring)
     (overlay-put overlay 'priority 100)))
 
+(setq mc--unsupported-cmds '())
+
+(defmacro unsupported-cmd (cmd)
+  `(progn
+     (push (quote ,cmd) mc--unsupported-cmds)
+     (defadvice ,cmd (around unsupported-advice activate)
+       "command isn't supported with multiple cursors"
+       (unless multiple-cursors-mode
+         ad-do-it))))
+
+(unsupported-cmd yank-pop)
+
 (setq mc--cmds '(self-insert-command
                  previous-line
                  next-line
@@ -92,16 +104,9 @@
                  backward-delete-char-untabify
                  delete-char
                  delete-backward-char
+                 zap-to-char
                  move-end-of-line-or-next-line
                  move-start-of-line-or-prev-line))
-
-(setq mc--unsupported-cmds '(yank-pop))
-
-;; todo: macro-ify and iterate over mc--unsupported-cmds
-(defadvice yank-pop (around yank-pop-unsupported-advice activate)
-  "yank-pop isn't supported with multiple cursors"
-  (unless multiple-cursors-mode
-    ad-do-it))
 
 (defun mc/execute-command-for-all-cursors (cmd)
   (let ((current-kill-ring kill-ring))
