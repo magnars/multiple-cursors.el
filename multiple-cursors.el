@@ -141,8 +141,14 @@ from being executed if in multiple-cursors-mode."
                  delete-char c-electric-delete-forward
                  delete-backward-char c-electric-backspace
                  zap-to-char
+                 end-of-line
+                 move-end-of-line
                  move-end-of-line-or-next-line
-                 move-start-of-line-or-prev-line))
+                 beginning-of-line
+                 move-beginning-of-line
+                 move-start-of-line-or-prev-line
+                 dired-back-to-start-of-files
+                 back-to-indentation))
 
 (defun mc/execute-command-for-all-fake-cursors (cmd)
   "Calls CMD interactively for each cursor.
