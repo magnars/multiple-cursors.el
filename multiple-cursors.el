@@ -195,12 +195,13 @@ you should disable multiple-cursors-mode."
 
 (defvar mc/keymap nil
   "Keymap while multiple cursors are active.
-Main goal of the keymap is to rebind C-g to conclude multiple
-cursors editing.")
+Main goal of the keymap is to rebind C-g and <return> to conclude
+multiple cursors editing.")
 (if mc/keymap
     nil
   (setq mc/keymap (make-sparse-keymap))
-  (define-key mc/keymap (kbd "C-g") 'multiple-cursors-mode))
+  (define-key mc/keymap (kbd "C-g") 'multiple-cursors-mode)
+  (define-key mc/keymap (kbd "<return>") 'multiple-cursors-mode))
 
 (define-minor-mode multiple-cursors-mode
   "Mode while multiple cursors are active."
