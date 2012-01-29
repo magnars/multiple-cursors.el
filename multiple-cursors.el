@@ -126,6 +126,7 @@ from being executed if in multiple-cursors-mode."
 
 ;; Commands that should be mirrored by all cursors
 (setq mc--cmds '(self-insert-command
+                 js2-insert-and-indent
                  previous-line
                  next-line
                  newline
@@ -133,9 +134,12 @@ from being executed if in multiple-cursors-mode."
                  right-word forward-word
                  left-char backward-char
                  left-word backward-word
+                 hippie-expand
                  yank
                  kill-word
                  kill-region-or-backward-word
+                 kill-line
+                 kill-whole-line
                  backward-kill-word
                  backward-delete-char-untabify
                  delete-char c-electric-delete-forward
