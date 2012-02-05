@@ -136,6 +136,7 @@ from being executed if in multiple-cursors-mode."
                  left-char backward-char
                  left-word backward-word
                  forward-list
+                 backward-list
                  hippie-expand
                  yank yank-indented
                  kill-word
