@@ -128,6 +128,8 @@ from being executed if in multiple-cursors-mode."
 (setq mc--cmds '(self-insert-command
                  js2-insert-and-indent
                  wrap-region-trigger
+                 sgml-slash
+                 slime-space
                  previous-line
                  next-line
                  newline
