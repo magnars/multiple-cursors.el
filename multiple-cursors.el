@@ -137,6 +137,9 @@ from being executed if in multiple-cursors-mode."
                  right-word forward-word
                  left-char backward-char
                  left-word backward-word
+                 subword-upcase upcase-word
+                 subword-downcase downcase-word
+                 subword-capitalize capitalize-word
                  forward-list
                  backward-list
                  hippie-expand
