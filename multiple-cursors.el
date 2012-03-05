@@ -152,6 +152,9 @@ from being executed if in multiple-cursors-mode."
                  backward-delete-char-untabify
                  delete-char c-electric-delete-forward
                  delete-backward-char c-electric-backspace
+                 c-electric-paren
+                 c-electric-semi&comma
+                 just-one-space
                  zap-to-char
                  end-of-line
                  move-end-of-line
