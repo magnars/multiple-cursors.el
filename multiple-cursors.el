@@ -133,6 +133,7 @@ from being executed if in multiple-cursors-mode."
                  previous-line
                  next-line
                  newline
+                 join-line
                  right-char forward-char
                  right-word forward-word
                  left-char backward-char
@@ -154,9 +155,12 @@ from being executed if in multiple-cursors-mode."
                  delete-backward-char c-electric-backspace
                  c-electric-paren
                  c-electric-semi&comma
+                 org-shiftright
                  just-one-space
                  zap-to-char
                  end-of-line
+                 js2-beginning-of-line
+                 js2-end-of-line
                  move-end-of-line
                  move-end-of-line-or-next-line
                  beginning-of-line
