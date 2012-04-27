@@ -133,6 +133,8 @@ from being executed if in multiple-cursors-mode."
                  previous-line
                  next-line
                  newline
+                 yas/expand
+                 newline-and-indent
                  join-line
                  right-char forward-char
                  right-word forward-word
@@ -143,7 +145,7 @@ from being executed if in multiple-cursors-mode."
                  subword-capitalize capitalize-word
                  forward-list
                  backward-list
-                 hippie-expand
+                 hippie-expand hippie-expand-lines
                  yank yank-indented
                  kill-word
                  kill-region-or-backward-word
