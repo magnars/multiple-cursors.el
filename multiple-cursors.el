@@ -177,7 +177,8 @@ It works by moving point to the fake cursor, setting
 up the proper kill-ring, and then removing the cursor.
 After executing the command, it sets up a new fake
 cursor with updated info."
-  (let ((current-kill-ring kill-ring))
+  (let ((current-kill-ring kill-ring)
+        (annoying-arrows-mode nil))
     (save-excursion
       (mapc #'(lambda (o)
                 (when (eq (overlay-get o 'type) 'additional-cursor)
