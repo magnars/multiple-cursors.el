@@ -11,3 +11,14 @@ Feature: Mark multiple integration
     And I press "C->"
     And I type "sentence"
     Then I should see "This sentence contains the word sentence twice"
+
+  Scenario: Mark two words and go to multiple cursors
+    Given there is no region selected
+    When I insert "This text contains the word text twice"
+    And I select "text"
+    And I press "C->"
+    And I press "C-g"
+    And I type "'"
+    And I press "C-f" 4 times
+    And I type "'"
+    Then I should see "This 'text' contains the word 'text' twice"
