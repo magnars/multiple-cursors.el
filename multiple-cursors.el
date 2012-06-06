@@ -79,6 +79,11 @@
   "The face used for additional cursors"
   :group 'multiple-cursors)
 
+(defface mc/region-face
+  '((t :inherit region))
+  "The face used for additional regions"
+  :group 'multiple-cursors)
+
 (defun mc/make-cursor-overlay-at-eol (pos)
   "Create overlay to look like cursor at end of line."
   (let ((overlay (make-overlay pos pos nil nil t)))
@@ -99,79 +104,36 @@ highlights the entire width of the window."
       (mc/make-cursor-overlay-at-eol (point))
     (mc/make-cursor-overlay-inline (point))))
 
+(defun mc/make-region-overlay-between-point-and-mark ()
+  (let ((overlay (make-overlay (mark) (point) nil nil t)))
+    (overlay-put overlay 'face 'mc/region-face)
+    (overlay-put overlay 'type 'additional-region)
+    overlay))
+
+;; TODO:
+;; (set-marker MARKER nil) for performance
+;; collapse cursors at same point
+;; remove mark-multiple integration
+;; C-g fjerner regions først, før den disabler multiple-cursors
+;; refactor and add tests :-P
+
+;; ALSO:
+;; unknown:
+;;    (t)ry all or (i)gnore -> (did that work ok? (k)eep doing that or (d)on't)
+
 (defun mc/add-cursor-at-point ()
   "Add a fake cursor where point is.
 Also makes a copy of the kill-ring to be used by this cursor."
   (let ((overlay (mc/make-cursor-overlay-at-point)))
     (overlay-put overlay 'type 'additional-cursor)
     (overlay-put overlay 'kill-ring kill-ring)
+    (overlay-put overlay 'mark-ring mark-ring)
+    (overlay-put overlay 'mark-active mark-active)
+    (overlay-put overlay 'mark (set-marker (make-marker) (mark)))
+    (when (use-region-p)
+      (overlay-put overlay 'region-overlay
+                   (mc/make-region-overlay-between-point-and-mark)))
     (overlay-put overlay 'priority 100)))
-
-(defvar mc--unsupported-cmds '()
-  "List of commands that does not work well with multiple cursors.
-Set up with the unsupported-cmd macro.")
-
-(defmacro unsupported-cmd (cmd)
-  "Adds command to list of unsupported commands and prevents it
-from being executed if in multiple-cursors-mode."
-  `(progn
-     (push (quote ,cmd) mc--unsupported-cmds)
-     (defadvice ,cmd (around unsupported-advice activate)
-       "command isn't supported with multiple cursors"
-       (unless multiple-cursors-mode
-         ad-do-it))))
-
-;; Commands that make a giant mess of multiple cursors
-(unsupported-cmd yank-pop)
-
-;; Commands that should be mirrored by all cursors
-(setq mc--cmds '(self-insert-command
-                 js2-insert-and-indent
-                 wrap-region-trigger
-                 sgml-slash
-                 slime-space
-                 previous-line
-                 next-line
-                 newline
-                 yas/expand
-                 newline-and-indent
-                 join-line
-                 right-char forward-char
-                 right-word forward-word
-                 left-char backward-char
-                 left-word backward-word
-                 subword-upcase upcase-word
-                 subword-downcase downcase-word
-                 subword-capitalize capitalize-word
-                 forward-list
-                 backward-list
-                 hippie-expand hippie-expand-lines
-                 yank yank-indented
-                 kill-word
-                 kill-region-or-backward-word
-                 kill-line
-                 kill-whole-line
-                 backward-kill-word
-                 backward-delete-char-untabify
-                 delete-char c-electric-delete-forward
-                 delete-backward-char c-electric-backspace
-                 c-electric-paren
-                 c-electric-semi&comma
-                 org-shiftright
-                 just-one-space
-                 zap-to-char
-                 end-of-line
-                 js2-beginning-of-line
-                 js2-end-of-line
-                 js2r-inline-var
-                 change-number-at-point
-                 move-end-of-line
-                 move-end-of-line-or-next-line
-                 beginning-of-line
-                 move-beginning-of-line
-                 move-start-of-line-or-prev-line
-                 dired-back-to-start-of-files
-                 back-to-indentation))
 
 (defun mc/execute-command-for-all-fake-cursors (cmd)
   "Calls CMD interactively for each cursor.
@@ -180,18 +142,31 @@ up the proper kill-ring, and then removing the cursor.
 After executing the command, it sets up a new fake
 cursor with updated info."
   (let ((current-kill-ring kill-ring)
+        (current-mark-ring mark-ring)
+        (current-mark-active mark-active)
         (annoying-arrows-mode nil))
     (save-excursion
       (mapc #'(lambda (o)
                 (when (eq (overlay-get o 'type) 'additional-cursor)
                   (goto-char (overlay-start o))
                   (setq kill-ring (overlay-get o 'kill-ring))
+                  (set-marker (mark-marker) (overlay-get o 'mark))
+                  (setq mark-ring (overlay-get o 'mark-ring))
+                  (setq mark-active (overlay-get o 'mark-active))
+                  (delete-region-overlay o)
                   (delete-overlay o)
                   (ignore-errors
                     (call-interactively cmd)
+                    (when deactivate-mark (deactivate-mark))
                     (mc/add-cursor-at-point))))
             (overlays-in (point-min) (point-max))))
-    (setq kill-ring current-kill-ring)))
+    (setq kill-ring current-kill-ring)
+    (setq mark-ring current-mark-ring)
+    (setq mark-active current-mark-active)))
+
+(defun delete-region-overlay (o)
+  (ignore-errors
+    (delete-overlay (overlay-get o 'region-overlay))))
 
 (defun mc/execute-this-command-for-all-cursors ()
   "Used with post-command-hook to execute supported commands for
@@ -214,6 +189,7 @@ Do not use to conclude editing with multiple cursors. For that
 you should disable multiple-cursors-mode."
   (mapc #'(lambda (o)
             (when (eq (overlay-get o 'type) 'additional-cursor)
+              (delete-region-overlay o)
               (delete-overlay o)))
         (overlays-in (point-min) (point-max))))
 
@@ -275,15 +251,85 @@ mark-multiple if point and mark is on different columns."
   "Removes mark-multiple and switches to multiple cursors instead"
   (interactive)
   (let ((offset (- (point) (overlay-start mm/master))))
+    (deactivate-mark)
     (save-excursion
       (dolist (mirror mm/mirrors)
         (goto-char (+ offset (overlay-start mirror)))
         (mc/add-cursor-at-point)))
     (mm/clear-all)
-    (deactivate-mark)
     (multiple-cursors-mode)))
 
 (define-key mm/keymap (kbd "C-g") 'mc/switch-from-mark-multiple-to-cursors)
+
+(defvar mc--unsupported-cmds '()
+  "List of commands that does not work well with multiple cursors.
+Set up with the unsupported-cmd macro.")
+
+(defmacro unsupported-cmd (cmd)
+  "Adds command to list of unsupported commands and prevents it
+from being executed if in multiple-cursors-mode."
+  `(progn
+     (push (quote ,cmd) mc--unsupported-cmds)
+     (defadvice ,cmd (around unsupported-advice activate)
+       "command isn't supported with multiple cursors"
+       (unless multiple-cursors-mode
+         ad-do-it))))
+
+;; Commands that make a giant mess of multiple cursors
+(unsupported-cmd yank-pop)
+
+;; Commands that should be mirrored by all cursors
+(setq mc--cmds '(self-insert-command
+                 js2-insert-and-indent
+                 wrap-region-trigger
+                 sgml-slash
+                 slime-space
+                 previous-line
+                 next-line
+                 newline
+                 yas/expand
+                 newline-and-indent
+                 join-line
+                 right-char forward-char
+                 right-word forward-word
+                 left-char backward-char
+                 left-word backward-word
+                 subword-upcase upcase-word
+                 subword-downcase downcase-word
+                 subword-capitalize capitalize-word
+                 forward-list
+                 backward-list
+                 hippie-expand hippie-expand-lines
+                 yank yank-indented
+                 kill-word
+                 kill-region-or-backward-word
+                 kill-line
+                 kill-whole-line
+                 backward-kill-word
+                 backward-delete-char-untabify
+                 delete-char c-electric-delete-forward
+                 delete-backward-char c-electric-backspace
+                 c-electric-paren
+                 c-electric-semi&comma
+                 org-shiftright
+                 just-one-space
+                 zap-to-char
+                 end-of-line
+                 set-mark-command
+                 js2-beginning-of-line
+                 js2-end-of-line
+                 js2r-inline-var
+                 change-number-at-point
+                 move-end-of-line
+                 move-end-of-line-or-next-line
+                 beginning-of-line
+                 er/expand-region
+                 er/mark-word
+                 move-beginning-of-line
+                 move-start-of-line-or-prev-line
+                 dired-back-to-start-of-files
+                 save-region-or-current-line
+                 back-to-indentation))
 
 (provide 'multiple-cursors)
 
