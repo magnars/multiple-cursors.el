@@ -1,0 +1,6 @@
+[submodule "util/ecukes"]
+	path = util/ecukes
+	url = git://github.com/rejeep/ecukes.git
+[submodule "util/espuds"]
+	path = util/espuds
+	url = git://github.com/rejeep/espuds.git

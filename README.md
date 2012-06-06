@@ -23,20 +23,6 @@ You can also switch to multiple-cursors-mode by pressing C-g when in
 mark-multiple-mode. This is symmetrical to how pressing C-g with an active
 region deactivates it. Press C-g again to remove extra cursors.
 
-## Contribute
-
-There's plenty wrong with this implementation still. I'm actively trying things
-out, and also working on combining it with
-[mark-multiple.el](https://github.com/magnars/mark-multiple.el) to get a more
-comprehensive tool.
-
-Still, if you've got something to contribute, please do not hesitate to open
-an issue, and we can take a look together before you dive into the elisp. :-)
-
-You'll find the repo at:
-
-    https://github.com/magnars/multiple-cursors.el
-
 ## Combining with mark-multiple
 
 Right now you can go from multiple marks to multiple cursors with C-g.
@@ -54,6 +40,31 @@ needs to be rewritten, and possibly integrated into multiple-cursors.
 
 For now, mark-multiple is an excellent tool to place your cursors where you need
 them to be.
+
+## Contribute
+
+There's plenty wrong with this implementation still. I'm actively trying things
+out, and also working on combining it with
+[mark-multiple.el](https://github.com/magnars/mark-multiple.el) to get a more
+comprehensive tool.
+
+Still, if you've got something to contribute, please do not hesitate to open
+an issue, and we can take a look together before you dive into the elisp. :-)
+
+You'll find the repo at:
+
+    https://github.com/magnars/multiple-cursors.el
+
+To fetch the test dependencies:
+
+    $ cd /path/to/multiple-cursors
+    $ git submodule init
+    $ git submodule update
+
+Run the tests with:
+
+    $ ./util/ecukes/ecukes features
+
 
 ## License
 

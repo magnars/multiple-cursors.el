@@ -163,6 +163,8 @@ from being executed if in multiple-cursors-mode."
                  end-of-line
                  js2-beginning-of-line
                  js2-end-of-line
+                 js2r-inline-var
+                 change-number-at-point
                  move-end-of-line
                  move-end-of-line-or-next-line
                  beginning-of-line
