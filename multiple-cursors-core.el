@@ -127,6 +127,7 @@ you should disable multiple-cursors-mode."
         (overlays-in (point-min) (point-max))))
 
 (defun mc/keyboard-quit ()
+  "Deactivate mark if there are any active, otherwise exit multiple-cursors-mode."
   (interactive)
   (if (not (use-region-p))
       (multiple-cursors-mode 0)
