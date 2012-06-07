@@ -140,6 +140,7 @@ cursor with updated info."
                   (goto-char (overlay-start o))
                   (setq kill-ring (overlay-get o 'kill-ring))
                   (set-marker (mark-marker) (overlay-get o 'mark))
+                  (set-marker (overlay-get o 'mark) nil)
                   (setq mark-ring (overlay-get o 'mark-ring))
                   (setq mark-active (overlay-get o 'mark-active))
                   (delete-region-overlay o)
