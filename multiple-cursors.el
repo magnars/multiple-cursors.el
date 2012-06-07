@@ -183,6 +183,12 @@ you should disable multiple-cursors-mode."
               (delete-overlay o)))
         (overlays-in (point-min) (point-max))))
 
+(defun mc/keyboard-quit ()
+  (interactive)
+  (if (not (use-region-p))
+      (multiple-cursors-mode 0)
+    (deactivate-mark)))
+
 (defvar mc/keymap nil
   "Keymap while multiple cursors are active.
 Main goal of the keymap is to rebind C-g and <return> to conclude
@@ -190,7 +196,7 @@ multiple cursors editing.")
 (if mc/keymap
     nil
   (setq mc/keymap (make-sparse-keymap))
-  (define-key mc/keymap (kbd "C-g") 'multiple-cursors-mode)
+  (define-key mc/keymap (kbd "C-g") 'mc/keyboard-quit)
   (define-key mc/keymap (kbd "<return>") 'multiple-cursors-mode))
 
 (define-minor-mode multiple-cursors-mode
@@ -217,10 +223,10 @@ mark-multiple if point and mark is on different columns."
          (num-cursors (abs (- point-line mark-line)))
          (navigation-func (if (< point-line mark-line) 'previous-line 'next-line)))
     (exchange-point-and-mark)
+    (deactivate-mark)
     (while (not (eq (line-number-at-pos) point-line))
       (mc/add-cursor-at-point)
       (funcall navigation-func))
-    (deactivate-mark)
     (multiple-cursors-mode)))
 
 (defun mc/edit-ends-of-lines ()
@@ -269,7 +275,8 @@ from being executed if in multiple-cursors-mode."
 (unsupported-cmd yank-pop)
 
 ;; Commands that should be mirrored by all cursors
-(setq mc--cmds '(self-insert-command
+(setq mc--cmds '(mc/keyboard-quit
+                 self-insert-command
                  js2-insert-and-indent
                  wrap-region-trigger
                  sgml-slash
