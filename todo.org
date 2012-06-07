@@ -1,10 +1,16 @@
-* TODO: [2/8]
+* TODO: [3/9]
 ** DONE (set-marker MARKER nil) for performance
 ** DONE C-g deactivates regions first, before disabling multiple-cursors
-** TODO remove mark-multiple integration
+** DONE more state to save per cursor: er/history
 ** TODO refactor
    an object with all the current state, used for both overlays and current
 ** TODO add tests
-** TODO more state to save per cursor: er/history
 ** TODO collapse cursors at same point
 ** TODO unknown command: (t)ry all or (i)gnore -> (did that work ok? (k)eep doing that or (d)on't)
+** TODO separate mark-multiple and multiple-cursors
+   mark-multiple goes back to being the util? or just dies?
+   given the problem with extract-var and undo, may just kill mark-multiple.
+   problem with that is: C-g when doing rename-tag shouldn't go to multiple-cursors.
+
+** TODO there's something going wrong with last-command/this-command?
+   expand-region works nicely, even collapse when we save er/history, but last collapse puts all cursors in same spot

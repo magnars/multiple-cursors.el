@@ -119,6 +119,7 @@ Also makes a copy of the kill-ring to be used by this cursor."
     (overlay-put overlay 'mark-ring mark-ring)
     (overlay-put overlay 'mark-active mark-active)
     (overlay-put overlay 'mark (set-marker (make-marker) (mark)))
+    (overlay-put overlay 'er/history er/history)
     (when (use-region-p)
       (overlay-put overlay 'region-overlay
                    (mc/make-region-overlay-between-point-and-mark)))
@@ -133,6 +134,7 @@ cursor with updated info."
   (let ((current-kill-ring kill-ring)
         (current-mark-ring mark-ring)
         (current-mark-active mark-active)
+        (current-er/history er/history)
         (annoying-arrows-mode nil))
     (save-excursion
       (mapc #'(lambda (o)
@@ -143,6 +145,7 @@ cursor with updated info."
                   (set-marker (overlay-get o 'mark) nil)
                   (setq mark-ring (overlay-get o 'mark-ring))
                   (setq mark-active (overlay-get o 'mark-active))
+                  (setq er/history (overlay-get o 'er/history))
                   (delete-region-overlay o)
                   (delete-overlay o)
                   (ignore-errors
@@ -152,7 +155,8 @@ cursor with updated info."
             (overlays-in (point-min) (point-max))))
     (setq kill-ring current-kill-ring)
     (setq mark-ring current-mark-ring)
-    (setq mark-active current-mark-active)))
+    (setq mark-active current-mark-active)
+    (setq er/history current-er/history)))
 
 (defun delete-region-overlay (o)
   (ignore-errors
