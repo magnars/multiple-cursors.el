@@ -110,20 +110,46 @@ highlights the entire width of the window."
     (overlay-put overlay 'type 'additional-region)
     overlay))
 
-(defun mc/add-cursor-at-point ()
-  "Add a fake cursor where point is.
-Also makes a copy of the kill-ring to be used by this cursor."
+(defun mc/store-current-state-in-overlay (o)
+  (overlay-put o 'point (point))
+  (overlay-put o 'kill-ring kill-ring)
+  (overlay-put o 'mark (set-marker (make-marker) (mark)))
+  (overlay-put o 'mark-ring mark-ring)
+  (overlay-put o 'mark-active mark-active)
+  (overlay-put o 'er/history er/history)
+  o)
+
+(defun mc/restore-state-from-overlay (o)
+  (goto-char (overlay-get o 'point))
+  (setq kill-ring (overlay-get o 'kill-ring))
+  (set-marker (mark-marker) (overlay-get o 'mark))
+  (setq mark-ring (overlay-get o 'mark-ring))
+  (setq mark-active (overlay-get o 'mark-active))
+  (setq er/history (overlay-get o 'er/history)))
+
+(defun mc/clean-up-state-overlay (o)
+  (set-marker (overlay-get o 'mark) nil)
+  (mc/delete-region-overlay o)
+  (delete-overlay o))
+
+(defun mc/pop-state-from-overlay (o)
+  (mc/restore-state-from-overlay o)
+  (mc/clean-up-state-overlay o))
+
+(defun mc/delete-region-overlay (o)
+  (ignore-errors
+    (delete-overlay (overlay-get o 'region-overlay))))
+
+(defun mc/create-fake-cursor-at-point ()
+  "Add a fake cursor and possibly a fake active region overlay based on point and mark.
+Saves the current state in the overlay to be restored later."
   (let ((overlay (mc/make-cursor-overlay-at-point)))
     (overlay-put overlay 'type 'additional-cursor)
-    (overlay-put overlay 'kill-ring kill-ring)
-    (overlay-put overlay 'mark-ring mark-ring)
-    (overlay-put overlay 'mark-active mark-active)
-    (overlay-put overlay 'mark (set-marker (make-marker) (mark)))
-    (overlay-put overlay 'er/history er/history)
+    (overlay-put overlay 'priority 100)
+    (mc/store-current-state-in-overlay overlay)
     (when (use-region-p)
       (overlay-put overlay 'region-overlay
-                   (mc/make-region-overlay-between-point-and-mark)))
-    (overlay-put overlay 'priority 100)))
+                   (mc/make-region-overlay-between-point-and-mark)))))
 
 (defun mc/execute-command-for-all-fake-cursors (cmd)
   "Calls CMD interactively for each cursor.
@@ -131,36 +157,19 @@ It works by moving point to the fake cursor, setting
 up the proper kill-ring, and then removing the cursor.
 After executing the command, it sets up a new fake
 cursor with updated info."
-  (let ((current-kill-ring kill-ring)
-        (current-mark-ring mark-ring)
-        (current-mark-active mark-active)
-        (current-er/history er/history)
+  (let ((current-state (mc/store-current-state-in-overlay
+                        (make-overlay (point) (point) nil nil t)))
         (annoying-arrows-mode nil))
     (save-excursion
       (mapc #'(lambda (o)
                 (when (eq (overlay-get o 'type) 'additional-cursor)
-                  (goto-char (overlay-start o))
-                  (setq kill-ring (overlay-get o 'kill-ring))
-                  (set-marker (mark-marker) (overlay-get o 'mark))
-                  (set-marker (overlay-get o 'mark) nil)
-                  (setq mark-ring (overlay-get o 'mark-ring))
-                  (setq mark-active (overlay-get o 'mark-active))
-                  (setq er/history (overlay-get o 'er/history))
-                  (delete-region-overlay o)
-                  (delete-overlay o)
+                  (mc/pop-state-from-overlay o)
                   (ignore-errors
                     (call-interactively cmd)
                     (when deactivate-mark (deactivate-mark))
-                    (mc/add-cursor-at-point))))
+                    (mc/create-fake-cursor-at-point))))
             (overlays-in (point-min) (point-max))))
-    (setq kill-ring current-kill-ring)
-    (setq mark-ring current-mark-ring)
-    (setq mark-active current-mark-active)
-    (setq er/history current-er/history)))
-
-(defun delete-region-overlay (o)
-  (ignore-errors
-    (delete-overlay (overlay-get o 'region-overlay))))
+    (mc/pop-state-from-overlay current-state)))
 
 (defun mc/execute-this-command-for-all-cursors ()
   "Used with post-command-hook to execute supported commands for
@@ -183,8 +192,7 @@ Do not use to conclude editing with multiple cursors. For that
 you should disable multiple-cursors-mode."
   (mapc #'(lambda (o)
             (when (eq (overlay-get o 'type) 'additional-cursor)
-              (delete-region-overlay o)
-              (delete-overlay o)))
+              (mc/clean-up-state-overlay o)))
         (overlays-in (point-min) (point-max))))
 
 (defun mc/keyboard-quit ()
@@ -227,7 +235,7 @@ mark-multiple if point and mark is on different columns."
          (navigation-func (if (< point-line mark-line) 'previous-line 'next-line)))
     (deactivate-mark)
     (while (not (eq (line-number-at-pos) point-line))
-      (mc/add-cursor-at-point)
+      (mc/create-fake-cursor-at-point)
       (funcall navigation-func))
     (multiple-cursors-mode)))
 
@@ -253,7 +261,7 @@ mark-multiple if point and mark is on different columns."
     (save-excursion
       (dolist (mirror mm/mirrors)
         (goto-char (+ offset (overlay-start mirror)))
-        (mc/add-cursor-at-point)))
+        (mc/create-fake-cursor-at-point)))
     (mm/clear-all)
     (multiple-cursors-mode)))
 

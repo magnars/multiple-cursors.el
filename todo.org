@@ -1,9 +1,8 @@
-* TODO: [3/9]
+* TODO: [4/9]
 ** DONE (set-marker MARKER nil) for performance
 ** DONE C-g deactivates regions first, before disabling multiple-cursors
 ** DONE more state to save per cursor: er/history
-** TODO refactor
-   an object with all the current state, used for both overlays and current
+** DONE refactor: an object with all the current state, used for both overlays and current
 ** TODO add tests
 ** TODO collapse cursors at same point
 ** TODO unknown command: (t)ry all or (i)gnore -> (did that work ok? (k)eep doing that or (d)on't)
