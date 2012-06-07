@@ -42,7 +42,7 @@ highlights the entire width of the window."
   (overlay-put o 'mark (set-marker (make-marker) (mark)))
   (overlay-put o 'mark-ring mark-ring)
   (overlay-put o 'mark-active mark-active)
-  (overlay-put o 'er/history er/history)
+  (when (boundp er/history) (overlay-put o 'er/history er/history))
   o)
 
 (defun mc/restore-state-from-overlay (o)
@@ -52,7 +52,7 @@ highlights the entire width of the window."
   (set-marker (mark-marker) (overlay-get o 'mark))
   (setq mark-ring (overlay-get o 'mark-ring))
   (setq mark-active (overlay-get o 'mark-active))
-  (setq er/history (overlay-get o 'er/history)))
+  (when (boundp er/history) (setq er/history (overlay-get o 'er/history))))
 
 (defun mc/clean-up-state-overlay (o)
   "Delete overlay with state, including dependent overlays and markers."
