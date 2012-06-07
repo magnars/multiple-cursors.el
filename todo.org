@@ -1,15 +1,21 @@
-* TODO: [4/9]
+* TODO: [4/10]
 ** DONE (set-marker MARKER nil) for performance
 ** DONE C-g deactivates regions first, before disabling multiple-cursors
 ** DONE more state to save per cursor: er/history
 ** DONE refactor: an object with all the current state, used for both overlays and current
-** TODO add tests
-** TODO collapse cursors at same point
-** TODO unknown command: (t)ry all, (i)gnore -> (did that work ok? (k)eep doing that or (d)on't)
+** TODO unknown command: Do for (a)ll, (o)nce or (i)gnore -> (did that work ok? (k)eep doing that or (d)on't)
+   unknown-command ran once - what now? (o)nce is enough, repeat for (a)ll, (u)ndo - that did NOT work.
+   unknown-command ran for all - did that work as expected? (y)es, (n)o
+   what to do about unknown-command in the future? Run it (o)nce, or (s)top it from being run.
 ** TODO separate mark-multiple and multiple-cursors
    mark-multiple goes back to being the util? or just dies?
    given the problem with extract-var and undo, may just kill mark-multiple.
    problem with that is: C-g when doing rename-tag shouldn't go to multiple-cursors.
 
+** TODO add tests
+** TODO collapse cursors at same point
 ** TODO there's something going wrong with last-command/this-command?
    expand-region works nicely, even collapse when we save er/history, but last collapse puts all cursors in same spot
+
+** TODO Create replacements for some common non-working commands
+   Possible to do C-s ... how about M-y ?
