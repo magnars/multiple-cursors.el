@@ -110,17 +110,6 @@ highlights the entire width of the window."
     (overlay-put overlay 'type 'additional-region)
     overlay))
 
-;; TODO:
-;; (set-marker MARKER nil) for performance
-;; collapse cursors at same point
-;; remove mark-multiple integration
-;; C-g fjerner regions først, før den disabler multiple-cursors
-;; refactor and add tests :-P
-
-;; ALSO:
-;; unknown:
-;;    (t)ry all or (i)gnore -> (did that work ok? (k)eep doing that or (d)on't)
-
 (defun mc/add-cursor-at-point ()
   "Add a fake cursor where point is.
 Also makes a copy of the kill-ring to be used by this cursor."
