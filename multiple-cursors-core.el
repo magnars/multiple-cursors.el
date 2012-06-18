@@ -216,6 +216,10 @@ from being executed if in multiple-cursors-mode."
                  beginning-of-line
                  er/expand-region
                  er/mark-word
+                 smart-forward
+                 smart-backward
+                 smart-up
+                 smart-down
                  move-beginning-of-line
                  move-start-of-line-or-prev-line
                  dired-back-to-start-of-files
