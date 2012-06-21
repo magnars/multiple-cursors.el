@@ -8,7 +8,7 @@ mark-multiple if point and mark is on different columns."
   (interactive)
   (when (not (use-region-p))
     (error "Mark a set of lines first."))
-  (mc/remove-additional-cursors)
+  (mc/remove-fake-cursors)
   (let* ((point-line (line-number-at-pos))
          (mark-line (progn (exchange-point-and-mark) (line-number-at-pos)))
          (navigation-func (if (< point-line mark-line) 'previous-line 'next-line)))

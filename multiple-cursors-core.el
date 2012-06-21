@@ -54,7 +54,7 @@ highlights the entire width of the window."
   (setq mark-active (overlay-get o 'mark-active))
   (when (boundp 'er/history) (setq er/history (overlay-get o 'er/history))))
 
-(defun mc/clean-up-state-overlay (o)
+(defun mc/remove-fake-cursor (o)
   "Delete overlay with state, including dependent overlays and markers."
   (set-marker (overlay-get o 'point) nil)
   (set-marker (overlay-get o 'mark) nil)
@@ -64,7 +64,7 @@ highlights the entire width of the window."
 (defun mc/pop-state-from-overlay (o)
   "Restore the state stored in given overlay and then remove the overlay."
   (mc/restore-state-from-overlay o)
-  (mc/clean-up-state-overlay o))
+  (mc/remove-fake-cursor o))
 
 (defun mc/delete-region-overlay (o)
   "Remove the dependent region overlay for a given cursor overlay."
@@ -88,19 +88,29 @@ It works by moving point to the fake cursor, setting
 up the proper kill-ring, and then removing the cursor.
 After executing the command, it sets up a new fake
 cursor with updated info."
-  (let ((current-state (mc/store-current-state-in-overlay
-                        (make-overlay (point) (point) nil nil t)))
-        (annoying-arrows-mode nil))
-    (save-excursion
-      (mapc #'(lambda (o)
-                (when (eq (overlay-get o 'type) 'additional-cursor)
-                  (mc/pop-state-from-overlay o)
-                  (ignore-errors
-                    (call-interactively cmd)
-                    (when deactivate-mark (deactivate-mark))
-                    (mc/create-fake-cursor-at-point))))
-            (overlays-in (point-min) (point-max))))
-    (mc/pop-state-from-overlay current-state)))
+  (let ((annoying-arrows-mode nil))
+    (mc/save-excursion
+     (mc/for-each-fake-cursor
+      (mc/pop-state-from-overlay cursor)
+      (ignore-errors
+        (call-interactively cmd)
+        (when deactivate-mark (deactivate-mark))
+        (mc/create-fake-cursor-at-point))))))
+
+(defmacro mc/for-each-fake-cursor (&rest forms)
+  "Runs the body for each fake cursor, bound to the name cursor"
+  `(mapc #'(lambda (cursor)
+             (when (eq (overlay-get cursor 'type) 'additional-cursor)
+               ,@forms))
+         (overlays-in (point-min) (point-max))))
+
+(defmacro mc/save-excursion (&rest forms)
+  "Saves and restores all the state that multiple-cursors cares about."
+  `(let ((current-state (mc/store-current-state-in-overlay
+                         (make-overlay (point) (point) nil nil t))))
+     (overlay-put current-state 'type 'original-cursor)
+     (save-excursion ,@forms)
+     (mc/pop-state-from-overlay current-state)))
 
 (defun mc/execute-this-command-for-all-cursors ()
   "Used with post-command-hook to execute supported commands for
@@ -117,14 +127,12 @@ cursors."
         (message "Skipping %S" this-original-command)
       (mc/execute-command-for-all-fake-cursors this-original-command))))
 
-(defun mc/remove-additional-cursors ()
+(defun mc/remove-fake-cursors ()
   "Remove all fake cursors.
 Do not use to conclude editing with multiple cursors. For that
 you should disable multiple-cursors-mode."
-  (mapc #'(lambda (o)
-            (when (eq (overlay-get o 'type) 'additional-cursor)
-              (mc/clean-up-state-overlay o)))
-        (overlays-in (point-min) (point-max))))
+  (mc/for-each-fake-cursor
+   (mc/remove-fake-cursor cursor)))
 
 (defun mc/keyboard-quit ()
   "Deactivate mark if there are any active, otherwise exit multiple-cursors-mode."
@@ -146,10 +154,10 @@ multiple cursors editing.")
 (define-minor-mode multiple-cursors-mode
   "Mode while multiple cursors are active."
   nil " mc" mc/keymap
-  (cond ((not multiple-cursors-mode)
-         (remove-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t)
-         (mc/remove-additional-cursors))
-        (t (add-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t t))))
+  (if multiple-cursors-mode
+      (add-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t t)
+    (remove-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t)
+    (mc/remove-fake-cursors)))
 
 (defvar mc--unsupported-cmds '()
   "List of commands that does not work well with multiple cursors.
@@ -167,6 +175,10 @@ from being executed if in multiple-cursors-mode."
 
 ;; Commands that make a giant mess of multiple cursors
 (unsupported-cmd yank-pop)
+
+;; Commands to run only once (not yet in use)
+(setq mc--cmds-run-once '(mark-next-like-this
+                          save-buffer))
 
 ;; Commands that should be mirrored by all cursors
 (setq mc--cmds '(mc/keyboard-quit
