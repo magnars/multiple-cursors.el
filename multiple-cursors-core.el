@@ -113,7 +113,8 @@ is executed normally for point, but skipped for the fake
 cursors."
   (if (memq this-original-command mc--unsupported-cmds)
       (message "%S is not supported with multiple cursors" this-original-command)
-    (if (not (memq this-original-command mc--cmds))
+    (if (not (or (memq this-original-command mc--cmds)
+                 (get this-original-command 'mc--enabled)))
         (message "Skipping %S" this-original-command)
       (mc/execute-command-for-all-fake-cursors this-original-command))))
 
@@ -164,6 +165,11 @@ from being executed if in multiple-cursors-mode."
        "command isn't supported with multiple cursors"
        (unless multiple-cursors-mode
          ad-do-it))))
+
+(defun mc/mark-supported-cmd (cmd)
+  "Marks a command allowable in multiple-cursors-mode"
+  (interactive "CCommand: ")
+  (put cmd 'mc--enabled t))
 
 ;; Commands that make a giant mess of multiple cursors
 (unsupported-cmd yank-pop)
