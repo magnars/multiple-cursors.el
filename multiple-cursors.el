@@ -75,6 +75,7 @@
 (require 'multiple-cursors-core)
 (require 'mc-edit-lines)
 (require 'mc-mark-multiple-integration)
+(require 'rectangular-region-mode)
 
 (provide 'multiple-cursors)
 
