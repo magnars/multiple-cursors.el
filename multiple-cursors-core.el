@@ -42,6 +42,8 @@ highlights the entire width of the window."
   (overlay-put o 'mark (set-marker (make-marker) (mark)))
   (overlay-put o 'mark-ring mark-ring)
   (overlay-put o 'mark-active mark-active)
+  (overlay-put o 'yank-undo-function yank-undo-function)
+  (overlay-put o 'kill-ring-yank-pointer kill-ring-yank-pointer)
   (when (boundp 'er/history) (overlay-put o 'er/history er/history))
   o)
 
@@ -52,6 +54,8 @@ highlights the entire width of the window."
   (set-marker (mark-marker) (overlay-get o 'mark))
   (setq mark-ring (overlay-get o 'mark-ring))
   (setq mark-active (overlay-get o 'mark-active))
+  (setq yank-undo-function (overlay-get o 'yank-undo-function))
+  (setq kill-ring-yank-pointer (overlay-get o 'kill-ring-yank-pointer))
   (when (boundp 'er/history) (setq er/history (overlay-get o 'er/history))))
 
 (defun mc/remove-fake-cursor (o)
@@ -173,8 +177,9 @@ from being executed if in multiple-cursors-mode."
        (unless multiple-cursors-mode
          ad-do-it))))
 
-;; Commands that make a giant mess of multiple cursors
-(unsupported-cmd yank-pop)
+;; Commands that does not work with multiple-cursors
+(unsupported-cmd isearch-forward)
+(unsupported-cmd isearch-backward)
 
 ;; Commands to run only once (not yet in use)
 (setq mc--cmds-run-once '(mark-next-like-this
