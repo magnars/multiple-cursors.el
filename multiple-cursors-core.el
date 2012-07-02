@@ -128,7 +128,8 @@ cursors."
   (if (memq this-original-command mc--unsupported-cmds)
       (message "%S is not supported with multiple cursors" this-original-command)
     (if (not (memq this-original-command mc--cmds))
-        (message "Skipping %S" this-original-command)
+        (when (not (memq this-original-command mc--cmds-run-once))
+          (message "Skipping %S" this-original-command))
       (mc/execute-command-for-all-fake-cursors this-original-command))))
 
 (defun mc/remove-fake-cursors ()
