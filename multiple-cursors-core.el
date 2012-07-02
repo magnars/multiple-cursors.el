@@ -126,7 +126,9 @@ Commands that are neither supported nor explicitly unsupported
 is executed normally for point, but skipped for the fake
 cursors."
   (if (memq this-original-command mc--unsupported-cmds)
-      (message "%S is not supported with multiple cursors" this-original-command)
+      (message "%S is not supported with multiple cursors. %s"
+               this-original-command
+               (get this-original-command 'mc--unsupported-msg))
     (if (not (memq this-original-command mc--cmds))
         (when (not (memq this-original-command mc--cmds-run-once))
           (message "Skipping %S" this-original-command))
@@ -168,19 +170,21 @@ multiple cursors editing.")
   "List of commands that does not work well with multiple cursors.
 Set up with the unsupported-cmd macro.")
 
-(defmacro unsupported-cmd (cmd)
+(defmacro unsupported-cmd (cmd msg)
   "Adds command to list of unsupported commands and prevents it
 from being executed if in multiple-cursors-mode."
   `(progn
      (push (quote ,cmd) mc--unsupported-cmds)
+     (put (quote ,cmd) 'mc--unsupported-msg ,msg)
      (defadvice ,cmd (around unsupported-advice activate)
        "command isn't supported with multiple cursors"
-       (unless multiple-cursors-mode
+       (unless (and multiple-cursors-mode (called-interactively-p 'any))
          ad-do-it))))
 
 ;; Commands that does not work with multiple-cursors
-(unsupported-cmd isearch-forward)
-(unsupported-cmd isearch-backward)
+(unsupported-cmd isearch-forward ". Feel free to add a multiple-cursors friendly version.")
+(unsupported-cmd isearch-backward ". Feel free to add a multiple-cursors friendly version.")
+(unsupported-cmd delete-char ", delete-forward-char is preferred for interactive use.")
 
 ;; Commands to run only once (not yet in use)
 (setq mc--cmds-run-once '(mark-next-like-this
@@ -219,7 +223,7 @@ from being executed if in multiple-cursors-mode."
                  kill-whole-line
                  backward-kill-word
                  backward-delete-char-untabify
-                 delete-char c-electric-delete-forward
+                 delete-forward-char c-electric-delete-forward
                  delete-backward-char c-electric-backspace
                  c-electric-paren
                  c-electric-semi&comma
