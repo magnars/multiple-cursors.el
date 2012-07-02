@@ -178,7 +178,10 @@ from being executed if in multiple-cursors-mode."
 
 ;; Commands to run only once (not yet in use)
 (setq mc--cmds-run-once '(mark-next-like-this
-                          save-buffer))
+                          save-buffer
+                          undo
+                          undo-tree-undo
+                          undo-tree-redo))
 
 ;; Commands that should be mirrored by all cursors
 (setq mc--cmds '(mc/keyboard-quit
