@@ -126,7 +126,7 @@ Commands that are neither supported nor explicitly unsupported
 is executed normally for point, but skipped for the fake
 cursors."
   (if (memq this-original-command mc--unsupported-cmds)
-      (message "%S is not supported with multiple cursors. %s"
+      (message "%S is not supported with multiple cursors%s"
                this-original-command
                (get this-original-command 'mc--unsupported-msg))
     (if (not (memq this-original-command mc--cmds))
@@ -182,8 +182,8 @@ from being executed if in multiple-cursors-mode."
          ad-do-it))))
 
 ;; Commands that does not work with multiple-cursors
-(unsupported-cmd isearch-forward ". Feel free to add a multiple-cursors friendly version.")
-(unsupported-cmd isearch-backward ". Feel free to add a multiple-cursors friendly version.")
+(unsupported-cmd isearch-forward ". Feel free to add a compatible version.")
+(unsupported-cmd isearch-backward ". Feel free to add a compatible version.")
 (unsupported-cmd delete-char ", delete-forward-char is preferred for interactive use.")
 
 ;; Commands to run only once (not yet in use)
