@@ -247,7 +247,7 @@ from being executed if in multiple-cursors-mode."
                  forward-list
                  backward-list
                  hippie-expand hippie-expand-lines
-                 yank yank-indented
+                 yank yank-indented yank-pop
                  kill-word
                  kill-region-or-backward-word
                  kill-line
