@@ -39,6 +39,7 @@ highlights the entire width of the window."
   "Store relevant info about point and mark in the given overlay."
   (overlay-put o 'point (set-marker (make-marker) (point)))
   (overlay-put o 'kill-ring kill-ring)
+  (overlay-put o 'kill-ring-yank-pointer kill-ring-yank-pointer)
   (overlay-put o 'mark (set-marker (make-marker) (mark)))
   (overlay-put o 'mark-ring mark-ring)
   (overlay-put o 'mark-active mark-active)
@@ -51,6 +52,7 @@ highlights the entire width of the window."
   "Restore point and mark from stored info in the given overlay."
   (goto-char (overlay-get o 'point))
   (setq kill-ring (overlay-get o 'kill-ring))
+  (setq kill-ring-yank-pointer (overlay-get o 'kill-ring-yank-pointer))
   (set-marker (mark-marker) (overlay-get o 'mark))
   (setq mark-ring (overlay-get o 'mark-ring))
   (setq mark-active (overlay-get o 'mark-active))
@@ -188,6 +190,32 @@ from being executed if in multiple-cursors-mode."
 (unsupported-cmd isearch-forward ". Feel free to add a compatible version.")
 (unsupported-cmd isearch-backward ". Feel free to add a compatible version.")
 (unsupported-cmd delete-char ", delete-forward-char is preferred for interactive use.")
+
+;; Fixing certain commands
+;;----------------------------------------------------------------------------------------
+;; Make sure pastes from other programs are added to all kill-rings when yanking
+(defadvice current-kill (before interprogram-paste-for-all-cursors activate)
+  (let ((interprogram-paste (and (= n 0)
+                                 interprogram-paste-function
+                                 (funcall interprogram-paste-function))))
+    (when interprogram-paste
+      ;; Add interprogram-paste to normal kill ring, just
+      ;; like current-kill usually does for itself.
+      (let ((interprogram-cut-function nil))
+        (if (listp interprogram-paste)
+            (mapc 'kill-new (nreverse interprogram-paste))
+          (kill-new interprogram-paste))
+        ;; And then add interprogram-paste to the kill-rings
+        ;; of all the other cursors too.
+        (mc/for-each-fake-cursor
+         (let ((kill-ring (overlay-get cursor 'kill-ring))
+               (kill-ring-yank-pointer (overlay-get cursor 'kill-ring-yank-pointer)))
+           (if (listp interprogram-paste)
+               (mapc 'kill-new (nreverse interprogram-paste))
+             (kill-new interprogram-paste))
+           (overlay-put cursor 'kill-ring kill-ring)
+           (overlay-put cursor 'kill-ring-yank-pointer kill-ring-yank-pointer)))))))
+;;----------------------------------------------------------------------------------------
 
 ;; Commands to run only once (not yet in use)
 (setq mc--cmds-run-once '(mark-next-like-this
