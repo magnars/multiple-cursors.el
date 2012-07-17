@@ -97,6 +97,7 @@ cursor with updated info."
      (mc/for-each-fake-cursor
       (mc/pop-state-from-overlay cursor)
       (ignore-errors
+        (run-hooks 'pre-command-hook)
         (call-interactively cmd)
         (when deactivate-mark (deactivate-mark))
         (mc/create-fake-cursor-at-point))))))
