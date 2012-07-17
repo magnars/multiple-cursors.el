@@ -249,7 +249,6 @@ from being executed if in multiple-cursors-mode."
                  js2r-inline-var
                  change-number-at-point
                  move-end-of-line
-                 move-end-of-line-or-next-line
                  beginning-of-line
                  er/expand-region
                  er/mark-word
@@ -258,7 +257,6 @@ from being executed if in multiple-cursors-mode."
                  smart-up
                  smart-down
                  move-beginning-of-line
-                 move-start-of-line-or-prev-line
                  dired-back-to-start-of-files
                  save-region-or-current-line
                  back-to-indentation))
