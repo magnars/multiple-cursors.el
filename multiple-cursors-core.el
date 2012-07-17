@@ -125,14 +125,16 @@ inform about the lack of support.
 Commands that are neither supported nor explicitly unsupported
 is executed normally for point, but skipped for the fake
 cursors."
-  (if (memq this-original-command mc--unsupported-cmds)
-      (message "%S is not supported with multiple cursors%s"
-               this-original-command
-               (get this-original-command 'mc--unsupported-msg))
-    (if (not (memq this-original-command mc--cmds))
-        (when (not (memq this-original-command mc--cmds-run-once))
-          (message "Skipping %S" this-original-command))
-      (mc/execute-command-for-all-fake-cursors this-original-command))))
+  (let ((original-command (or (command-remapping this-original-command)
+                              this-original-command)))
+    (if (memq original-command mc--unsupported-cmds)
+        (message "%S is not supported with multiple cursors%s"
+                 original-command
+                 (get original-command 'mc--unsupported-msg))
+      (if (not (memq original-command mc--cmds))
+          (when (not (memq original-command mc--cmds-run-once))
+            (message "Skipping %S" original-command))
+        (mc/execute-command-for-all-fake-cursors original-command)))))
 
 (defun mc/remove-fake-cursors ()
   "Remove all fake cursors.
@@ -210,9 +212,9 @@ from being executed if in multiple-cursors-mode."
                  right-word forward-word
                  left-char backward-char
                  left-word backward-word
-                 subword-upcase upcase-word
-                 subword-downcase downcase-word
-                 subword-capitalize capitalize-word
+                 upcase-word
+                 downcase-word
+                 capitalize-word
                  forward-list
                  backward-list
                  hippie-expand hippie-expand-lines
@@ -221,6 +223,15 @@ from being executed if in multiple-cursors-mode."
                  kill-region-or-backward-word
                  kill-line
                  kill-whole-line
+                 subword-forward
+                 subword-backward
+                 subword-mark
+                 subword-kill
+                 subword-backward-kill
+                 subword-transpose
+                 subword-capitalize
+                 subword-upcase
+                 subword-downcase
                  backward-kill-word
                  backward-delete-char-untabify
                  delete-forward-char c-electric-delete-forward
