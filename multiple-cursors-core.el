@@ -202,6 +202,8 @@ from being executed if in multiple-cursors-mode."
     (when interprogram-paste
       ;; Add interprogram-paste to normal kill ring, just
       ;; like current-kill usually does for itself.
+      ;; We have to do the work for it tho, since the funcall only returns
+      ;; something once. It is not a pure function.
       (let ((interprogram-cut-function nil))
         (if (listp interprogram-paste)
             (mapc 'kill-new (nreverse interprogram-paste))
