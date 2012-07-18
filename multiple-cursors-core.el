@@ -144,7 +144,7 @@ cursors."
                    original-command
                    (get original-command 'mc--unsupported))
         (if (not (memq original-command mc--cmds))
-            (when (not (memq original-command mc--cmds-run-once))
+            (when (and original-command (not (memq original-command mc--cmds-run-once)))
               (message "Skipping %S" original-command))
           (mc/execute-command-for-all-fake-cursors original-command))))))
 
@@ -222,12 +222,13 @@ from being executed if in multiple-cursors-mode."
            (overlay-put cursor 'kill-ring-yank-pointer kill-ring-yank-pointer)))))))
 ;;----------------------------------------------------------------------------------------
 
-;; Commands to run only once (not yet in use)
+;; Commands to run only once (don't need to message about skipping it)
 (setq mc--cmds-run-once '(mark-next-like-this
                           save-buffer
                           undo
                           undo-tree-undo
-                          undo-tree-redo))
+                          undo-tree-redo
+                          mc/switch-from-mark-multiple-to-cursors))
 
 ;; Commands that should be mirrored by all cursors
 (setq mc--cmds '(mc/keyboard-quit

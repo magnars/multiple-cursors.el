@@ -17,8 +17,9 @@ Feature: Mark multiple integration
     When I insert "This text contains the word text twice"
     And I select "text"
     And I press "C->"
-    And I press "C-g"
-    And I type "'"
+    And I switch to multiple-cursors mode
+    And I type "("
     And I press "M-f"
-    And I type "'"
-    Then I should see "This 'text' contains the word 'text' twice"
+    And I press "M-f"
+    And I type ")"
+    Then I should see "This (text contains) the word (text twice)"

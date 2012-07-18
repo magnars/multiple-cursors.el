@@ -14,6 +14,7 @@
 (require 'ert)
 
 (Before
+ (multiple-cursors-mode 0)
  (mm/clear-all)
  (global-set-key (kbd "C->") 'mark-next-like-this)
  (switch-to-buffer
