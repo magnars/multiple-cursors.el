@@ -132,10 +132,10 @@ is executed normally for point, but skipped for the fake
 cursors."
   (let ((original-command (or (command-remapping this-original-command)
                               this-original-command)))
-    (if (memq original-command mc--unsupported-cmds)
+    (if (get original-command 'mc--unsupported)
         (message "%S is not supported with multiple cursors%s"
                  original-command
-                 (get original-command 'mc--unsupported-msg))
+                 (get original-command 'mc--unsupported))
       (if (not (memq original-command mc--cmds))
           (when (not (memq original-command mc--cmds-run-once))
             (message "Skipping %S" original-command))
@@ -173,16 +173,11 @@ multiple cursors editing.")
     (remove-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t)
     (mc/remove-fake-cursors)))
 
-(defvar mc--unsupported-cmds '()
-  "List of commands that does not work well with multiple cursors.
-Set up with the unsupported-cmd macro.")
-
 (defmacro unsupported-cmd (cmd msg)
   "Adds command to list of unsupported commands and prevents it
 from being executed if in multiple-cursors-mode."
   `(progn
-     (push (quote ,cmd) mc--unsupported-cmds)
-     (put (quote ,cmd) 'mc--unsupported-msg ,msg)
+     (put (quote ,cmd) 'mc--unsupported ,msg)
      (defadvice ,cmd (around unsupported-advice activate)
        "command isn't supported with multiple cursors"
        (unless (and multiple-cursors-mode (called-interactively-p 'any))
