@@ -99,8 +99,10 @@ cursor with updated info."
      (mc/for-each-fake-cursor
       (mc/pop-state-from-overlay cursor)
       (ignore-errors
+        (setq this-command cmd)
         (run-hooks 'pre-command-hook)
-        (call-interactively cmd)
+        (unless (eq this-command 'ignore)
+          (call-interactively cmd))
         (when deactivate-mark (deactivate-mark))
         (mc/create-fake-cursor-at-point))))))
 
@@ -189,7 +191,6 @@ from being executed if in multiple-cursors-mode."
 ;; Commands that does not work with multiple-cursors
 (unsupported-cmd isearch-forward ". Feel free to add a compatible version.")
 (unsupported-cmd isearch-backward ". Feel free to add a compatible version.")
-(unsupported-cmd delete-char ", delete-forward-char is preferred for interactive use.")
 
 ;; Fixing certain commands
 ;;----------------------------------------------------------------------------------------
@@ -263,7 +264,7 @@ from being executed if in multiple-cursors-mode."
                  subword-downcase
                  backward-kill-word
                  backward-delete-char-untabify
-                 delete-forward-char c-electric-delete-forward
+                 delete-char delete-forward-char c-electric-delete-forward
                  delete-backward-char c-electric-backspace
                  c-electric-paren
                  c-electric-semi&comma
