@@ -132,14 +132,21 @@ is executed normally for point, but skipped for the fake
 cursors."
   (let ((original-command (or (command-remapping this-original-command)
                               this-original-command)))
-    (if (get original-command 'mc--unsupported)
-        (message "%S is not supported with multiple cursors%s"
-                 original-command
-                 (get original-command 'mc--unsupported))
-      (if (not (memq original-command mc--cmds))
-          (when (not (memq original-command mc--cmds-run-once))
-            (message "Skipping %S" original-command))
-        (mc/execute-command-for-all-fake-cursors original-command)))))
+
+    ;; if it's a lambda, we can't know if it's supported or not
+    ;; - so go ahead and assume it's ok, because we're just optimistic like that
+    (if (not (symbolp original-command))
+        (mc/execute-command-for-all-fake-cursors original-command)
+
+      ;; otherwise it's a symbol, and we can be more thorough
+      (if (get original-command 'mc--unsupported)
+          (message "%S is not supported with multiple cursors%s"
+                   original-command
+                   (get original-command 'mc--unsupported))
+        (if (not (memq original-command mc--cmds))
+            (when (not (memq original-command mc--cmds-run-once))
+              (message "Skipping %S" original-command))
+          (mc/execute-command-for-all-fake-cursors original-command))))))
 
 (defun mc/remove-fake-cursors ()
   "Remove all fake cursors.
