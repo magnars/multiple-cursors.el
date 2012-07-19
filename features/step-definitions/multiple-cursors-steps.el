@@ -22,6 +22,33 @@
         (assert (eq 1 (num-cursors)) nil
                 "Expected to have one cursor, but there are still fake cursor overlays.")))
 
-(And "^I switch to multiple-cursors mode$"
-     (lambda ()
-       (mc/switch-from-mark-multiple-to-cursors)))
+(When "^I press \"\\(.+\\)\"$"
+      (lambda (keybinding)
+        (let ((macro (edmacro-parse-keys keybinding)))
+          (if espuds-chain-active
+              (setq espuds-action-chain (vconcat espuds-action-chain macro))
+            (if (and (equal keybinding "C-g")
+                     (eq (key-binding (kbd "C-g")) 'keyboard-quit))
+                (espuds-quit)
+              (execute-kbd-macro macro))))))
+
+(Given "^I have cursors at \"\\(.+\\)\" in \"\\(.+\\)\"$"
+       (lambda (needle haystack)
+         (insert haystack)
+         (goto-char (point-min))
+         (search-forward needle)
+         (set-mark (point))
+         (goto-char (match-beginning 0))
+         (mark-all-like-this)
+         (mc/switch-from-mark-multiple-to-cursors)))
+
+(When "^I copy \"\\(.+\\)\" in another program$"
+       (lambda (text)
+         (lexical-let ((text text))
+           (setq interprogram-paste-function
+                 #'(lambda () (let ((r text)) (setq text nil) r))))))
+
+(Given "^I have bound C-! to a lambda that inserts \"\\(.+\\)\"$"
+       (lambda (ins)
+         (lexical-let ((ins ins))
+           (global-set-key (kbd "C-!") #'(lambda () (interactive) (insert ins))))))

@@ -228,6 +228,8 @@ from being executed if in multiple-cursors-mode."
                           undo
                           undo-tree-undo
                           undo-tree-redo
+                          universal-argument
+                          universal-argument-other-key
                           mc/switch-from-mark-multiple-to-cursors))
 
 ;; Commands that should be mirrored by all cursors
