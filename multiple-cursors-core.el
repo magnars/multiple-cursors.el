@@ -294,7 +294,7 @@ from being executed if in multiple-cursors-mode."
                  smart-down
                  move-beginning-of-line
                  dired-back-to-start-of-files
-                 save-region-or-current-line
+                 kill-ring-save save-region-or-current-line
                  back-to-indentation))
 
 (provide 'multiple-cursors-core)

@@ -70,13 +70,14 @@ Feature: Multiple cursors core
   Scenario: delete-selection-mode (yank)
     Given I turn on delete-selection-mode
     And I have cursors at "text" in "This text contains the word text twice"
+    And I press "M-b"
     And I press "C-SPC"
     And I press "M-f"
     And I press "M-w"
     And I press "C-SPC"
     And I press "M-f"
     And I press "C-y"
-    Then I should see "This texttext the word texttext"
+    Then I should see "ThisThis contains the wordword twice"
 
   Scenario: subword-mode
     Given I turn on subword-mode
