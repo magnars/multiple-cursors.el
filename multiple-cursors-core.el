@@ -121,6 +121,12 @@ cursor with updated info."
      (save-excursion ,@forms)
      (mc/pop-state-from-overlay current-state)))
 
+(defun mc/prompt-for-inclusion-in-whitelist (original-command)
+  (if (y-or-n-p (format "Do %S for all cursors?" original-command))
+      (add-to-list 'mc--cmds original-command)
+    (add-to-list 'mc--cmds-run-once original-command)
+    nil))
+
 (defun mc/execute-this-command-for-all-cursors ()
   "Used with post-command-hook to execute supported commands for
 all cursors. It also checks a list of explicitly unsupported
@@ -143,9 +149,10 @@ cursors."
           (message "%S is not supported with multiple cursors%s"
                    original-command
                    (get original-command 'mc--unsupported))
-        (if (not (memq original-command mc--cmds))
-            (when (and original-command (not (memq original-command mc--cmds-run-once)))
-              (message "Skipping %S" original-command))
+        (when (and original-command
+                   (not (memq original-command mc--cmds-run-once))
+                   (or (memq original-command mc--cmds)
+                       (mc/prompt-for-inclusion-in-whitelist original-command)))
           (mc/execute-command-for-all-fake-cursors original-command))))))
 
 (defun mc/remove-fake-cursors ()
@@ -230,7 +237,10 @@ from being executed if in multiple-cursors-mode."
                           undo-tree-redo
                           universal-argument
                           universal-argument-other-key
-                          mc/switch-from-mark-multiple-to-cursors))
+                          mc/switch-from-mark-multiple-to-cursors
+                          mc/edit-lines
+                          mc/edit-ends-of-lines
+                          mc/edit-beginnings-of-lines))
 
 ;; Commands that should be mirrored by all cursors
 (setq mc--cmds '(mc/keyboard-quit
