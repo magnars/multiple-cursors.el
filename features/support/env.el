@@ -23,6 +23,7 @@
  (transient-mark-mode 1)
  (cua-mode 0)
  (delete-selection-mode 0)
+ (subword-mode 0)
  (setq set-mark-default-inactive nil)
  (deactivate-mark))
 

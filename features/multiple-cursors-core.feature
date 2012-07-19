@@ -4,20 +4,12 @@ Feature: Multiple cursors core
   I want to change multiple parts of the buffer at once
 
   Scenario: Exiting multiple-cursors mode with return
-    Given there is no region selected
-    When I insert "This text contains the word text twice"
-    And I select "text"
-    And I press "C->"
-    And I press "C-g"
+    Given I have cursors at "text" in "This text contains the word text twice"
     And I press "<return>"
     Then I should have one cursor
 
   Scenario: Exiting multiple-cursors mode with C-g
-    Given there is no region selected
-    When I insert "This text contains the word text twice"
-    And I select "text"
-    And I press "C->"
-    And I press "C-g"
+    Given I have cursors at "text" in "This text contains the word text twice"
     And I press "C-g"
     Then I should have one cursor
 
@@ -36,12 +28,6 @@ Feature: Multiple cursors core
     And I press "M-d"
     And I press "C-y M-y"
     Then I should see "This  text the word  text"
-
-  Scenario: Interprogram paste
-    Given I have cursors at "text" in "This text contains the word text twice"
-    When I copy "external" in another program
-    And I press "C-y"
-    Then I should see "This externaltext contains the word externaltext twice"
 
   Scenario: Multiple lambdas
     Given I have bound C-! to a lambda that inserts "a"
@@ -80,3 +66,28 @@ Feature: Multiple cursors core
     And I press "M-f"
     And I press "C-d"
     Then I should see "This  contains the word  twice"
+
+  Scenario: delete-selection-mode (yank)
+    Given I turn on delete-selection-mode
+    And I have cursors at "text" in "This text contains the word text twice"
+    And I press "C-SPC"
+    And I press "M-f"
+    And I press "M-w"
+    And I press "C-SPC"
+    And I press "M-f"
+    And I press "C-y"
+    Then I should see "This texttext the word texttext"
+
+  Scenario: subword-mode
+    Given I turn on subword-mode
+    And I have cursors at "textSnippet" in "This textSnippet contains the word textSnippet twice"
+    And I press "M-f"
+    And I type "_"
+    And I press "M-l"
+    Then I should see "This text_snippet contains the word text_snippet twice"
+
+  Scenario: Interprogram paste
+    Given I have cursors at "text" in "This text contains the word text twice"
+    When I copy "external" in another program
+    And I press "C-y"
+    Then I should see "This externaltext contains the word externaltext twice"
