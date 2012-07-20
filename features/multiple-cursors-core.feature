@@ -57,6 +57,14 @@ Feature: Multiple cursors core
     And I press "C-!"
     Then I should see "This aatext contains the word text twice"
 
+  Scenario: Undo
+    Given I have cursors at "text" in "This text contains the word text twice"
+    When I press "M-f"
+    And I press "M-DEL"
+    And I press "C-_"
+    And I type "!"
+    Then I should see "This text! contains the word text! twice"
+
   Scenario: Setting and popping mark
     Given I have cursors at "text" in "This text contains the word text twice"
     And I press "C-SPC"

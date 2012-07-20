@@ -1,3 +1,5 @@
+(eval-when-compile (require 'cl))
+
 (defface mc/cursor-face
   '((t (:inverse-video t)))
   "The face used for fake cursors"
@@ -77,10 +79,18 @@ highlights the entire width of the window."
   (ignore-errors
     (delete-overlay (overlay-get o 'region-overlay))))
 
-(defun mc/create-fake-cursor-at-point ()
+(defvar mc--current-cursor-id 0
+  "Var to store increasing id of fake cursors, used to keep track of them for undo.")
+
+(defun mc/create-cursor-id ()
+  "Returns a unique cursor id"
+  (incf mc--current-cursor-id))
+
+(defun mc/create-fake-cursor-at-point (&optional id)
   "Add a fake cursor and possibly a fake active region overlay based on point and mark.
 Saves the current state in the overlay to be restored later."
   (let ((overlay (mc/make-cursor-overlay-at-point)))
+    (overlay-put overlay 'mc-id (or id (mc/create-cursor-id)))
     (overlay-put overlay 'type 'additional-cursor)
     (overlay-put overlay 'priority 100)
     (mc/store-current-state-in-overlay overlay)
@@ -88,23 +98,62 @@ Saves the current state in the overlay to be restored later."
       (overlay-put overlay 'region-overlay
                    (mc/make-region-overlay-between-point-and-mark)))))
 
+(defun mc/execute-command (cmd)
+  "Run command, simulating the parts of the command loop that makes sense for fake cursors."
+  (setq this-command cmd)
+  (run-hooks 'pre-command-hook)
+  (unless (eq this-command 'ignore)
+    (call-interactively cmd))
+  (when deactivate-mark (deactivate-mark)))
+
 (defun mc/execute-command-for-all-fake-cursors (cmd)
   "Calls CMD interactively for each cursor.
 It works by moving point to the fake cursor, setting
-up the proper kill-ring, and then removing the cursor.
+up the proper environment, and then removing the cursor.
 After executing the command, it sets up a new fake
 cursor with updated info."
-  (let ((annoying-arrows-mode nil))
-    (mc/save-excursion
-     (mc/for-each-fake-cursor
-      (mc/pop-state-from-overlay cursor)
-      (ignore-errors
-        (setq this-command cmd)
-        (run-hooks 'pre-command-hook)
-        (unless (eq this-command 'ignore)
-          (call-interactively cmd))
-        (when deactivate-mark (deactivate-mark))
-        (mc/create-fake-cursor-at-point))))))
+  (mc/save-excursion
+   (mc/for-each-fake-cursor
+    (let ((id (overlay-get cursor 'mc-id))
+          (annoying-arrows-mode nil))
+      (mc/add-fake-cursor-to-undo-list
+       (mc/pop-state-from-overlay cursor)
+       (ignore-errors
+         (mc/execute-command cmd)
+         (mc/create-fake-cursor-at-point id)))))))
+
+(defmacro mc/add-fake-cursor-to-undo-list (&rest forms)
+  "Make sure point is in the right place when undoing"
+  `(let ((undo-cleaner (cons 'apply (cons 'deactivate-cursor-after-undo (list id)))))
+     (setq buffer-undo-list (cons undo-cleaner buffer-undo-list))
+     ,@forms
+     (if (eq undo-cleaner (car buffer-undo-list)) ;; if nothing has been added to the undo-list
+         (setq buffer-undo-list (cdr buffer-undo-list)) ;; then pop the cleaner right off again
+       (setq buffer-undo-list ;; otherwise add a function to activate this cursor
+             (cons (cons 'apply (cons 'activate-cursor-for-undo (list id))) buffer-undo-list)))))
+
+(defun mc/cursor-with-id (id)
+  "Find the first cursor with the given id, or nil"
+  (find-if #'(lambda (o) (= id (overlay-get o 'mc-id)))
+           (overlays-in (point-min) (point-max))))
+
+(defvar mc--stored-state-for-undo nil
+  "Variable to keep the state of the real cursor while undoing a fake one")
+
+(defun activate-cursor-for-undo (id)
+  "Called when undoing to temporarily activate the fake cursor which action is being undone."
+  (let ((cursor (mc/cursor-with-id id)))
+    (when cursor
+      (setq mc--stored-state-for-undo (mc/store-current-state-in-overlay
+                                       (make-overlay (point) (point) nil nil t)))
+      (mc/pop-state-from-overlay cursor))))
+
+(defun deactivate-cursor-after-undo (id)
+  "Called when undoing to reinstate the real cursor after undoing a fake one."
+  (when mc--stored-state-for-undo
+    (mc/create-fake-cursor-at-point id)
+    (mc/pop-state-from-overlay mc--stored-state-for-undo)
+    (setq mc--stored-state-for-undo nil)))
 
 (defmacro mc/for-each-fake-cursor (&rest forms)
   "Runs the body for each fake cursor, bound to the name cursor"
@@ -122,6 +171,7 @@ cursor with updated info."
      (mc/pop-state-from-overlay current-state)))
 
 (defun mc/prompt-for-inclusion-in-whitelist (original-command)
+  "Asks the user, then adds the command either to the once-list or the all-list."
   (if (y-or-n-p (format "Do %S for all cursors?" original-command))
       (add-to-list 'mc--cmds original-command)
     (add-to-list 'mc--cmds-run-once original-command)
