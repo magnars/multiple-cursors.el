@@ -265,8 +265,6 @@ from being executed if in multiple-cursors-mode."
 (unsupported-cmd isearch-forward ". Feel free to add a compatible version.")
 (unsupported-cmd isearch-backward ". Feel free to add a compatible version.")
 
-;; Fixing certain commands
-;;----------------------------------------------------------------------------------------
 ;; Make sure pastes from other programs are added to all kill-rings when yanking
 (defadvice current-kill (before interprogram-paste-for-all-cursors activate)
   (let ((interprogram-paste (and (= n 0)
@@ -291,7 +289,6 @@ from being executed if in multiple-cursors-mode."
              (kill-new interprogram-paste))
            (overlay-put cursor 'kill-ring kill-ring)
            (overlay-put cursor 'kill-ring-yank-pointer kill-ring-yank-pointer)))))))
-;;----------------------------------------------------------------------------------------
 
 (defvar mc--default-cmds-to-run-once '(mc/switch-from-mark-multiple-to-cursors
                                        mc/edit-lines
@@ -350,11 +347,6 @@ from being executed if in multiple-cursors-mode."
                                           move-beginning-of-line
                                           kill-ring-save
                                           back-to-indentation
-
-                                          ;; mode specific commands
-                                          org-shiftright
-                                          sgml-slash
-                                          slime-space
                                           subword-forward
                                           subword-backward
                                           subword-mark
@@ -364,20 +356,6 @@ from being executed if in multiple-cursors-mode."
                                           subword-capitalize
                                           subword-upcase
                                           subword-downcase
-                                          js2-beginning-of-line
-                                          js2-end-of-line
-                                          js2-insert-and-indent
-                                          js2r-inline-var
-                                          c-electric-delete-forward
-                                          c-electric-backspace
-                                          c-electric-paren
-                                          c-electric-semi&comma
-
-                                          ;; common extension commands
-                                          wrap-region-trigger
-                                          yas/expand
-
-                                          ;; magnars extension commands
                                           er/expand-region
                                           er/contract-region
                                           smart-forward
@@ -393,7 +371,20 @@ from being executed if in multiple-cursors-mode."
                                kill-region-or-backward-word
                                change-number-at-point
                                dired-back-to-start-of-files
-                               yank-indented))
+                               yank-indented
+                               wrap-region-trigger
+                               yas/expand
+                               org-shiftright
+                               sgml-slash
+                               slime-space
+                               js2-beginning-of-line
+                               js2-end-of-line
+                               js2-insert-and-indent
+                               js2r-inline-var
+                               c-electric-delete-forward
+                               c-electric-backspace
+                               c-electric-paren
+                               c-electric-semi&comma))
 
 
 (provide 'multiple-cursors-core)
