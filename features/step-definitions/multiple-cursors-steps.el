@@ -2,11 +2,8 @@
      (lambda ()
        (delete-selection-mode 1)))
 
-(defun is-extra-cursor-p (o)
-  (eq (overlay-get o 'type) 'additional-cursor))
-
 (defun num-cursors ()
-  (1+ (count-if 'is-extra-cursor-p
+  (1+ (count-if 'mc/fake-cursor-p
                 (overlays-in (point-min) (point-max)))))
 
 (Then "^I should have \\([0-9]+\\) cursors$"

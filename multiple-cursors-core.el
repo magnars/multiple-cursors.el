@@ -1,7 +1,7 @@
 (eval-when-compile (require 'cl))
 
 (defface mc/cursor-face
-  '((t (:inverse-video t)))
+  '((t :inherit cursor))
   "The face used for fake cursors"
   :group 'multiple-cursors)
 
@@ -91,7 +91,7 @@ highlights the entire width of the window."
 Saves the current state in the overlay to be restored later."
   (let ((overlay (mc/make-cursor-overlay-at-point)))
     (overlay-put overlay 'mc-id (or id (mc/create-cursor-id)))
-    (overlay-put overlay 'type 'additional-cursor)
+    (overlay-put overlay 'type 'fake-cursor)
     (overlay-put overlay 'priority 100)
     (mc/store-current-state-in-overlay overlay)
     (when (use-region-p)
@@ -132,9 +132,14 @@ cursor with updated info."
        (setq buffer-undo-list ;; otherwise add a function to activate this cursor
              (cons (cons 'apply (cons 'activate-cursor-for-undo (list id))) buffer-undo-list)))))
 
+(defun mc/fake-cursor-p (o)
+  "Predicate to check if an overlay is a fake cursor"
+  (eq (overlay-get o 'type) 'fake-cursor))
+
 (defun mc/cursor-with-id (id)
   "Find the first cursor with the given id, or nil"
-  (find-if #'(lambda (o) (= id (overlay-get o 'mc-id)))
+  (find-if #'(lambda (o) (and (mc/fake-cursor-p o)
+                              (= id (overlay-get o 'mc-id))))
            (overlays-in (point-min) (point-max))))
 
 (defvar mc--stored-state-for-undo nil
@@ -158,7 +163,7 @@ cursor with updated info."
 (defmacro mc/for-each-fake-cursor (&rest forms)
   "Runs the body for each fake cursor, bound to the name cursor"
   `(mapc #'(lambda (cursor)
-             (when (eq (overlay-get cursor 'type) 'additional-cursor)
+             (when (mc/fake-cursor-p cursor)
                ,@forms))
          (overlays-in (point-min) (point-max))))
 
@@ -173,8 +178,8 @@ cursor with updated info."
 (defun mc/prompt-for-inclusion-in-whitelist (original-command)
   "Asks the user, then adds the command either to the once-list or the all-list."
   (if (y-or-n-p (format "Do %S for all cursors?" original-command))
-      (add-to-list 'mc--cmds original-command)
-    (add-to-list 'mc--cmds-run-once original-command)
+      (add-to-list 'mc--cmds-to-run-for-all original-command)
+    (add-to-list 'mc--cmds-to-run-once original-command)
     nil))
 
 (defun mc/execute-this-command-for-all-cursors ()
@@ -200,8 +205,8 @@ cursors."
                    original-command
                    (get original-command 'mc--unsupported))
         (when (and original-command
-                   (not (memq original-command mc--cmds-run-once))
-                   (or (memq original-command mc--cmds)
+                   (not (memq original-command mc--cmds-to-run-once))
+                   (or (memq original-command mc--cmds-to-run-for-all)
                        (mc/prompt-for-inclusion-in-whitelist original-command)))
           (mc/execute-command-for-all-fake-cursors original-command))))))
 
@@ -280,7 +285,7 @@ from being executed if in multiple-cursors-mode."
 ;;----------------------------------------------------------------------------------------
 
 ;; Commands to run only once (don't need to message about skipping it)
-(setq mc--cmds-run-once '(mark-next-like-this
+(setq mc--cmds-to-run-once '(mark-next-like-this
                           save-buffer
                           undo
                           undo-tree-undo
@@ -293,7 +298,7 @@ from being executed if in multiple-cursors-mode."
                           mc/edit-beginnings-of-lines))
 
 ;; Commands that should be mirrored by all cursors
-(setq mc--cmds '(mc/keyboard-quit
+(setq mc--cmds-to-run-for-all '(mc/keyboard-quit
                  self-insert-command
                  js2-insert-and-indent
                  wrap-region-trigger
