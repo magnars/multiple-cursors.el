@@ -178,8 +178,8 @@ cursor with updated info."
 (defun mc/prompt-for-inclusion-in-whitelist (original-command)
   "Asks the user, then adds the command either to the once-list or the all-list."
   (if (y-or-n-p (format "Do %S for all cursors?" original-command))
-      (add-to-list 'mc--default-cmds-to-run-for-all original-command)
-    (add-to-list 'mc--default-cmds-to-run-once original-command)
+      (add-to-list 'mc/cmds-to-run-for-all original-command)
+    (add-to-list 'mc/cmds-to-run-once original-command)
     nil))
 
 (defun mc/num-cursors ()
@@ -213,7 +213,9 @@ cursors."
                      (get original-command 'mc--unsupported))
           (when (and original-command
                      (not (memq original-command mc--default-cmds-to-run-once))
+                     (not (memq original-command mc/cmds-to-run-once))
                      (or (memq original-command mc--default-cmds-to-run-for-all)
+                         (memq original-command mc/cmds-to-run-for-all)
                          (mc/prompt-for-inclusion-in-whitelist original-command)))
             (mc/execute-command-for-all-fake-cursors original-command)))))))
 
@@ -291,18 +293,18 @@ from being executed if in multiple-cursors-mode."
            (overlay-put cursor 'kill-ring-yank-pointer kill-ring-yank-pointer)))))))
 ;;----------------------------------------------------------------------------------------
 
-(defvar mc--default-cmds-to-run-once '(save-buffer
+(defvar mc--default-cmds-to-run-once '(mc/switch-from-mark-multiple-to-cursors
+                                       mc/edit-lines
+                                       mc/edit-ends-of-lines
+                                       mc/edit-beginnings-of-lines
+                                       mc/mark-next-like-this
+                                       save-buffer
                                        ido-exit-minibuffer
                                        undo undo-tree-undo
                                        redo undo-tree-redo
                                        universal-argument
                                        universal-argument-other-key
-                                       top-level
-                                       mc/switch-from-mark-multiple-to-cursors
-                                       mc/edit-lines
-                                       mc/edit-ends-of-lines
-                                       mc/edit-beginnings-of-lines
-                                       mc/mark-next-like-this)
+                                       top-level)
   "Default set of commands to run only once in multiple-cursors-mode.")
 
 (defvar mc/cmds-to-run-once nil
