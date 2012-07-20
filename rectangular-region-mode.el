@@ -7,6 +7,7 @@
   "Keymap for rectangular region is mainly for rebinding C-g")
 
 (define-key rectangular-region-mode-map (kbd "C-g") 'rrm/keyboard-quit)
+(define-key rectangular-region-mode-map (kbd "<return>") 'rrm/switch-to-multiple-cursors)
 
 (defun rrm/keyboard-quit ()
   (interactive)
@@ -52,7 +53,8 @@
        (move-to-column point-column t)
        (mc/create-fake-cursor-at-point)))))
 
-(defun rrm/execute-change (&rest forms)
+(defun rrm/switch-to-multiple-cursors (&rest forms)
+  (interactive)
   (rectangular-region-mode 0)
   (multiple-cursors-mode 1))
 
@@ -61,9 +63,9 @@
   nil " rr" rectangular-region-mode-map
   (if rectangular-region-mode
       (progn
-        (add-hook 'after-change-functions 'rrm/execute-change t t)
+        (add-hook 'after-change-functions 'rrm/switch-to-multiple-cursors t t)
         (add-hook 'post-command-hook 'rrm/repaint t t))
-    (remove-hook 'after-change-functions 'rrm/execute-change t)
+    (remove-hook 'after-change-functions 'rrm/switch-to-multiple-cursors t)
     (remove-hook 'post-command-hook 'rrm/repaint t)
     (set-marker rrm/anchor nil)))
 
