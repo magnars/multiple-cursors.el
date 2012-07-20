@@ -52,3 +52,15 @@
        (lambda (ins)
          (lexical-let ((ins ins))
            (global-set-key (kbd "C-!") #'(lambda () (interactive) (insert ins))))))
+
+(Given "^I have bound C-! to a new command that inserts \"\\(.+\\)\"$"
+       (lambda (ins)
+         (lexical-let ((ins ins))
+           (defun mc-test-temp-command () (interactive) (insert ins))
+           (global-set-key (kbd "C-!") 'mc-test-temp-command))))
+
+(Given "^I have bound C-! to another new command that inserts \"\\(.+\\)\"$"
+       (lambda (ins)
+         (lexical-let ((ins ins))
+           (defun mc-test-temp-command-2 () (interactive) (insert ins))
+           (global-set-key (kbd "C-!") 'mc-test-temp-command-2))))
