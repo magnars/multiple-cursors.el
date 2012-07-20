@@ -2,13 +2,9 @@
      (lambda ()
        (delete-selection-mode 1)))
 
-(defun num-cursors ()
-  (1+ (count-if 'mc/fake-cursor-p
-                (overlays-in (point-min) (point-max)))))
-
 (Then "^I should have \\([0-9]+\\) cursors$"
       (lambda (num)
-        (let ((actual (num-cursors)))
+        (let ((actual (mc/num-cursors)))
           (assert (eq (string-to-number num) actual) nil
                   "Expected to have %s cursors, but was %d." num actual))))
 
@@ -16,7 +12,7 @@
       (lambda ()
         (assert (not multiple-cursors-mode) nil
                 "Expected to have one cursor, but multiple-cursors-mode is still active.")
-        (assert (eq 1 (num-cursors)) nil
+        (assert (eq 1 (mc/num-cursors)) nil
                 "Expected to have one cursor, but there are still fake cursor overlays.")))
 
 (When "^I press \"\\(.+\\)\"$"

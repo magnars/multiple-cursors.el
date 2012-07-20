@@ -178,9 +178,14 @@ cursor with updated info."
 (defun mc/prompt-for-inclusion-in-whitelist (original-command)
   "Asks the user, then adds the command either to the once-list or the all-list."
   (if (y-or-n-p (format "Do %S for all cursors?" original-command))
-      (add-to-list 'mc--cmds-to-run-for-all original-command)
-    (add-to-list 'mc--cmds-to-run-once original-command)
+      (add-to-list 'mc--default-cmds-to-run-for-all original-command)
+    (add-to-list 'mc--default-cmds-to-run-once original-command)
     nil))
+
+(defun mc/num-cursors ()
+  "The number of cursors (real and fake) in the buffer."
+  (1+ (count-if 'mc/fake-cursor-p
+                (overlays-in (point-min) (point-max)))))
 
 (defun mc/execute-this-command-for-all-cursors ()
   "Used with post-command-hook to execute supported commands for
@@ -191,24 +196,26 @@ inform about the lack of support.
 Commands that are neither supported nor explicitly unsupported
 is executed normally for point, but skipped for the fake
 cursors."
-  (let ((original-command (or (command-remapping this-original-command)
-                              this-original-command)))
+  (if (eq 1 (mc/num-cursors)) ;; no fake cursors? disable mc-mode
+      (multiple-cursors-mode 0)
+    (let ((original-command (or (command-remapping this-original-command)
+                                this-original-command)))
 
-    ;; if it's a lambda, we can't know if it's supported or not
-    ;; - so go ahead and assume it's ok, because we're just optimistic like that
-    (if (not (symbolp original-command))
-        (mc/execute-command-for-all-fake-cursors original-command)
+      ;; if it's a lambda, we can't know if it's supported or not
+      ;; - so go ahead and assume it's ok, because we're just optimistic like that
+      (if (not (symbolp original-command))
+          (mc/execute-command-for-all-fake-cursors original-command)
 
-      ;; otherwise it's a symbol, and we can be more thorough
-      (if (get original-command 'mc--unsupported)
-          (message "%S is not supported with multiple cursors%s"
-                   original-command
-                   (get original-command 'mc--unsupported))
-        (when (and original-command
-                   (not (memq original-command mc--cmds-to-run-once))
-                   (or (memq original-command mc--cmds-to-run-for-all)
-                       (mc/prompt-for-inclusion-in-whitelist original-command)))
-          (mc/execute-command-for-all-fake-cursors original-command))))))
+        ;; otherwise it's a symbol, and we can be more thorough
+        (if (get original-command 'mc--unsupported)
+            (message "%S is not supported with multiple cursors%s"
+                     original-command
+                     (get original-command 'mc--unsupported))
+          (when (and original-command
+                     (not (memq original-command mc--default-cmds-to-run-once))
+                     (or (memq original-command mc--default-cmds-to-run-for-all)
+                         (mc/prompt-for-inclusion-in-whitelist original-command)))
+            (mc/execute-command-for-all-fake-cursors original-command)))))))
 
 (defun mc/remove-fake-cursors ()
   "Remove all fake cursors.
@@ -284,82 +291,107 @@ from being executed if in multiple-cursors-mode."
            (overlay-put cursor 'kill-ring-yank-pointer kill-ring-yank-pointer)))))))
 ;;----------------------------------------------------------------------------------------
 
-;; Commands to run only once (don't need to message about skipping it)
-(setq mc--cmds-to-run-once '(mark-next-like-this
-                          save-buffer
-                          undo
-                          undo-tree-undo
-                          undo-tree-redo
-                          universal-argument
-                          universal-argument-other-key
-                          mc/switch-from-mark-multiple-to-cursors
-                          mc/edit-lines
-                          mc/edit-ends-of-lines
-                          mc/edit-beginnings-of-lines))
+(defvar mc--default-cmds-to-run-once '(save-buffer
+                                       ido-exit-minibuffer
+                                       undo undo-tree-undo
+                                       redo undo-tree-redo
+                                       universal-argument
+                                       universal-argument-other-key
+                                       top-level
+                                       mc/switch-from-mark-multiple-to-cursors
+                                       mc/edit-lines
+                                       mc/edit-ends-of-lines
+                                       mc/edit-beginnings-of-lines
+                                       mc/mark-next-like-this)
+  "Default set of commands to run only once in multiple-cursors-mode.")
 
-;; Commands that should be mirrored by all cursors
-(setq mc--cmds-to-run-for-all '(mc/keyboard-quit
-                 self-insert-command
-                 js2-insert-and-indent
-                 wrap-region-trigger
-                 sgml-slash
-                 slime-space
-                 previous-line
-                 next-line
-                 newline
-                 yas/expand
-                 newline-and-indent
-                 join-line
-                 right-char forward-char
-                 right-word forward-word
-                 left-char backward-char
-                 left-word backward-word
-                 upcase-word
-                 downcase-word
-                 capitalize-word
-                 forward-list
-                 backward-list
-                 hippie-expand hippie-expand-lines
-                 yank yank-indented yank-pop
-                 kill-word
-                 kill-region-or-backward-word
-                 kill-line
-                 kill-whole-line
-                 subword-forward
-                 subword-backward
-                 subword-mark
-                 subword-kill
-                 subword-backward-kill
-                 subword-transpose
-                 subword-capitalize
-                 subword-upcase
-                 subword-downcase
-                 backward-kill-word
-                 backward-delete-char-untabify
-                 delete-char delete-forward-char c-electric-delete-forward
-                 delete-backward-char c-electric-backspace
-                 c-electric-paren
-                 c-electric-semi&comma
-                 org-shiftright
-                 just-one-space
-                 zap-to-char
-                 end-of-line
-                 set-mark-command
-                 js2-beginning-of-line
-                 js2-end-of-line
-                 js2r-inline-var
-                 change-number-at-point
-                 move-end-of-line
-                 beginning-of-line
-                 er/expand-region
-                 er/mark-word
-                 smart-forward
-                 smart-backward
-                 smart-up
-                 smart-down
-                 move-beginning-of-line
-                 dired-back-to-start-of-files
-                 kill-ring-save save-region-or-current-line
-                 back-to-indentation))
+(defvar mc/cmds-to-run-once nil
+  "Commands to run only once in multiple-cursors-mode.")
+
+(defvar mc--default-cmds-to-run-for-all '(mc/keyboard-quit
+                                          self-insert-command
+                                          previous-line
+                                          next-line
+                                          newline
+                                          newline-and-indent
+                                          join-line
+                                          right-char
+                                          right-word
+                                          forward-char
+                                          forward-word
+                                          left-char
+                                          left-word
+                                          backward-char
+                                          backward-word
+                                          upcase-word
+                                          downcase-word
+                                          capitalize-word
+                                          forward-list
+                                          backward-list
+                                          hippie-expand
+                                          hippie-expand-lines
+                                          yank
+                                          yank-pop
+                                          kill-word
+                                          kill-line
+                                          kill-whole-line
+                                          backward-kill-word
+                                          backward-delete-char-untabify
+                                          delete-char delete-forward-char
+                                          delete-backward-char
+                                          just-one-space
+                                          zap-to-char
+                                          end-of-line
+                                          set-mark-command
+                                          move-end-of-line
+                                          beginning-of-line
+                                          move-beginning-of-line
+                                          kill-ring-save
+                                          back-to-indentation
+
+                                          ;; mode specific commands
+                                          org-shiftright
+                                          sgml-slash
+                                          slime-space
+                                          subword-forward
+                                          subword-backward
+                                          subword-mark
+                                          subword-kill
+                                          subword-backward-kill
+                                          subword-transpose
+                                          subword-capitalize
+                                          subword-upcase
+                                          subword-downcase
+                                          js2-beginning-of-line
+                                          js2-end-of-line
+                                          js2-insert-and-indent
+                                          js2r-inline-var
+                                          c-electric-delete-forward
+                                          c-electric-backspace
+                                          c-electric-paren
+                                          c-electric-semi&comma
+
+                                          ;; common extension commands
+                                          wrap-region-trigger
+                                          yas/expand
+
+                                          ;; magnars extension commands
+                                          er/expand-region
+                                          er/contract-region
+                                          smart-forward
+                                          smart-backward
+                                          smart-up
+                                          smart-down)
+  "Default set of commands that should be mirrored by all cursors")
+
+(defvar mc/cmds-to-run-for-all nil
+  "Commands to run for all cursors in multiple-cursors-mode")
+
+(setq mc/cmds-to-run-for-all '(save-region-or-current-line
+                               kill-region-or-backward-word
+                               change-number-at-point
+                               dired-back-to-start-of-files
+                               yank-indented))
+
 
 (provide 'multiple-cursors-core)
