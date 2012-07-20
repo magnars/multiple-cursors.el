@@ -10,13 +10,13 @@
 
 (defun mc/make-cursor-overlay-at-eol (pos)
   "Create overlay to look like cursor at end of line."
-  (let ((overlay (make-overlay pos pos nil nil t)))
+  (let ((overlay (make-overlay pos pos nil nil nil)))
     (overlay-put overlay 'after-string (propertize " " 'face 'mc/cursor-face))
     overlay))
 
 (defun mc/make-cursor-overlay-inline (pos)
   "Create overlay to look like cursor inside text."
-  (let ((overlay (make-overlay pos (1+ pos) nil nil t)))
+  (let ((overlay (make-overlay pos (1+ pos) nil nil nil)))
     (overlay-put overlay 'face 'mc/cursor-face)
     overlay))
 
