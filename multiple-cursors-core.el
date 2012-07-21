@@ -292,84 +292,6 @@ from being executed if in multiple-cursors-mode."
            (overlay-put cursor 'kill-ring kill-ring)
            (overlay-put cursor 'kill-ring-yank-pointer kill-ring-yank-pointer)))))))
 
-(defvar mc--default-cmds-to-run-once '(mc/switch-from-mark-multiple-to-cursors
-                                       mc/edit-lines
-                                       mc/edit-ends-of-lines
-                                       mc/edit-beginnings-of-lines
-                                       mc/mark-next-like-this
-                                       save-buffer
-                                       ido-exit-minibuffer
-                                       undo undo-tree-undo
-                                       redo undo-tree-redo
-                                       universal-argument
-                                       universal-argument-other-key
-                                       top-level)
-  "Default set of commands to run only once in multiple-cursors-mode.")
-
-(defvar mc/cmds-to-run-once nil
-  "Commands to run only once in multiple-cursors-mode.")
-
-(defvar mc--default-cmds-to-run-for-all '(mc/keyboard-quit
-                                          self-insert-command
-                                          previous-line
-                                          next-line
-                                          newline
-                                          newline-and-indent
-                                          join-line
-                                          right-char
-                                          right-word
-                                          forward-char
-                                          forward-word
-                                          left-char
-                                          left-word
-                                          backward-char
-                                          backward-word
-                                          upcase-word
-                                          downcase-word
-                                          capitalize-word
-                                          forward-list
-                                          backward-list
-                                          hippie-expand
-                                          hippie-expand-lines
-                                          yank
-                                          yank-pop
-                                          kill-word
-                                          kill-line
-                                          kill-whole-line
-                                          backward-kill-word
-                                          backward-delete-char-untabify
-                                          delete-char delete-forward-char
-                                          delete-backward-char
-                                          just-one-space
-                                          zap-to-char
-                                          end-of-line
-                                          set-mark-command
-                                          move-end-of-line
-                                          beginning-of-line
-                                          move-beginning-of-line
-                                          kill-ring-save
-                                          back-to-indentation
-                                          subword-forward
-                                          subword-backward
-                                          subword-mark
-                                          subword-kill
-                                          subword-backward-kill
-                                          subword-transpose
-                                          subword-capitalize
-                                          subword-upcase
-                                          subword-downcase
-                                          er/expand-region
-                                          er/contract-region
-                                          smart-forward
-                                          smart-backward
-                                          smart-up
-                                          smart-down)
-  "Default set of commands that should be mirrored by all cursors")
-
-(defvar mc/list-file "~/.emacs.d/.mc-lists.el"
-  "The position of the file that keeps track of your preferences
-for running commands with multiple cursors.")
-
 (defun mc/save-lists ()
   (with-temp-file mc/list-file
     (emacs-lisp-mode)
@@ -393,6 +315,90 @@ for running commands with multiple cursors.")
       (end-of-line))
     (insert "))")
     (newline)))
+
+(defvar mc/cmds-to-run-once nil
+  "Commands to run only once in multiple-cursors-mode.")
+
+(defvar mc--default-cmds-to-run-once nil
+  "Default set of commands to run only once in multiple-cursors-mode.")
+
+(setq mc--default-cmds-to-run-once '(mc/switch-from-mark-multiple-to-cursors
+                                     mc/edit-lines
+                                     mc/edit-ends-of-lines
+                                     mc/edit-beginnings-of-lines
+                                     mc/mark-next-like-this
+                                     mc/cycle-forward
+                                     rrm/switch-to-multiple-cursors
+                                     save-buffer
+                                     ido-exit-minibuffer
+                                     undo undo-tree-undo
+                                     redo undo-tree-redo
+                                     universal-argument
+                                     universal-argument-other-key
+                                     top-level))
+
+(defvar mc/list-file "~/.emacs.d/.mc-lists.el"
+  "The position of the file that keeps track of your preferences
+for running commands with multiple cursors.")
+
+(defvar mc--default-cmds-to-run-for-all nil
+  "Default set of commands that should be mirrored by all cursors")
+
+(setq mc--default-cmds-to-run-for-all '(mc/keyboard-quit
+                                        self-insert-command
+                                        previous-line
+                                        next-line
+                                        newline
+                                        newline-and-indent
+                                        join-line
+                                        right-char
+                                        right-word
+                                        forward-char
+                                        forward-word
+                                        left-char
+                                        left-word
+                                        backward-char
+                                        backward-word
+                                        upcase-word
+                                        downcase-word
+                                        capitalize-word
+                                        forward-list
+                                        backward-list
+                                        hippie-expand
+                                        hippie-expand-lines
+                                        yank
+                                        yank-pop
+                                        kill-word
+                                        kill-line
+                                        kill-whole-line
+                                        backward-kill-word
+                                        backward-delete-char-untabify
+                                        delete-char delete-forward-char
+                                        delete-backward-char
+                                        just-one-space
+                                        zap-to-char
+                                        end-of-line
+                                        set-mark-command
+                                        move-end-of-line
+                                        beginning-of-line
+                                        move-beginning-of-line
+                                        kill-ring-save
+                                        back-to-indentation
+                                        subword-forward
+                                        subword-backward
+                                        subword-mark
+                                        subword-kill
+                                        subword-backward-kill
+                                        subword-transpose
+                                        subword-capitalize
+                                        subword-upcase
+                                        subword-downcase
+                                        er/expand-region
+                                        er/contract-region
+                                        smart-forward
+                                        smart-backward
+                                        smart-up
+                                        smart-down))
 
 (defvar mc/cmds-to-run-for-all nil
   "Commands to run for all cursors in multiple-cursors-mode")
