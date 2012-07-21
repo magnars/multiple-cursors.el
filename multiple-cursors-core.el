@@ -294,6 +294,10 @@ from being executed if in multiple-cursors-mode."
            (overlay-put cursor 'kill-ring kill-ring)
            (overlay-put cursor 'kill-ring-yank-pointer kill-ring-yank-pointer)))))))
 
+(defvar mc/list-file "~/.emacs.d/.mc-lists.el"
+  "The position of the file that keeps track of your preferences
+for running commands with multiple cursors.")
+
 (defun mc/save-lists ()
   (with-temp-file mc/list-file
     (emacs-lisp-mode)
@@ -360,10 +364,6 @@ from being executed if in multiple-cursors-mode."
                                      windmove-right
                                      windmove-up
                                      windmove-down))
-
-(defvar mc/list-file "~/.emacs.d/.mc-lists.el"
-  "The position of the file that keeps track of your preferences
-for running commands with multiple cursors.")
 
 (defvar mc--default-cmds-to-run-for-all nil
   "Default set of commands that should be mirrored by all cursors")
