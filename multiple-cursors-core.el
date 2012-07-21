@@ -328,6 +328,7 @@ from being executed if in multiple-cursors-mode."
                                      mc/edit-beginnings-of-lines
                                      mc/mark-next-like-this
                                      mc/cycle-forward
+                                     mc/cycle-backward
                                      rrm/switch-to-multiple-cursors
                                      save-buffer
                                      ido-exit-minibuffer
