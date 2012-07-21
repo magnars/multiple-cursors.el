@@ -253,6 +253,8 @@ multiple cursors editing.")
     (remove-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t)
     (mc/remove-fake-cursors)))
 
+(add-hook 'after-revert-hook #'(lambda () (multiple-cursors-mode 0)))
+
 (defmacro unsupported-cmd (cmd msg)
   "Adds command to list of unsupported commands and prevents it
 from being executed if in multiple-cursors-mode."
