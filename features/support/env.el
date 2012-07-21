@@ -13,6 +13,8 @@
 (require 'espuds)
 (require 'ert)
 
+(defun mc/save-lists ()) ;; redefine to do nothing when running tests
+
 (Before
  (multiple-cursors-mode 0)
  (mm/clear-all)
