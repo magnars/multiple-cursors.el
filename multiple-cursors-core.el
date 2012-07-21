@@ -335,7 +335,10 @@ from being executed if in multiple-cursors-mode."
                                      undo undo-tree-undo
                                      redo undo-tree-redo
                                      universal-argument
+                                     universal-argument-more
                                      universal-argument-other-key
+                                     negative-argument
+                                     digit-argument
                                      top-level))
 
 (defvar mc/list-file "~/.emacs.d/.mc-lists.el"
