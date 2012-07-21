@@ -334,14 +334,32 @@ from being executed if in multiple-cursors-mode."
                                      rrm/switch-to-multiple-cursors
                                      save-buffer
                                      ido-exit-minibuffer
-                                     undo undo-tree-undo
-                                     redo undo-tree-redo
+                                     undo
+                                     redo
+                                     undo-tree-undo
+                                     undo-tree-redo
                                      universal-argument
                                      universal-argument-more
                                      universal-argument-other-key
                                      negative-argument
                                      digit-argument
-                                     top-level))
+                                     top-level
+                                     recenter-top-bottom
+                                     describe-mode
+                                     describe-key-1
+                                     describe-function
+                                     describe-bindings
+                                     describe-prefix-bindings
+                                     other-window
+                                     kill-buffer-and-window
+                                     split-window-right
+                                     split-window-below
+                                     delete-other-windows
+                                     toggle-window-split
+                                     windmove-left
+                                     windmove-right
+                                     windmove-up
+                                     windmove-down))
 
 (defvar mc/list-file "~/.emacs.d/.mc-lists.el"
   "The position of the file that keeps track of your preferences
@@ -356,6 +374,11 @@ for running commands with multiple cursors.")
                                         next-line
                                         newline
                                         newline-and-indent
+                                        open-line
+                                        transpose-chars
+                                        transpose-lines
+                                        transpose-paragraphs
+                                        transpose-regions
                                         join-line
                                         right-char
                                         right-word
