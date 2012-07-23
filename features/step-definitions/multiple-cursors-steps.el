@@ -15,6 +15,16 @@
         (assert (eq 1 (mc/num-cursors)) nil
                 "Expected to have one cursor, but there are still fake cursor overlays.")))
 
+(Then "^rectangular-region-mode should be off$"
+       (lambda ()
+         (assert (not rectangular-region-mode) nil
+                 "Expected rectangular-region-mode mode to be off, but wasn't.")))
+
+(Then "^rectangular-region-mode should be on$"
+       (lambda ()
+         (assert (rectangular-region-mode) nil
+                 "Expected rectangular-region-mode mode to be on, but wasn't.")))
+
 (When "^I press \"\\(.+\\)\"$"
       (lambda (keybinding)
         (let ((macro (edmacro-parse-keys keybinding)))
@@ -57,3 +67,18 @@
          (lexical-let ((ins ins))
            (defun mc-test-temp-command-2 () (interactive) (insert ins))
            (global-set-key (kbd "C-!") 'mc-test-temp-command-2))))
+
+(When "^I go to character \"\\(.+\\)\"$"
+      (lambda (char)
+        (goto-char (point-min))
+        (let ((search (re-search-forward (format "%s" char) nil t))
+              (message "Can not go to character '%s' since it does not exist in the current buffer: %s"))
+          (assert search nil message char (espuds-buffer-contents)))))
+
+(When "^I go to the \\(front\\|end\\) of the word \"\\(.+\\)\"$"
+      (lambda (pos word)
+        (goto-char (point-min))
+        (let ((search (re-search-forward (format "%s" word) nil t))
+              (message "Can not go to character '%s' since it does not exist in the current buffer: %s"))
+          (assert search nil message word (espuds-buffer-contents))
+          (if (string-equal "front" pos) (backward-word)))))

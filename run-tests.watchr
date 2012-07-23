@@ -7,13 +7,13 @@ end
 
 def run_all_tests
   system('clear')
-  result = run "./util/ecukes/ecukes"
+  result = run "./util/ecukes/ecukes --graphical"
   puts result
 end
 
 def run_test(file)
   system('clear')
-  result = run "./util/ecukes/ecukes #{file}"
+  result = run "./util/ecukes/ecukes --graphical #{file}"
   puts result
 end
 

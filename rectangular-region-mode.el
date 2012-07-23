@@ -61,6 +61,10 @@
   (when rectangular-region-mode
     (rrm/switch-to-multiple-cursors)))
 
+(defadvice kill-ring-save (before switch-from-rrm-to-mc activate)
+  (when rectangular-region-mode
+    (rrm/switch-to-multiple-cursors)))
+
 (define-minor-mode rectangular-region-mode
   "A mode for creating a rectangular region to edit"
   nil " rr" rectangular-region-mode-map
