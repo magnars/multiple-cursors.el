@@ -58,12 +58,11 @@ You'll find the repo at:
 To fetch the test dependencies:
 
     $ cd /path/to/multiple-cursors
-    $ git submodule init
-    $ git submodule update
+    $ git submodule update --init
 
 Run the tests with:
 
-    $ ./util/ecukes/ecukes features
+    $ ./util/ecukes/ecukes --graphical
 
 
 ## License
