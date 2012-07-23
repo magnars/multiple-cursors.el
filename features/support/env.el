@@ -20,6 +20,7 @@
  (rectangular-region-mode 0)
  (mm/clear-all)
  (global-set-key (kbd "C->") 'mark-next-like-this)
+ (global-set-key (kbd "M->") 'mc/mark-next-like-this)
  (global-set-key (kbd "H-SPC") 'set-rectangular-region-anchor)
  (switch-to-buffer
   (get-buffer-create "*multiple-cursors*"))
