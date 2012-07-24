@@ -1,7 +1,7 @@
 (eval-when-compile (require 'cl))
 
 (defface mc/cursor-face
-  '((t :inherit cursor))
+  '((t (:inverse-video t)))
   "The face used for fake cursors"
   :group 'multiple-cursors)
 
