@@ -82,3 +82,11 @@
               (message "Can not go to character '%s' since it does not exist in the current buffer: %s"))
           (assert search nil message word (espuds-buffer-contents))
           (if (string-equal "front" pos) (backward-word)))))
+
+(When "^I select the last \"\\(.+\\)\"$"
+      (lambda (text)
+        (goto-char (point-max))
+        (let ((search (re-search-backward text nil t)))
+          (assert search nil "The text '%s' was not found in the current buffer." text))
+        (set-mark (point))
+        (re-search-forward text)))

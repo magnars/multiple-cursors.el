@@ -333,6 +333,7 @@ for running commands with multiple cursors.")
                                      mc/edit-ends-of-lines
                                      mc/edit-beginnings-of-lines
                                      mc/mark-next-like-this
+                                     mc/mark-previous-like-this
                                      mc/cycle-forward
                                      mc/cycle-backward
                                      rrm/switch-to-multiple-cursors
