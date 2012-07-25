@@ -129,4 +129,25 @@ With zero ARG, skip the last one and mark next."
       (multiple-cursors-mode 1)
     (multiple-cursors-mode 0)))
 
+;;;###autoload
+(defun mc/mark-all-in-region (beg end)
+  "Find and mark all the parts in the region matching the given search"
+  (interactive "r")
+  (let ((search (read-from-minibuffer "Mark all in region: "))
+        (case-fold-search nil))
+    (mc/remove-fake-cursors)
+    (goto-char beg)
+    (while (search-forward search end t)
+      (push-mark (match-beginning 0))
+      (mc/create-fake-cursor-at-point))
+    (let ((first (mc/furthest-cursor-before-point)))
+      (if (not first)
+          (error "Search failed for %S" search)
+        (mc/pop-state-from-overlay first))))
+  (if (> (mc/num-cursors) 1)
+      (multiple-cursors-mode 1)
+    (multiple-cursors-mode 0)))
+
+
+
 (provide 'mc-mark-more)

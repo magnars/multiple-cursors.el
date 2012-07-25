@@ -23,6 +23,7 @@
  (global-set-key (kbd "M->") 'mc/mark-next-like-this)
  (global-set-key (kbd "M-<") 'mc/mark-previous-like-this)
  (global-set-key (kbd "M-!") 'mc/mark-all-like-this)
+ (global-set-key (kbd "M-#") 'mc/mark-all-in-region)
  (global-set-key (kbd "H-SPC") 'set-rectangular-region-anchor)
  (switch-to-buffer
   (get-buffer-create "*multiple-cursors*"))

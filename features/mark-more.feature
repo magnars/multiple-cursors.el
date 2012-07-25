@@ -85,3 +85,12 @@ Feature: Marking multiple parts of the buffer
     And I select "text"
     And I press "M-!"
     Then I should have 3 cursors
+
+  Scenario: Marking in region
+    Given I turn on delete-selection-mode
+    When I insert "Here's text, text and text"
+    And I select "text, text"
+    And I press "M-# text <return>"
+    And I type "more"
+    Then I should have 2 cursors
+    And I should see "Here's more, more and text"

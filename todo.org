@@ -10,9 +10,7 @@
    Possible to do C-s ...
    Any way to make M-z just prompt for letter once?
 ** TODO mark-multiple-mode
-   mark-multiple has some advantages
-    -> simpler visuals, no extra cursors (matter of taste?)
-    -> moving out of the marked area quits the mode
+   mark-multiple has some advantages -> moving out of the marked area quits the mode
 ** DONE unknown command: Do for (a)ll, (o)nce or (i)gnore -> (did that work ok? (k)eep doing that or (d)on't)
    unknown-command ran once - what now? (o)nce is enough, repeat for (a)ll, (u)ndo - that did NOT work.
    unknown-command ran for all - did that work as expected? (y)es, (n)o
