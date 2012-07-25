@@ -334,11 +334,14 @@ for running commands with multiple cursors.")
                                      mc/edit-beginnings-of-lines
                                      mc/mark-next-like-this
                                      mc/mark-previous-like-this
+                                     mc/mark-more-like-this-extended
+                                     mc/mark-all-like-this
                                      mc/cycle-forward
                                      mc/cycle-backward
                                      rrm/switch-to-multiple-cursors
                                      save-buffer
                                      ido-exit-minibuffer
+                                     exit-minibuffer
                                      undo
                                      redo
                                      undo-tree-undo
