@@ -1,55 +1,94 @@
 # multiple-cursors.el
 
-An experiment in multiple cursors for emacs. Still very much in beta.
+Multiple cursors for Emacs. This is some pretty crazy functionality, so yes,
+there are kinks. Don't be afraid tho, I've been using it since 2011 with
+great success and much merriment.
 
-The basic concept works, but there are definitely some kinks to work out.
+## Basic usage
 
-This extension is dependent on the mark-multiple library.
+Start out with:
 
-    https://github.com/magnars/mark-multiple.el
+    (require 'multiple-cursors)
 
-## Usage
+When you have an active region that spans multiple lines, the following will
+add a cursor to each line:
+
+    (global-set-key (kbd "C-S-c C-S-c") 'mc/add-multiple-cursors-to-region-lines)
+
+When you want to add multiple cursors not based on continuous lines, but based on
+keywords in the buffer, use:
+
+    (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+    (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+    (global-set-key (kbd "M-<") 'mc/mark-all-like-this)
+
+First mark the word, then add more cursors.
+
+
+## More commands to play around with
 
 I've set up my key-bindings like so:
 
-    ;; Experimental multiple-cursors
+    ;; From active region to multiple cursors:
     (global-set-key (kbd "C-S-c C-S-c") 'mc/add-multiple-cursors-to-region-lines)
     (global-set-key (kbd "C-S-c C-e") 'mc/edit-ends-of-lines)
     (global-set-key (kbd "C-S-c C-a") 'mc/edit-beginnings-of-lines)
 
-To get out of multiple-cursors-mode, press `C-g`.
+When you have an active region that spans multiple lines, the preceeding three
+commands will add one cursor to each line.
 
-You can also switch to multiple-cursors-mode by pressing C-g when in
-mark-multiple-mode. This is symmetrical to how pressing C-g with an active
-region deactivates it. Press C-g again to remove extra cursors.
+    ;; Rectangular region mode
+    (global-set-key (kbd "H-SPC") 'set-rectangular-region-anchor)
 
-## Combining with mark-multiple
+Think of this one as `set-mark` except you're marking a rectangular region. It is
+an exceedingly quick way of adding multiple cursors to multiple lines.
 
-Right now you can go from multiple marks to multiple cursors with C-g.
+    ;; Mark more like this
+    (global-set-key (kbd "M-æ") 'mc/mark-all-like-this)
+    (global-set-key (kbd "C-å") 'mc/mark-previous-like-this)
+    (global-set-key (kbd "C-æ") 'mc/mark-next-like-this)
+    (global-set-key (kbd "C-Æ") 'mc/mark-more-like-this-extended)
+    (global-set-key (kbd "M-å") 'mc/mark-all-in-region)
 
-The other way around is a bit more tricky:
+Okay, yes, I have a crazy norwegian keyboard. Regardless, these will look at
+whatever you've got selected at the moment, and mark more places like that in
+the buffer.
 
- * What to do about overlapping marks?
- * Expanding the marks should be possible, for instance using `mark-word` or
-   `expand-region`
- * Killing or copying needs to keep a kill-ring for each cursor.
+To get out of multiple-cursors-mode, press `<return>` or `C-g`. The latter will
+first disable multiple regions before disabling multiple cursors. If you want to
+insert a newline in multiple-cursors-mode, use `C-j`.
 
-So basically `mark-multiple` isn't ready for prime time as a full blown multiple
-marks library. For this to work as expected, I think parts of mark-multiple
-needs to be rewritten, and possibly integrated into multiple-cursors.
+BTW, I highly recommend adding `mc/mark-next-like-this` to a key binding that's
+right next to the key for `er/expand-region`.
 
-For now, mark-multiple is an excellent tool to place your cursors where you need
-them to be.
+
+## Unknown commands
+
+Multiple-cursors uses two lists of commands to know what to do: the run-once list
+and the run-for-all list. It comes with a set of defaults, but it would be beyond silly
+to try and include them all.
+
+So that's why multiple-cursors occasionally asks what to do about a command. It will
+then remember your choice by saving it in `~/.emacs.d/.mc-lists.el`. You can change
+the location with:
+
+    (setq mc/list-file "/my/preferred/file")
+
+
+## Known limitations
+
+* isearch-forward and isearch-backward aren't supported with multiple cursors.
+  You should feel free to add a simplified version that can work with it.
+* Commands run with `M-x` won't be repeated for all cursors.
+* All key bindings that refer to lambdas are always run for all cursors. If you
+  need to limit it, you will have to give it a name.
+* Redo might screw with your cursors. Undo works very well.
+
 
 ## Contribute
 
-There's plenty wrong with this implementation still. I'm actively trying things
-out, and also working on combining it with
-[mark-multiple.el](https://github.com/magnars/mark-multiple.el) to get a more
-comprehensive tool.
-
-Still, if you've got something to contribute, please do not hesitate to open
-an issue, and we can take a look together before you dive into the elisp. :-)
+Yes, please do. There's a suite of tests, so remember to add tests for your
+specific feature, or I might break it later.
 
 You'll find the repo at:
 
