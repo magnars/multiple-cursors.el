@@ -61,6 +61,10 @@ the buffer.
 BTW, I highly recommend adding `mc/mark-next-like-this` to a key binding that's
 right next to the key for `er/expand-region`.
 
+## Scrolling
+
+Sometimes you end up with cursors outside of your view. You can scroll the
+screen to center on each cursor with `C-v` and `M-v`.
 
 ## Unknown commands
 

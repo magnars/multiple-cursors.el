@@ -1,3 +1,33 @@
+;;; rectangular-region-mode.el
+
+;; Copyright (C) 2012 Magnar Sveen
+
+;; Author: Magnar Sveen <magnars@gmail.com>
+;; Keywords: editing cursors
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; (global-set-key (kbd "H-SPC") 'set-rectangular-region-anchor)
+
+;; Think of this one as `set-mark` except you're marking a rectangular region. It is
+;; an exceedingly quick way of adding multiple cursors to multiple lines.
+
+;;; Code:
+
+
 (require 'multiple-cursors-core)
 
 (defvar rrm/anchor (make-marker)
@@ -77,3 +107,5 @@
     (set-marker rrm/anchor nil)))
 
 (provide 'rectangular-region-mode)
+
+;;; rectangular-region-mode.el ends here

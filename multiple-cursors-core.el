@@ -1,3 +1,30 @@
+;;; multiple-cursors-core.el --- An experiment in multiple cursors for emacs.
+
+;; Copyright (C) 2012 Magnar Sveen
+
+;; Author: Magnar Sveen <magnars@gmail.com>
+;; Keywords: editing cursors
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; This file contains the core functionality of multiple-cursors.
+;; Please see multiple-cursors.el for more commentary.
+
+;;; Code:
+
 (eval-when-compile (require 'cl))
 
 (defface mc/cursor-face
@@ -439,3 +466,5 @@ for running commands with multiple cursors.")
 (load mc/list-file t) ;; load, but no errors if it does not exist yet please
 
 (provide 'multiple-cursors-core)
+
+;;; multiple-cursors-core.el ends here
