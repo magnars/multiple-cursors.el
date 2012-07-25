@@ -79,3 +79,9 @@ Feature: Marking multiple parts of the buffer
     And I press "C-- M-<"
     And I type "more"
     Then I should see "Here's text, more and more"
+
+  Scenario: Marking all
+    When I insert "Here's text, text and text"
+    And I select "text"
+    And I press "M-!"
+    Then I should have 3 cursors
