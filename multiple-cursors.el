@@ -44,6 +44,10 @@
 ;;
 ;; First mark the word, then add more cursors.
 ;;
+;; To get out of multiple-cursors-mode, press `<return>` or `C-g`. The latter will
+;; first disable multiple regions before disabling multiple cursors. If you want to
+;; insert a newline in multiple-cursors-mode, use `C-j`.
+;;
 ;;
 ;; ## More commands to play around with
 ;;
@@ -74,10 +78,6 @@
 ;; whatever you've got selected at the moment, and mark more places like that in
 ;; the buffer.
 ;;
-;; To get out of multiple-cursors-mode, press `<return>` or `C-g`. The latter will
-;; first disable multiple regions before disabling multiple cursors. If you want to
-;; insert a newline in multiple-cursors-mode, use `C-j`.
-;;
 ;; BTW, I highly recommend adding `mc/mark-next-like-this` to a key binding that's
 ;; right next to the key for `er/expand-region`.
 ;;
@@ -86,7 +86,7 @@
 ;;
 ;; Multiple-cursors uses two lists of commands to know what to do: the run-once list
 ;; and the run-for-all list. It comes with a set of defaults, but it would be beyond silly
-;; to try and include them all.
+;; to try and include all the known Emacs commands.
 ;;
 ;; So that's why multiple-cursors occasionally asks what to do about a command. It will
 ;; then remember your choice by saving it in `~/.emacs.d/.mc-lists.el`. You can change
@@ -123,7 +123,6 @@
 ;;
 ;;     $ ./util/ecukes/ecukes --graphical
 ;;
-
 ;;; Code:
 
 (require 'multiple-cursors-core)
