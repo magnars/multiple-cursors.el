@@ -29,6 +29,7 @@
 
 (require 'multiple-cursors-core)
 
+;;;###autoload
 (defun mc/edit-lines ()
   "Add one cursor to each line of the active region.
 Starts from mark and moves in straight down or up towards the
@@ -49,6 +50,7 @@ mark-multiple if point and mark is on different columns."
       (funcall navigation-func))
     (multiple-cursors-mode)))
 
+;;;###autoload
 (defun mc/edit-ends-of-lines ()
   "Add one cursor to the end of each line in the active region."
   (interactive)
@@ -56,6 +58,7 @@ mark-multiple if point and mark is on different columns."
   (mc/execute-command-for-all-fake-cursors 'end-of-line)
   (end-of-line))
 
+;;;###autoload
 (defun mc/edit-beginnings-of-lines ()
   "Add one cursor to the beginning of each line in the active region."
   (interactive)

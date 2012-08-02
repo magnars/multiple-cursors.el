@@ -45,6 +45,7 @@
   (deactivate-mark))
 
 ;; Bind this to a key (for instance H-SPC) to start rectangular-region-mode
+;;;###autoload
 (defun set-rectangular-region-anchor ()
   (interactive)
   (set-marker rrm/anchor (point))
