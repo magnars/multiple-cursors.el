@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-
+(require 'multiple-cursors-core)
 (require 'mark-multiple)
 
 (defun mc/switch-from-mark-multiple-to-cursors ()

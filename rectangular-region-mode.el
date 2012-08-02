@@ -27,7 +27,6 @@
 
 ;;; Code:
 
-
 (require 'multiple-cursors-core)
 
 (defvar rrm/anchor (make-marker)

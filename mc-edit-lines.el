@@ -27,6 +27,8 @@
 
 ;;; Code:
 
+(require 'multiple-cursors-core)
+
 (defun mc/edit-lines ()
   "Add one cursor to each line of the active region.
 Starts from mark and moves in straight down or up towards the

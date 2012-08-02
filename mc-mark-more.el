@@ -27,6 +27,8 @@
 
 ;;; Code:
 
+(require 'multiple-cursors-core)
+
 (defun mc/cursor-end (cursor)
   (if (overlay-get cursor 'mark-active)
       (max (overlay-get cursor 'point)

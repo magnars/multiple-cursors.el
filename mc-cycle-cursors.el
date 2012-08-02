@@ -26,6 +26,8 @@
 
 ;;; Code:
 
+(require 'multiple-cursors-core)
+
 (eval-when-compile (require 'cl))
 
 (defun mc/next-cursor-after-point ()
