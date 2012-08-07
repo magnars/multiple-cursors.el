@@ -13,7 +13,7 @@ Start out with:
 When you have an active region that spans multiple lines, the following will
 add a cursor to each line:
 
-    (global-set-key (kbd "C-S-c C-S-c") 'mc/add-multiple-cursors-to-region-lines)
+    (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 
 When you want to add multiple cursors not based on continuous lines, but based on
 keywords in the buffer, use:
@@ -34,7 +34,7 @@ insert a newline in multiple-cursors-mode, use `C-j`.
 I've set up my key-bindings like so:
 
     ;; From active region to multiple cursors:
-    (global-set-key (kbd "C-S-c C-S-c") 'mc/add-multiple-cursors-to-region-lines)
+    (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
     (global-set-key (kbd "C-S-c C-e") 'mc/edit-ends-of-lines)
     (global-set-key (kbd "C-S-c C-a") 'mc/edit-beginnings-of-lines)
 
