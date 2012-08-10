@@ -142,7 +142,8 @@ cursor with updated info."
   (mc/save-excursion
    (mc/for-each-fake-cursor
     (let ((id (overlay-get cursor 'mc-id))
-          (annoying-arrows-mode nil))
+          (annoying-arrows-mode nil)
+          (smooth-scroll-margin 0))
       (mc/add-fake-cursor-to-undo-list
        (mc/pop-state-from-overlay cursor)
        (ignore-errors
