@@ -276,9 +276,12 @@ multiple cursors editing.")
   "Mode while multiple cursors are active."
   nil " mc" mc/keymap
   (if multiple-cursors-mode
-      (add-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t t)
+      (progn
+        (add-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t t)
+        (run-hooks 'multiple-cursors-mode-enabled-hook))
     (remove-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t)
-    (mc/remove-fake-cursors)))
+    (mc/remove-fake-cursors)
+    (run-hooks 'multiple-cursors-mode-disabled-hook)))
 
 (add-hook 'after-revert-hook #'(lambda () (multiple-cursors-mode 0)))
 
