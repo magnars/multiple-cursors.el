@@ -140,15 +140,16 @@ up the proper environment, and then removing the cursor.
 After executing the command, it sets up a new fake
 cursor with updated info."
   (mc/save-excursion
-   (mc/for-each-fake-cursor
-    (let ((id (overlay-get cursor 'mc-id))
-          (annoying-arrows-mode nil)
-          (smooth-scroll-margin 0))
-      (mc/add-fake-cursor-to-undo-list
-       (mc/pop-state-from-overlay cursor)
-       (ignore-errors
-         (mc/execute-command cmd)
-         (mc/create-fake-cursor-at-point id)))))))
+   (mc/save-window-scroll
+    (mc/for-each-fake-cursor
+     (save-excursion
+       (let ((id (overlay-get cursor 'mc-id))
+             (annoying-arrows-mode nil))
+         (mc/add-fake-cursor-to-undo-list
+          (mc/pop-state-from-overlay cursor)
+          (ignore-errors
+            (mc/execute-command cmd)
+            (mc/create-fake-cursor-at-point id)))))))))
 
 (defmacro mc/add-fake-cursor-to-undo-list (&rest forms)
   "Make sure point is in the right place when undoing"
@@ -202,6 +203,18 @@ cursor with updated info."
      (overlay-put current-state 'type 'original-cursor)
      (save-excursion ,@forms)
      (mc/pop-state-from-overlay current-state)))
+
+(defmacro mc/save-window-scroll (&rest forms)
+  "Saves and restores the window scroll position"
+  `(let ((p (set-marker (make-marker) (point)))
+         (start (set-marker (make-marker) (window-start)))
+         (hscroll (window-hscroll)))
+     ,@forms
+     (goto-char p)
+     (set-window-start nil start)
+     (set-window-hscroll nil hscroll)
+     (set-marker p nil)
+     (set-marker start nil)))
 
 (defun mc/prompt-for-inclusion-in-whitelist (original-command)
   "Asks the user, then adds the command either to the once-list or the all-list."
