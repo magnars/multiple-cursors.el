@@ -20,7 +20,7 @@ keywords in the buffer, use:
 
     (global-set-key (kbd "C->") 'mc/mark-next-like-this)
     (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-    (global-set-key (kbd "M-<") 'mc/mark-all-like-this)
+    (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 First mark the word, then add more cursors.
 
