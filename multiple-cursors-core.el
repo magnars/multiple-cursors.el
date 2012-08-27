@@ -37,6 +37,43 @@
   "The face used for fake regions"
   :group 'multiple-cursors)
 
+(defmacro mc/add-fake-cursor-to-undo-list (&rest forms)
+  "Make sure point is in the right place when undoing"
+  `(let ((undo-cleaner (cons 'apply (cons 'deactivate-cursor-after-undo (list id)))))
+     (setq buffer-undo-list (cons undo-cleaner buffer-undo-list))
+     ,@forms
+     (if (eq undo-cleaner (car buffer-undo-list)) ;; if nothing has been added to the undo-list
+         (setq buffer-undo-list (cdr buffer-undo-list)) ;; then pop the cleaner right off again
+       (setq buffer-undo-list ;; otherwise add a function to activate this cursor
+             (cons (cons 'apply (cons 'activate-cursor-for-undo (list id))) buffer-undo-list)))))
+
+(defmacro mc/for-each-fake-cursor (&rest forms)
+  "Runs the body for each fake cursor, bound to the name cursor"
+  `(mapc #'(lambda (cursor)
+             (when (mc/fake-cursor-p cursor)
+               ,@forms))
+         (overlays-in (point-min) (point-max))))
+
+(defmacro mc/save-excursion (&rest forms)
+  "Saves and restores all the state that multiple-cursors cares about."
+  `(let ((current-state (mc/store-current-state-in-overlay
+                         (make-overlay (point) (point) nil nil t))))
+     (overlay-put current-state 'type 'original-cursor)
+     (save-excursion ,@forms)
+     (mc/pop-state-from-overlay current-state)))
+
+(defmacro mc/save-window-scroll (&rest forms)
+  "Saves and restores the window scroll position"
+  `(let ((p (set-marker (make-marker) (point)))
+         (start (set-marker (make-marker) (window-start)))
+         (hscroll (window-hscroll)))
+     ,@forms
+     (goto-char p)
+     (set-window-start nil start)
+     (set-window-hscroll nil hscroll)
+     (set-marker p nil)
+     (set-marker start nil)))
+
 (defun mc/make-cursor-overlay-at-eol (pos)
   "Create overlay to look like cursor at end of line."
   (let ((overlay (make-overlay pos pos nil nil nil)))
@@ -100,7 +137,6 @@ highlights the entire width of the window."
   "Restore the state stored in given overlay and then remove the overlay."
   (mc/restore-state-from-overlay o)
   (mc/remove-fake-cursor o))
-
 (defun mc/delete-region-overlay (o)
   "Remove the dependent region overlay for a given cursor overlay."
   (ignore-errors
@@ -151,16 +187,6 @@ cursor with updated info."
             (mc/execute-command cmd)
             (mc/create-fake-cursor-at-point id)))))))))
 
-(defmacro mc/add-fake-cursor-to-undo-list (&rest forms)
-  "Make sure point is in the right place when undoing"
-  `(let ((undo-cleaner (cons 'apply (cons 'deactivate-cursor-after-undo (list id)))))
-     (setq buffer-undo-list (cons undo-cleaner buffer-undo-list))
-     ,@forms
-     (if (eq undo-cleaner (car buffer-undo-list)) ;; if nothing has been added to the undo-list
-         (setq buffer-undo-list (cdr buffer-undo-list)) ;; then pop the cleaner right off again
-       (setq buffer-undo-list ;; otherwise add a function to activate this cursor
-             (cons (cons 'apply (cons 'activate-cursor-for-undo (list id))) buffer-undo-list)))))
-
 (defun mc/fake-cursor-p (o)
   "Predicate to check if an overlay is a fake cursor"
   (eq (overlay-get o 'type) 'fake-cursor))
@@ -188,33 +214,6 @@ cursor with updated info."
     (mc/create-fake-cursor-at-point id)
     (mc/pop-state-from-overlay mc--stored-state-for-undo)
     (setq mc--stored-state-for-undo nil)))
-
-(defmacro mc/for-each-fake-cursor (&rest forms)
-  "Runs the body for each fake cursor, bound to the name cursor"
-  `(mapc #'(lambda (cursor)
-             (when (mc/fake-cursor-p cursor)
-               ,@forms))
-         (overlays-in (point-min) (point-max))))
-
-(defmacro mc/save-excursion (&rest forms)
-  "Saves and restores all the state that multiple-cursors cares about."
-  `(let ((current-state (mc/store-current-state-in-overlay
-                         (make-overlay (point) (point) nil nil t))))
-     (overlay-put current-state 'type 'original-cursor)
-     (save-excursion ,@forms)
-     (mc/pop-state-from-overlay current-state)))
-
-(defmacro mc/save-window-scroll (&rest forms)
-  "Saves and restores the window scroll position"
-  `(let ((p (set-marker (make-marker) (point)))
-         (start (set-marker (make-marker) (window-start)))
-         (hscroll (window-hscroll)))
-     ,@forms
-     (goto-char p)
-     (set-window-start nil start)
-     (set-window-hscroll nil hscroll)
-     (set-marker p nil)
-     (set-marker start nil)))
 
 (defun mc/prompt-for-inclusion-in-whitelist (original-command)
   "Asks the user, then adds the command either to the once-list or the all-list."
