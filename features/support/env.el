@@ -5,6 +5,7 @@
   (setq multiple-cursors-util-path (expand-file-name "util" project-directory)))
 
 (add-to-list 'load-path multiple-cursors-root-path)
+(add-to-list 'load-path multiple-cursors-util-path)
 (add-to-list 'load-path (expand-file-name "espuds" multiple-cursors-util-path))
 (add-to-list 'load-path (expand-file-name "vendor" multiple-cursors-util-path))
 
