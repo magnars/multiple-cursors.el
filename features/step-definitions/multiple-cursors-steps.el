@@ -22,7 +22,7 @@
 
 (Then "^rectangular-region-mode should be on$"
        (lambda ()
-         (assert (rectangular-region-mode) nil
+         (assert rectangular-region-mode nil
                  "Expected rectangular-region-mode mode to be on, but wasn't.")))
 
 (When "^I press \"\\(.+\\)\"$"
