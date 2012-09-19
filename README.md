@@ -1,4 +1,4 @@
-# multiple-cursors.el
+# multiple-cursors.el [![Build Status](https://secure.travis-ci.org/magnars/multiple-cursors.el.png)]
 
 Multiple cursors for Emacs. This is some pretty crazy functionality, so yes,
 there are kinks. Don't be afraid tho, I've been using it since 2011 with
