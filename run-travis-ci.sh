@@ -10,11 +10,11 @@ fi
 "
 }
 
-set_default EMACS "$(which emacs)"
+set_default ECUKES_EMACS "$(which emacs)"
 
 echo "*** Emacs version ***"
-echo "EMACS =" $(which $EMACS)
-$EMACS --version
+echo "ECUKES_EMACS =" $(which $ECUKES_EMACS)
+$ECUKES_EMACS --version
 echo
 
 exec ./util/ecukes/ecukes --graphical
