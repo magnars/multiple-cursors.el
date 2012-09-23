@@ -131,3 +131,26 @@ Feature: Multiple cursors core
     contains
     twice
     """
+
+  Scenario: Split multiline kill-ring entry over cursors when num lines match
+    When I insert:
+    """
+    a
+    b
+    c
+    """
+    And I go to the front of the word "a"
+    And I press "C-SPC"
+    And I go to the end of the word "c"
+    And I press "M-w"
+    And I go to the end of the word "a"
+    And I press "H-SPC"
+    And I press "C-n"
+    And I press "C-n"
+    And I press "C-y"
+    Then I should see:
+    """
+    aa
+    bb
+    cc
+    """

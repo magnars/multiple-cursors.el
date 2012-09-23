@@ -62,11 +62,17 @@
      (save-excursion ,@forms)
      (mc/pop-state-from-overlay current-state)))
 
-(defmacro mc/for-each-cursor (&rest forms)
+(defun mc--compare-by-overlay-start (o1 o2)
+  (< (overlay-start o1) (overlay-start o2)))
+
+(defmacro mc/for-each-cursor-ordered (&rest forms)
   "Runs the body for each cursor, fake and real, bound to the name cursor"
   `(let ((real-cursor (mc/create-fake-cursor-at-point)))
-     (mc/for-each-fake-cursor ,@forms)
-     (mc/remove-fake-cursor real-cursor)))
+     (mapc #'(lambda (cursor)
+               (when (mc/fake-cursor-p cursor)
+                 ,@forms))
+           (sort (overlays-in (point-min) (point-max)) 'mc--compare-by-overlay-start))
+     (mc/pop-state-from-overlay real-cursor)))
 
 (defmacro mc/save-window-scroll (&rest forms)
   "Saves and restores the window scroll position"
@@ -177,6 +183,8 @@ Saves the current state in the overlay to be restored later."
     (call-interactively cmd))
   (when deactivate-mark (deactivate-mark)))
 
+(defvar mc--executing-command-for-fake-cursor nil)
+
 (defun mc/execute-command-for-all-fake-cursors (cmd)
   "Calls CMD interactively for each cursor.
 It works by moving point to the fake cursor, setting
@@ -187,7 +195,8 @@ cursor with updated info."
    (mc/save-window-scroll
     (mc/for-each-fake-cursor
      (save-excursion
-       (let ((id (overlay-get cursor 'mc-id))
+       (let ((mc--executing-command-for-fake-cursor t)
+             (id (overlay-get cursor 'mc-id))
              (annoying-arrows-mode nil))
          (mc/add-fake-cursor-to-undo-list
           (mc/pop-state-from-overlay cursor)
@@ -301,12 +310,37 @@ multiple cursors editing.")
       (setq entries (cdr entries)))
     all-equal))
 
-(defun mc--maybe-consolidate-kill-rings ()
+(defun mc--kill-ring-entries ()
   (let (entries)
-    (mc/for-each-cursor
+    (mc/for-each-cursor-ordered
      (setq entries (cons (car (overlay-get cursor 'kill-ring)) entries)))
+    (reverse entries)))
+
+(defun mc--maybe-consolidate-kill-rings ()
+  (let ((entries (mc--kill-ring-entries)))
     (unless (mc--all-equal entries)
       (kill-new (mapconcat 'identity entries "\n")))))
+
+(defun mc--kill-new (entries)
+  (mc/for-each-cursor-ordered
+   (let ((kill-ring (overlay-get cursor 'kill-ring))
+         (kill-ring-yank-pointer (overlay-get cursor 'kill-ring-yank-pointer)))
+     (kill-new (car entries))
+     (setq entries (cdr entries))
+     (overlay-put cursor 'kill-ring kill-ring)
+     (overlay-put cursor 'kill-ring-yank-pointer kill-ring-yank-pointer))))
+
+(defun mc--maybe-split-kill-ring ()
+  (let ((entries (mc--kill-ring-entries)))
+    (when (mc--all-equal entries)
+      (let ((lines (split-string (car entries) "\n")))
+        (when (= (mc/num-cursors) (length lines))
+          (mc--kill-new lines))))))
+
+(defadvice yank (before maybe-split-kill-ring activate)
+  (when (and (or multiple-cursors-mode rectangular-region-mode)
+             (not mc--executing-command-for-fake-cursor))
+    (mc--maybe-split-kill-ring)))
 
 (define-minor-mode multiple-cursors-mode
   "Mode while multiple cursors are active."
