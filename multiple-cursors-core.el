@@ -62,6 +62,12 @@
      (save-excursion ,@forms)
      (mc/pop-state-from-overlay current-state)))
 
+(defmacro mc/for-each-cursor (&rest forms)
+  "Runs the body for each cursor, fake and real, bound to the name cursor"
+  `(let ((real-cursor (mc/create-fake-cursor-at-point)))
+     (mc/for-each-fake-cursor ,@forms)
+     (mc/remove-fake-cursor real-cursor)))
+
 (defmacro mc/save-window-scroll (&rest forms)
   "Saves and restores the window scroll position"
   `(let ((p (set-marker (make-marker) (point)))
@@ -137,6 +143,7 @@ highlights the entire width of the window."
   "Restore the state stored in given overlay and then remove the overlay."
   (mc/restore-state-from-overlay o)
   (mc/remove-fake-cursor o))
+
 (defun mc/delete-region-overlay (o)
   "Remove the dependent region overlay for a given cursor overlay."
   (ignore-errors
@@ -159,7 +166,8 @@ Saves the current state in the overlay to be restored later."
     (mc/store-current-state-in-overlay overlay)
     (when (use-region-p)
       (overlay-put overlay 'region-overlay
-                   (mc/make-region-overlay-between-point-and-mark)))))
+                   (mc/make-region-overlay-between-point-and-mark)))
+    overlay))
 
 (defun mc/execute-command (cmd)
   "Run command, simulating the parts of the command loop that makes sense for fake cursors."
@@ -285,6 +293,21 @@ multiple cursors editing.")
   (define-key mc/keymap (kbd "C-g") 'mc/keyboard-quit)
   (define-key mc/keymap (kbd "<return>") 'multiple-cursors-mode))
 
+(defun mc--all-equal (entries)
+  (let ((first (car entries))
+        (all-equal t))
+    (while (and all-equal entries)
+      (setq all-equal (equal first (car entries)))
+      (setq entries (cdr entries)))
+    all-equal))
+
+(defun mc--maybe-consolidate-kill-rings ()
+  (let (entries)
+    (mc/for-each-cursor
+     (setq entries (cons (car (overlay-get cursor 'kill-ring)) entries)))
+    (unless (mc--all-equal entries)
+      (kill-new (mapconcat 'identity entries "\n")))))
+
 (define-minor-mode multiple-cursors-mode
   "Mode while multiple cursors are active."
   nil " mc" mc/keymap
@@ -293,6 +316,7 @@ multiple cursors editing.")
         (add-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t t)
         (run-hooks 'multiple-cursors-mode-enabled-hook))
     (remove-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t)
+    (mc--maybe-consolidate-kill-rings)
     (mc/remove-fake-cursors)
     (run-hooks 'multiple-cursors-mode-disabled-hook)))
 

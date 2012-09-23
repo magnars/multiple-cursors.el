@@ -114,3 +114,20 @@ Feature: Multiple cursors core
     When I copy "external" in another program
     And I press "C-y"
     Then I should see "This externaltext contains the word externaltext twice"
+
+  Scenario: Consolidated kill-ring after exiting multiple-cursors-mode
+    Given I have cursors at "text" in "This text contains the word text twice"
+    When I press "M-f"
+    And I press "C-f"
+    And I press "C-SPC"
+    And I press "M-f"
+    And I press "M-w"
+    And I press "<return>"
+    And I press "C-a"
+    And I press "C-y"
+    And I press "C-k"
+    Then I should see:
+    """
+    contains
+    twice
+    """
