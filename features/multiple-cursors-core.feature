@@ -115,7 +115,7 @@ Feature: Multiple cursors core
     And I press "C-y"
     Then I should see "This externaltext contains the word externaltext twice"
 
-  Scenario: Consolidated kill-ring after exiting multiple-cursors-mode
+  Scenario: Added to killed-rectangle after exiting multiple-cursors-mode
     Given I have cursors at "text" in "This text contains the word text twice"
     When I press "M-f"
     And I press "C-f"
@@ -124,33 +124,10 @@ Feature: Multiple cursors core
     And I press "M-w"
     And I press "<return>"
     And I press "C-a"
-    And I press "C-y"
     And I press "C-k"
+    And I press "C-x r y"
     Then I should see:
     """
     contains
     twice
-    """
-
-  Scenario: Split multiline kill-ring entry over cursors when num lines match
-    When I insert:
-    """
-    a
-    b
-    c
-    """
-    And I go to the front of the word "a"
-    And I press "C-SPC"
-    And I go to the end of the word "c"
-    And I press "M-w"
-    And I go to the end of the word "a"
-    And I press "H-SPC"
-    And I press "C-n"
-    And I press "C-n"
-    And I press "C-y"
-    Then I should see:
-    """
-    aa
-    bb
-    cc
     """

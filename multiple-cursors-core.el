@@ -27,6 +27,8 @@
 
 (eval-when-compile (require 'cl))
 
+(require 'rect)
+
 (defface mc/cursor-face
   '((t (:inverse-video t)))
   "The face used for fake cursors"
@@ -316,31 +318,10 @@ multiple cursors editing.")
      (setq entries (cons (car (overlay-get cursor 'kill-ring)) entries)))
     (reverse entries)))
 
-(defun mc--maybe-consolidate-kill-rings ()
+(defun mc--maybe-set-killed-rectangle ()
   (let ((entries (mc--kill-ring-entries)))
     (unless (mc--all-equal entries)
-      (kill-new (mapconcat 'identity entries "\n")))))
-
-(defun mc--kill-new (entries)
-  (mc/for-each-cursor-ordered
-   (let ((kill-ring (overlay-get cursor 'kill-ring))
-         (kill-ring-yank-pointer (overlay-get cursor 'kill-ring-yank-pointer)))
-     (kill-new (car entries))
-     (setq entries (cdr entries))
-     (overlay-put cursor 'kill-ring kill-ring)
-     (overlay-put cursor 'kill-ring-yank-pointer kill-ring-yank-pointer))))
-
-(defun mc--maybe-split-kill-ring ()
-  (let ((entries (mc--kill-ring-entries)))
-    (when (mc--all-equal entries)
-      (let ((lines (split-string (car entries) "\n")))
-        (when (= (mc/num-cursors) (length lines))
-          (mc--kill-new lines))))))
-
-(defadvice yank (before maybe-split-kill-ring activate)
-  (when (and (or multiple-cursors-mode rectangular-region-mode)
-             (not mc--executing-command-for-fake-cursor))
-    (mc--maybe-split-kill-ring)))
+      (setq killed-rectangle entries))))
 
 (define-minor-mode multiple-cursors-mode
   "Mode while multiple cursors are active."
@@ -350,7 +331,7 @@ multiple cursors editing.")
         (add-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t t)
         (run-hooks 'multiple-cursors-mode-enabled-hook))
     (remove-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t)
-    (mc--maybe-consolidate-kill-rings)
+    (mc--maybe-set-killed-rectangle)
     (mc/remove-fake-cursors)
     (run-hooks 'multiple-cursors-mode-disabled-hook)))
 
