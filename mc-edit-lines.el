@@ -40,11 +40,11 @@ line point is on."
   (mc/remove-fake-cursors)
   (let* ((point-line (line-number-at-pos))
          (mark-line (progn (exchange-point-and-mark) (line-number-at-pos)))
-         (navigation-func (if (< point-line mark-line) 'previous-line 'next-line)))
+         (direction (if (< point-line mark-line) :up :down)))
     (deactivate-mark)
     (while (not (eq (line-number-at-pos) point-line))
       (mc/create-fake-cursor-at-point)
-      (funcall navigation-func))
+      (if (eq direction :up) (forward-line -1) (forward-line 1)))
     (multiple-cursors-mode)))
 
 ;;;###autoload
