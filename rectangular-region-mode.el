@@ -39,6 +39,7 @@
 (define-key rectangular-region-mode-map (kbd "<return>") 'rrm/switch-to-multiple-cursors)
 
 (defun rrm/keyboard-quit ()
+  "Exit rectangular-region-mode."
   (interactive)
   (rectangular-region-mode 0)
   (rrm/remove-rectangular-region-overlays)
@@ -47,12 +48,17 @@
 ;; Bind this to a key (for instance H-SPC) to start rectangular-region-mode
 ;;;###autoload
 (defun set-rectangular-region-anchor ()
+  "Anchors the rectangular region at point.
+
+Think of this one as `set-mark' except you're marking a rectangular region. It is
+an exceedingly quick way of adding multiple cursors to multiple lines."
   (interactive)
   (set-marker rrm/anchor (point))
   (push-mark (point))
   (rectangular-region-mode 1))
 
 (defun rrm/remove-rectangular-region-overlays ()
+  "Remove all rectangular-region overlays."
   (mc/remove-fake-cursors)
   (mapc #'(lambda (o)
             (when (eq (overlay-get o 'type) 'additional-region)
@@ -60,6 +66,7 @@
         (overlays-in (point-min) (point-max))))
 
 (defun rrm/repaint ()
+  "Start from the anchor and draw a rectangle between it and point."
   (rrm/remove-rectangular-region-overlays)
   (let* ((annoying-arrows-mode nil)
          (point-column (current-column))
@@ -83,6 +90,7 @@
            (mc/create-fake-cursor-at-point)))))))
 
 (defun rrm/switch-to-multiple-cursors (&rest forms)
+  "Switch from rectangular-region-mode to multiple-cursors-mode."
   (interactive)
   (rectangular-region-mode 0)
   (multiple-cursors-mode 1))
