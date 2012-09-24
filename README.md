@@ -28,6 +28,9 @@ To get out of multiple-cursors-mode, press `<return>` or `C-g`. The latter will
 first disable multiple regions before disabling multiple cursors. If you want to
 insert a newline in multiple-cursors-mode, use `C-j`.
 
+## Video
+
+You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.com/e13.html).
 
 ## More commands to play around with
 
