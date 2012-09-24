@@ -33,10 +33,7 @@
 (defun mc/edit-lines ()
   "Add one cursor to each line of the active region.
 Starts from mark and moves in straight down or up towards the
-line point is on.
-
-Could possibly be used to mark multiple regions with
-mark-multiple if point and mark is on different columns."
+line point is on."
   (interactive)
   (when (not (use-region-p))
     (error "Mark a set of lines first."))

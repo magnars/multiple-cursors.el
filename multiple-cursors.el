@@ -131,9 +131,6 @@
 (require 'mc-mark-more)
 (require 'rectangular-region-mode)
 
-;;;###autoload
-(eval-after-load "mark-multiple" '(require 'mc-mark-multiple-integration))
-
 (provide 'multiple-cursors)
 
 ;;; multiple-cursors.el ends here

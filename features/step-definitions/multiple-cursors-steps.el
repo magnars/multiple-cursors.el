@@ -42,8 +42,8 @@
          (search-forward needle)
          (set-mark (point))
          (goto-char (match-beginning 0))
-         (mark-all-like-this)
-         (mc/switch-from-mark-multiple-to-cursors)))
+         (mc/mark-all-like-this)
+         (mc/keyboard-quit)))
 
 (When "^I copy \"\\(.+\\)\" in another program$"
        (lambda (text)

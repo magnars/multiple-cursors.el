@@ -411,8 +411,7 @@ for running commands with multiple cursors.")
 (defvar mc--default-cmds-to-run-once nil
   "Default set of commands to run only once in multiple-cursors-mode.")
 
-(setq mc--default-cmds-to-run-once '(mc/switch-from-mark-multiple-to-cursors
-                                     mc/edit-lines
+(setq mc--default-cmds-to-run-once '(mc/edit-lines
                                      mc/edit-ends-of-lines
                                      mc/edit-beginnings-of-lines
                                      mc/mark-next-like-this

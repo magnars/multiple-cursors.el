@@ -7,9 +7,7 @@
 (add-to-list 'load-path multiple-cursors-root-path)
 (add-to-list 'load-path multiple-cursors-util-path)
 (add-to-list 'load-path (expand-file-name "espuds" multiple-cursors-util-path))
-(add-to-list 'load-path (expand-file-name "vendor" multiple-cursors-util-path))
 
-(require 'mark-more-like-this)
 (require 'multiple-cursors)
 (require 'espuds)
 (require 'ert)
@@ -19,10 +17,8 @@
 (Before
  (multiple-cursors-mode 0)
  (rectangular-region-mode 0)
- (mm/clear-all)
- (global-set-key (kbd "C->") 'mark-next-like-this)
- (global-set-key (kbd "M->") 'mc/mark-next-like-this)
- (global-set-key (kbd "M-<") 'mc/mark-previous-like-this)
+ (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+ (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
  (global-set-key (kbd "M-!") 'mc/mark-all-like-this)
  (global-set-key (kbd "M-#") 'mc/mark-all-in-region)
  (global-set-key (kbd "H-SPC") 'set-rectangular-region-anchor)
