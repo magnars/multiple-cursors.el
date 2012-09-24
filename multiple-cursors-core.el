@@ -446,6 +446,9 @@ for running commands with multiple cursors.")
                                      split-window-below
                                      delete-other-windows
                                      toggle-window-split
+                                     mwheel-scroll
+                                     quit-window
+                                     toggle-read-only
                                      windmove-left
                                      windmove-right
                                      windmove-up
@@ -461,6 +464,7 @@ for running commands with multiple cursors.")
                                         newline
                                         newline-and-indent
                                         open-line
+                                        delete-blank-lines
                                         transpose-chars
                                         transpose-lines
                                         transpose-paragraphs
@@ -474,6 +478,8 @@ for running commands with multiple cursors.")
                                         left-word
                                         backward-char
                                         backward-word
+                                        forward-paragraph
+                                        backward-paragraph
                                         upcase-word
                                         downcase-word
                                         capitalize-word
@@ -483,6 +489,7 @@ for running commands with multiple cursors.")
                                         hippie-expand-lines
                                         yank
                                         yank-pop
+                                        append-next-kill
                                         kill-word
                                         kill-line
                                         kill-whole-line
@@ -494,6 +501,7 @@ for running commands with multiple cursors.")
                                         zap-to-char
                                         end-of-line
                                         set-mark-command
+                                        exchange-point-and-mark
                                         move-end-of-line
                                         beginning-of-line
                                         move-beginning-of-line
