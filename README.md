@@ -10,6 +10,9 @@ Start out with:
 
     (require 'multiple-cursors)
 
+Then you have to set up your keybindings - multiple-cursors doesn't presume to
+know how you'd like them layed out. Here are some examples:
+
 When you have an active region that spans multiple lines, the following will
 add a cursor to each line:
 
