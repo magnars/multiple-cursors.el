@@ -15,6 +15,7 @@
 (defun mc/save-lists ()) ;; redefine to do nothing when running tests
 
 (Before
+ (cua-mode 0)
  (multiple-cursors-mode 0)
  (rectangular-region-mode 0)
  (global-set-key (kbd "C->") 'mc/mark-next-like-this)

@@ -109,6 +109,16 @@ Feature: Multiple cursors core
     And I press "M-l"
     Then I should see "This text_snippet contains the word text_snippet twice"
 
+  Scenario: cua-mode
+    Given I turn on cua-mode
+    And I insert "This text contains the word text twice"
+    And I go to the front of the word "text"
+    And I press "C-SPC"
+    And I press "M-f"
+    And I press "C->"
+    And I type "!"
+    Then I should see "This ! contains the word ! twice"
+
   Scenario: Interprogram paste
     Given I have cursors at "text" in "This text contains the word text twice"
     When I copy "external" in another program
