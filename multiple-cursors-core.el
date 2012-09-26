@@ -329,16 +329,41 @@ So you can paste it in later with `yank-rectangle'."
     (unless (mc--all-equal entries)
       (setq killed-rectangle entries))))
 
+(defvar mc/unsupported-minor-modes '(auto-complete-mode)
+  "List of minor-modes that does not play well with multiple-cursors.
+They are temporarily disabled when multiple-cursors are active.")
+
+(defvar mc/temporarily-disabled-minor-modes nil
+  "The list of temporarily disabled minor-modes.")
+(make-variable-buffer-local 'mc/temporarily-disabled-minor-modes)
+
+(defun mc/temporarily-disable-minor-mode (mode)
+  (when (and (boundp mode) (eval mode))
+    (add-to-list 'mc/temporarily-disabled-minor-modes mode)
+    (funcall mode -1)))
+
+(defun mc/temporarily-disable-unsupported-minor-modes ()
+  (mapc 'mc/temporarily-disable-minor-mode mc/unsupported-minor-modes))
+
+(defun mc/enable-minor-mode (mode)
+  (funcall mode 1))
+
+(defun mc/enable-temporarily-disabled-minor-modes ()
+  (mapc 'mc/enable-minor-mode mc/temporarily-disabled-minor-modes)
+  (setq mc/temporarily-disabled-minor-modes nil))
+
 (define-minor-mode multiple-cursors-mode
   "Mode while multiple cursors are active."
   nil " mc" mc/keymap
   (if multiple-cursors-mode
       (progn
+        (mc/temporarily-disable-unsupported-minor-modes)
         (add-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t t)
         (run-hooks 'multiple-cursors-mode-enabled-hook))
     (remove-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t)
     (mc--maybe-set-killed-rectangle)
     (mc/remove-fake-cursors)
+    (mc/enable-temporarily-disabled-minor-modes)
     (run-hooks 'multiple-cursors-mode-disabled-hook)))
 
 (add-hook 'after-revert-hook #'(lambda () (multiple-cursors-mode 0)))
