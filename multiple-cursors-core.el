@@ -454,6 +454,8 @@ for running commands with multiple cursors.")
                                      delete-other-windows
                                      toggle-window-split
                                      mwheel-scroll
+                                     mouse-set-point
+                                     mouse-drag-region
                                      quit-window
                                      toggle-read-only
                                      windmove-left
