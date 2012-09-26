@@ -430,6 +430,7 @@ for running commands with multiple cursors.")
                                      save-buffer
                                      ido-exit-minibuffer
                                      exit-minibuffer
+                                     minibuffer-complete-and-exit
                                      undo
                                      redo
                                      undo-tree-undo
