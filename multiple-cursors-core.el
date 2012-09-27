@@ -554,6 +554,7 @@ for running commands with multiple cursors.")
 
 (setq mc--default-cmds-to-run-for-all '(mc/keyboard-quit
                                         self-insert-command
+                                        quoted-insert
                                         previous-line
                                         next-line
                                         newline
