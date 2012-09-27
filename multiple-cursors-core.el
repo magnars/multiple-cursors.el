@@ -205,7 +205,31 @@ cursor with updated info."
           (mc/pop-state-from-overlay cursor)
           (ignore-errors
             (mc/execute-command cmd)
-            (mc/create-fake-cursor-at-point id)))))))))
+            (mc/create-fake-cursor-at-point id))))))))
+  (mc--reset-read-prompts))
+
+;; Intercept some reading commands so you won't have to
+;; answer them for every single cursor
+
+(defadvice read-char (around mc-support activate)
+  (if (not multiple-cursors-mode)
+      ad-do-it
+    (unless mc--read-char
+      (setq mc--read-char ad-do-it))
+    (setq ad-return-value mc--read-char)))
+
+(defadvice read-quoted-char (around mc-support activate)
+  (if (not multiple-cursors-mode)
+      ad-do-it
+    (unless mc--read-quoted-char
+      (setq mc--read-quoted-char ad-do-it))
+    (setq ad-return-value mc--read-quoted-char)))
+
+(defun mc--reset-read-prompts ()
+  (setq mc--read-char nil)
+  (setq mc--read-quoted-char nil))
+
+(mc--reset-read-prompts)
 
 (defun mc/fake-cursor-p (o)
   "Predicate to check if an overlay is a fake cursor"

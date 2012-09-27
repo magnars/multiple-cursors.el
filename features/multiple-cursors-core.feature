@@ -119,6 +119,13 @@ Feature: Multiple cursors core
     And I type "!"
     Then I should see "This ! contains the word ! twice"
 
+  Scenario: Bound keyboard macros
+    Given I have bound C-! to a keyboard macro that insert "_"
+    And I have cursors at "text" in "This text contains the word text twice"
+    When I press "C-!"
+    When I press "C-!"
+    Then I should see "This __text contains the word __text twice"
+
   Scenario: Interprogram paste
     Given I have cursors at "text" in "This text contains the word text twice"
     When I copy "external" in another program

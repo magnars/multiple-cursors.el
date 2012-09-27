@@ -68,6 +68,11 @@
            (defun mc-test-temp-command-2 () (interactive) (insert ins))
            (global-set-key (kbd "C-!") 'mc-test-temp-command-2))))
 
+(Given "^I have bound C-! to a keyboard macro that insert \"_\"$"
+       (lambda ()
+         (fset 'mc-test-temp-kmacro "\C-q_")
+         (global-set-key (kbd "C-!") 'mc-test-temp-kmacro)))
+
 (When "^I go to character \"\\(.+\\)\"$"
       (lambda (char)
         (goto-char (point-min))
