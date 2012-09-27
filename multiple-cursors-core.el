@@ -266,6 +266,14 @@ not be recognized through the command-remapping lookup."
                                this-original-command))))
 
 (defun mc/execute-this-command-for-all-cursors ()
+  "Wrap around `mc/execute-this-command-for-all-cursors-1' to protect hook."
+  (condition-case error
+      (mc/execute-this-command-for-all-cursors-1)
+    (error
+     (message "[mc] problem in `mc/execute-this-command-for-all-cursors': %s"
+              (error-message-string error)))))
+
+(defun mc/execute-this-command-for-all-cursors-1 ()
   "Used with post-command-hook to execute supported commands for all cursors.
 
 It uses two lists of commands to know what to do: the run-once
