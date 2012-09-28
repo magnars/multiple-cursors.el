@@ -517,6 +517,7 @@ for running commands with multiple cursors.")
                                      ido-exit-minibuffer
                                      exit-minibuffer
                                      minibuffer-complete-and-exit
+                                     execute-extended-command
                                      undo
                                      redo
                                      undo-tree-undo
