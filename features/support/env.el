@@ -7,10 +7,12 @@
 (add-to-list 'load-path multiple-cursors-root-path)
 (add-to-list 'load-path multiple-cursors-util-path)
 (add-to-list 'load-path (expand-file-name "espuds" multiple-cursors-util-path))
+(add-to-list 'load-path (expand-file-name "vendor" multiple-cursors-util-path))
 
 (require 'multiple-cursors)
 (require 'espuds)
 (require 'ert)
+(require 'wrap-region)
 
 (defun mc/save-lists ()) ;; redefine to do nothing when running tests
 
@@ -31,6 +33,7 @@
  (cua-mode 0)
  (delete-selection-mode 0)
  (subword-mode 0)
+ (wrap-region-mode 0)
  (setq set-mark-default-inactive nil)
  (deactivate-mark))
 

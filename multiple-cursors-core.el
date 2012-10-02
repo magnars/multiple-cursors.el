@@ -297,6 +297,13 @@ not be recognized through the command-remapping lookup."
      (message "[mc] problem in `mc/execute-this-command-for-all-cursors': %s"
               (error-message-string error)))))
 
+;; execute-kbd-macro should never be run for fake cursors. The real cursor will
+;; execute the keyboard macro, resulting in new commands in the command loop,
+;; and the fake cursors can pick up on those instead.
+(defadvice execute-kbd-macro (around skip-fake-cursors activate)
+  (unless mc--executing-command-for-fake-cursor
+    ad-do-it))
+
 (defun mc/execute-this-command-for-all-cursors-1 ()
   "Used with post-command-hook to execute supported commands for all cursors.
 
