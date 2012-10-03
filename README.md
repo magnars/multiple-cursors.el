@@ -64,6 +64,9 @@ Okay, yes, I have a crazy norwegian keyboard. Regardless, these will look at
 whatever you've got selected at the moment, and mark more places like that in
 the buffer.
 
+If you would like to keep the global bindings clean, and get custom keybindings
+when the region is active, you can try [region-bindings-mode](https://github.com/fgallina/region-bindings-mode).
+
 BTW, I highly recommend adding `mc/mark-next-like-this` to a key binding that's
 right next to the key for `er/expand-region`.
 
