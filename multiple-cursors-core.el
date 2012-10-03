@@ -479,6 +479,18 @@ from being executed if in multiple-cursors-mode."
   "The position of the file that keeps track of your preferences
 for running commands with multiple cursors.")
 
+(defun mc/dump-list (list-symbol)
+  "Insert (setq 'LIST-SYMBOL LIST-VALUE) to current buffer."
+  (let ((value (symbol-value list-symbol)))
+    (insert "(setq " (symbol-name list-symbol) "\n"
+            "      '(")
+    (newline-and-indent)
+    (mapc #'(lambda (cmd) (insert (format "%S" cmd)) (newline-and-indent))
+          (sort value (lambda (x y) (string-lessp (symbol-name x)
+                                                  (symbol-name y)))))
+    (insert "))")
+    (newline)))
+
 (defun mc/save-lists ()
   "Saves preferences for running commands with multiple cursors to `mc/list-file'"
   (with-temp-file mc/list-file
@@ -488,21 +500,9 @@ for running commands with multiple cursors.")
     (insert ";; It keeps track of your preferences for running commands with multiple cursors.")
     (newline)
     (newline)
-    (insert "(setq mc/cmds-to-run-for-all '(")
-    (mapc #'(lambda (cmd) (insert (format "%S" cmd)) (newline-and-indent)) mc/cmds-to-run-for-all)
-    (when mc/cmds-to-run-for-all
-      (forward-line -1)
-      (end-of-line))
-    (insert "))")
+    (mc/dump-list 'mc/cmds-to-run-for-all)
     (newline)
-    (newline)
-    (insert "(setq mc/cmds-to-run-once '(")
-    (mapc #'(lambda (cmd) (insert (format "%S" cmd)) (newline-and-indent)) mc/cmds-to-run-once)
-    (when mc/cmds-to-run-once
-      (forward-line -1)
-      (end-of-line))
-    (insert "))")
-    (newline)))
+    (mc/dump-list 'mc/cmds-to-run-once)))
 
 (defvar mc/cmds-to-run-once nil
   "Commands to run only once in multiple-cursors-mode.")
