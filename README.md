@@ -116,6 +116,11 @@ Run the tests with:
 
     $ ./util/ecukes/ecukes --graphical
 
+## Contributors
+
+* [Takafumi Arakaki](https://github.com/tkf) made .mc-lists.el diff friendly
+
+Thanks!
 
 ## License
 
