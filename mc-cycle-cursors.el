@@ -54,31 +54,63 @@
          (setq prev cursor))))
     prev))
 
-(defun mc/cycle-forward (&optional error-if-no-next-cursor)
-  (interactive "P")
-  (let ((next-cursor (mc/next-cursor-after-point)))
-    (cond
-     (next-cursor 
-      (mc/create-fake-cursor-at-point)
-      (mc/pop-state-from-overlay next-cursor)
-      (recenter))
-     (error-if-no-next-cursor
-      (error "We're already at the last cursor"))
-     (t
-      (mc/cycle-backward t)))))
+(defcustom mc/cycle-looping-behaviour 'continue
+  "What to do if asked to cycle beyond the last cursor or before the first cursor."
+  :type '(radio (const :tag "Loop around to beginning/end of document." continue)
+                (const :tag "Warn and then loop around." warn)
+                (const :tag "Signal an error." error)))
 
-(defun mc/cycle-backward (&optional error-if-no-previous-cursor)
-  (interactive "P")
-  (let ((prev-cursor (mc/prev-cursor-before-point)))
-    (cond 
-     (prev-cursor
-      (mc/create-fake-cursor-at-point)
-      (mc/pop-state-from-overlay prev-cursor)
-      (recenter))
-     (error-if-no-previous-cursor
-      (error "We're already at the first cursor"))
-     (t
-      (mc/cycle-forward t)))))
+(defun mc/handle-loop-condition (error-message)
+  (ecase mc/cycle-looping-behaviour
+    (error (error error-message))
+    (warn  (message error-message))
+    (continue nil)))
+
+(defun mc/cycle (next-cursor fallback-cursor loop-message)
+  (when (null next-cursor)
+    (mc/handle-loop-condition loop-message)
+    (setf next-cursor fallback-cursor))
+  (mc/create-fake-cursor-at-point)
+  (mc/pop-state-from-overlay next-cursor)
+  (recenter))
+
+(defun extreme (sequence predicate &optional key)
+  "Returns the most predicate-y element of sequence; equivalent
+to (first (sort sequence text)). The extreme of the empty list is
+always nil."
+  (let ((extreme (first sequence)))
+    (dolist (i (rest sequence))
+      (when (funcall predicate
+                     (funcall (or key 'identity) i)
+                     (funcall (or key 'identity) extreme))
+        (setf extreme i)))
+    extreme))
+
+(defun mc/first-cursor-after (point)
+  "Very similar to mc/furthest-cursor-before-point, but ignores (mark) and (point)."
+  (extreme (remove-if (lambda (cursor)
+                        (< (mc/cursor-beg cursor) point))
+                      (mc/all-fake-cursors))
+           '< 'mc/cursor-beg))
+
+(defun mc/last-cursor-before (point)
+  "Very similar to mc/furthest-cursor-before-point, but ignores (mark) and (point)."
+  (extreme (remove-if (lambda (cursor)
+                        (> (mc/cursor-end cursor) point))
+                      (mc/all-fake-cursors))
+           '> 'mc/cursor-end))
+
+(defun mc/cycle-forward ()
+  (interactive)
+  (mc/cycle (mc/next-cursor-after-point)
+            (mc/first-cursor-after (point-min))
+             "We're already at the last cursor."))
+
+(defun mc/cycle-backward ()
+  (interactive)
+  (mc/cycle (mc/prev-cursor-before-point)
+            (mc/last-cursor-before (point-max))
+            "We're already at the last cursor"))
 
 (define-key mc/keymap (kbd "C-v") 'mc/cycle-forward)
 (define-key mc/keymap (kbd "M-v") 'mc/cycle-backward)
