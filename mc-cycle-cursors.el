@@ -54,23 +54,31 @@
          (setq prev cursor))))
     prev))
 
-(defun mc/cycle-forward ()
-  (interactive)
+(defun mc/cycle-forward (&optional error-if-no-next-cursor)
+  (interactive (list prefix-arg))
   (let ((next-cursor (mc/next-cursor-after-point)))
-    (unless next-cursor
+    (cond
+     (next-cursor 
+      (mc/create-fake-cursor-at-point)
+      (mc/pop-state-from-overlay next-cursor)
+      (recenter))
+     (error-if-no-next-cursor
       (error "We're already at the last cursor"))
-    (mc/create-fake-cursor-at-point)
-    (mc/pop-state-from-overlay next-cursor)
-    (recenter)))
+     (t
+      (mc/cycle-backward t)))))
 
-(defun mc/cycle-backward ()
-  (interactive)
+(defun mc/cycle-backward (&optional error-if-no-previous-cursor)
+  (interactive (list prefix-arg))
   (let ((prev-cursor (mc/prev-cursor-before-point)))
-    (unless prev-cursor
+    (cond 
+     (prev-cursor
+      (mc/create-fake-cursor-at-point)
+      (mc/pop-state-from-overlay prev-cursor)
+      (recenter))
+     (error-if-no-previous-cursor
       (error "We're already at the first cursor"))
-    (mc/create-fake-cursor-at-point)
-    (mc/pop-state-from-overlay prev-cursor)
-    (recenter)))
+     (t
+      (mc/cycle-forward t)))))
 
 (define-key mc/keymap (kbd "C-v") 'mc/cycle-forward)
 (define-key mc/keymap (kbd "M-v") 'mc/cycle-backward)
