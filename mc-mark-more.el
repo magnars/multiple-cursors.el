@@ -79,34 +79,54 @@
                             (mc/cursor-end cursor))))
     strings))
 
+(defun mc/maybe-multiple-cursors-mode ()
+  "Enable multiple-cursors-mode if there is more than one currently active cursor."
+  (if (> (mc/num-cursors) 1)
+      (multiple-cursors-mode 1)
+    (multiple-cursors-mode 0)))
+
+(defun mc/mark-more-like-this (skip-last direction)
+  (let ((case-fold-search nil)
+        (re (regexp-opt (mc/region-strings)))
+        (point-out-of-order (ecase direction
+                              (forwards       (< (point) (mark)))
+                              (backwards (not (< (point) (mark))))))
+        (furthest-cursor (ecase direction
+                           (forwards  (mc/furthest-cursor-after-point))
+                           (backwards (mc/furthest-cursor-before-point))))
+        (start-char (ecase direction
+                      (forwards  (mc/furthest-region-end))
+                      (backwards (mc/first-region-start))))
+        (search-function (ecase direction
+                           (forwards  'search-forward-regexp)
+                           (backwards 'search-backward-regexp)))
+        (match-point-getter (ecase direction
+                              (forwards 'match-beginning)
+                              (backwards 'match-end))))
+    (mc/save-excursion
+     (goto-char start-char)
+     (when skip-last
+       (mc/remove-fake-cursor furthest-cursor))
+     (if (funcall search-function re nil t) 
+         (progn
+           (push-mark (funcall match-point-getter 0))
+           (when point-out-of-order
+             (exchange-point-and-mark))
+           (mc/create-fake-cursor-at-point))
+       (error "no more matches found.")))))
+
 ;;;###autoload
 (defun mc/mark-next-like-this (arg)
   "Find and mark the next part of the buffer matching the currently active region
 With negative ARG, delete the last one instead.
 With zero ARG, skip the last one and mark next."
   (interactive "p")
-  (unless (region-active-p)
-    (error "Mark a region to match first."))
-  (when (< arg 0)
-    (mc/remove-fake-cursor (mc/furthest-cursor-after-point)))
-  (when (>= arg 0)
-    (let ((case-fold-search nil)
-          (point-first (< (point) (mark)))
-          (re (regexp-opt (mc/region-strings)))
-          (furthest-cursor (mc/furthest-cursor-after-point)))
-      (mc/save-excursion
-       (goto-char (mc/furthest-region-end))
-       (when (= arg 0)
-         (mc/remove-fake-cursor furthest-cursor))
-       (if (search-forward-regexp re nil t)
-           (progn
-             (push-mark (match-beginning 0))
-             (when point-first (exchange-point-and-mark))
-             (mc/create-fake-cursor-at-point))
-         (error "no more found forward")))))
-  (if (> (mc/num-cursors) 1)
-      (multiple-cursors-mode 1)
-    (multiple-cursors-mode 0)))
+  (if (region-active-p)
+      (if (< arg 0)
+          (mc/remove-fake-cursor (mc/furthest-cursor-after-point))
+        (mc/mark-more-like-this (= arg 0) 'forwards))
+    (mc/mark-lines arg 'forwards))
+  (mc/maybe-multiple-cursors-mode))
 
 ;;;###autoload
 (defun mc/mark-previous-like-this (arg)
@@ -114,28 +134,31 @@ With zero ARG, skip the last one and mark next."
 With negative ARG, delete the last one instead.
 With zero ARG, skip the last one and mark next."
   (interactive "p")
-  (unless (region-active-p)
-    (error "Mark a region to match first."))
-  (when (< arg 0)
-    (mc/remove-fake-cursor (mc/furthest-cursor-before-point)))
-  (when (>= arg 0)
-    (let ((case-fold-search nil)
-          (point-first (< (point) (mark)))
-          (re (regexp-opt (mc/region-strings)))
-          (furthest-cursor (mc/furthest-cursor-before-point)))
-      (mc/save-excursion
-       (goto-char (mc/first-region-start))
-       (when (= arg 0)
-         (mc/remove-fake-cursor furthest-cursor))
-       (if (search-backward-regexp re nil t)
-           (progn
-             (push-mark (match-end 0))
-             (unless point-first (exchange-point-and-mark))
-             (mc/create-fake-cursor-at-point))
-         (error "no more found backward")))))
-  (if (> (mc/num-cursors) 1)
-      (multiple-cursors-mode 1)
-    (multiple-cursors-mode 0)))
+  (if (region-active-p)
+      (if (< arg 0)
+          (mc/remove-fake-cursor (mc/furthest-cursor-before-point))
+        (mc/mark-more-like-this (= arg 0) 'backwards))
+    (mc/mark-lines arg 'backwards))
+  (mc/maybe-multiple-cursors-mode))
+
+(defun mc/mark-lines (num-lines direction)
+  (dotimes (i num-lines)
+    (mc/create-fake-cursor-at-point)
+    (ecase direction
+      (forwards  (next-line 1 nil))
+      (backwards (previous-line 1 nil)))))
+
+;;;###autoload
+(defun mc/mark-next-lines (arg)
+  (interactive "p")
+  (mc/mark-lines arg 'forwards)
+  (mc/maybe-multiple-cursors-mode))
+
+;;;###autoload
+(defun mc/mark-previous-lines (arg)
+  (interactive "p")
+  (mc/mark-lines arg 'backwards)
+  (mc/maybe-multiple-cursors-mode))
 
 ;;;###autoload
 (defun mc/unmark-next-like-this (arg)
