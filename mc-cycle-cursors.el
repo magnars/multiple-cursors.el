@@ -55,7 +55,7 @@
     prev))
 
 (defun mc/cycle-forward (&optional error-if-no-next-cursor)
-  (interactive (list prefix-arg))
+  (interactive "P")
   (let ((next-cursor (mc/next-cursor-after-point)))
     (cond
      (next-cursor 
@@ -68,7 +68,7 @@
       (mc/cycle-backward t)))))
 
 (defun mc/cycle-backward (&optional error-if-no-previous-cursor)
-  (interactive (list prefix-arg))
+  (interactive "P")
   (let ((prev-cursor (mc/prev-cursor-before-point)))
     (cond 
      (prev-cursor
