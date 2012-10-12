@@ -66,6 +66,24 @@
     (warn  (message error-message))
     (continue nil)))
 
+(defun mc/first-cursor-after (point)
+  "Very similar to mc/furthest-cursor-before-point, but ignores (mark) and (point)."
+  (let* ((cursors (mc/all-fake-cursors))
+         (cursors-after-point (remove-if (lambda (cursor)
+                                           (< (mc/cursor-beg cursor) point))
+                                         cursors))
+         (cursors-in-order (sort* cursors-after-point '< :key 'mc/cursor-beg)))
+    (first cursors-in-order)))
+
+(defun mc/last-cursor-before (point)
+  "Very similar to mc/furthest-cursor-before-point, but ignores (mark) and (point)."
+  (let* ((cursors (mc/all-fake-cursors))
+         (cursors-before-point (remove-if (lambda (cursor)
+                                            (> (mc/cursor-end cursor) point))
+                                          cursors))
+         (cursors-in-order (sort* cursors-before-point '> :key 'mc/cursor-end)))
+    (first cursors-in-order)))
+
 (defun mc/cycle (next-cursor fallback-cursor loop-message)
   (when (null next-cursor)
     (mc/handle-loop-condition loop-message)
@@ -73,32 +91,6 @@
   (mc/create-fake-cursor-at-point)
   (mc/pop-state-from-overlay next-cursor)
   (recenter))
-
-(defun extreme (sequence predicate &optional key)
-  "Returns the most predicate-y element of sequence; equivalent
-to (first (sort sequence text)). The extreme of the empty list is
-always nil."
-  (let ((extreme (first sequence)))
-    (dolist (i (rest sequence))
-      (when (funcall predicate
-                     (funcall (or key 'identity) i)
-                     (funcall (or key 'identity) extreme))
-        (setf extreme i)))
-    extreme))
-
-(defun mc/first-cursor-after (point)
-  "Very similar to mc/furthest-cursor-before-point, but ignores (mark) and (point)."
-  (extreme (remove-if (lambda (cursor)
-                        (< (mc/cursor-beg cursor) point))
-                      (mc/all-fake-cursors))
-           '< 'mc/cursor-beg))
-
-(defun mc/last-cursor-before (point)
-  "Very similar to mc/furthest-cursor-before-point, but ignores (mark) and (point)."
-  (extreme (remove-if (lambda (cursor)
-                        (> (mc/cursor-end cursor) point))
-                      (mc/all-fake-cursors))
-           '> 'mc/cursor-end))
 
 (defun mc/cycle-forward ()
   (interactive)
