@@ -94,3 +94,41 @@ Feature: Marking multiple parts of the buffer
     And I type "more"
     Then I should have 2 cursors
     And I should see "Here's more, more and text"
+
+  Scenario: Marking without an active region
+    When I insert:
+    """
+    aaa
+    bbb
+    ccc
+    """
+    And I go to the front of the word "bbb"
+    And I press "C->"
+    And I type "_"
+    Then I should have 2 cursors
+    And I should see:
+    """
+    aaa
+    _bbb
+    _ccc
+    """
+
+  Scenario: Increasing number of cursors without an active region
+    When I insert:
+    """
+    aaa
+    bbb
+    ccc
+    """
+    And I go to the front of the word "bbb"
+    And I press "C->"
+    And I press "C-<"
+    And i press "C-f"
+    And I type "_"
+    Then I should have 3 cursors
+    And I should see:
+    """
+    a_aa
+    b_bb
+    c_cc
+    """

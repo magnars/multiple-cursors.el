@@ -158,3 +158,17 @@ Feature: Multiple cursors core
     contains
     twice
     """
+
+  Scenario: Looping forwards around cursors
+    Given I have cursors at "_" in "1_34567_9"
+    And I press "C-v"
+    And I press "C-v"
+    And I press "C-v"
+    Then the cursor should be at point "8"
+
+  Scenario: Looping backwards around cursors
+    Given I have cursors at "_" in "1_34567_9"
+    And I press "M-v"
+    And I press "M-v"
+    Then the cursor should be at point "2"
+
