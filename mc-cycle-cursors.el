@@ -58,13 +58,15 @@
   "What to do if asked to cycle beyond the last cursor or before the first cursor."
   :type '(radio (const :tag "Loop around to beginning/end of document." continue)
                 (const :tag "Warn and then loop around." warn)
-                (const :tag "Signal an error." error)))
+                (const :tag "Signal an error." error)
+                (const :tag "Don't loop." stop)))
 
 (defun mc/handle-loop-condition (error-message)
   (ecase mc/cycle-looping-behaviour
     (error (error error-message))
     (warn  (message error-message))
-    (continue nil)))
+    (continue 'continue)
+    (stop 'stop)))
 
 (defun mc/first-cursor-after (point)
   "Very similar to mc/furthest-cursor-before-point, but ignores (mark) and (point)."
@@ -84,9 +86,10 @@
          (cursors-in-order (sort* cursors-before-point '> :key 'mc/cursor-end)))
     (first cursors-in-order)))
 
-(defun mc/cycle (next-cursor fallback-cursor loop-message)
+(defun* mc/cycle (next-cursor fallback-cursor loop-message)
   (when (null next-cursor)
-    (mc/handle-loop-condition loop-message)
+    (when (eql 'stop (mc/handle-loop-condition loop-message))
+      (return-from mc/cycle nil))
     (setf next-cursor fallback-cursor))
   (mc/create-fake-cursor-at-point)
   (mc/pop-state-from-overlay next-cursor)
