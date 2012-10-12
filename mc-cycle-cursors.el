@@ -30,7 +30,7 @@
 
 (eval-when-compile (require 'cl))
 
-(defun mc/next-cursor-after-point ()
+(defun mc/next-fake-cursor-after-point ()
   (let ((pos (point))
         (next-pos (point-max))
         next)
@@ -42,7 +42,7 @@
          (setq next cursor))))
     next))
 
-(defun mc/prev-cursor-before-point ()
+(defun mc/prev-fake-cursor-before-point ()
   (let ((pos (point))
         (prev-pos (point-min))
         prev)
@@ -68,7 +68,7 @@
     (continue 'continue)
     (stop 'stop)))
 
-(defun mc/first-cursor-after (point)
+(defun mc/first-fake-cursor-after (point)
   "Very similar to mc/furthest-cursor-before-point, but ignores (mark) and (point)."
   (let* ((cursors (mc/all-fake-cursors))
          (cursors-after-point (remove-if (lambda (cursor)
@@ -77,7 +77,7 @@
          (cursors-in-order (sort* cursors-after-point '< :key 'mc/cursor-beg)))
     (first cursors-in-order)))
 
-(defun mc/last-cursor-before (point)
+(defun mc/last-fake-cursor-before (point)
   "Very similar to mc/furthest-cursor-before-point, but ignores (mark) and (point)."
   (let* ((cursors (mc/all-fake-cursors))
          (cursors-before-point (remove-if (lambda (cursor)
@@ -97,14 +97,14 @@
 
 (defun mc/cycle-forward ()
   (interactive)
-  (mc/cycle (mc/next-cursor-after-point)
-            (mc/first-cursor-after (point-min))
+  (mc/cycle (mc/next-fake-cursor-after-point)
+            (mc/first-fake-cursor-after (point-min))
              "We're already at the last cursor."))
 
 (defun mc/cycle-backward ()
   (interactive)
-  (mc/cycle (mc/prev-cursor-before-point)
-            (mc/last-cursor-before (point-max))
+  (mc/cycle (mc/prev-fake-cursor-before-point)
+            (mc/last-fake-cursor-before (point-max))
             "We're already at the last cursor"))
 
 (define-key mc/keymap (kbd "C-v") 'mc/cycle-forward)
