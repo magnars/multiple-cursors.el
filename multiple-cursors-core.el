@@ -49,12 +49,15 @@
        (setq buffer-undo-list ;; otherwise add a function to activate this cursor
              (cons (cons 'apply (cons 'activate-cursor-for-undo (list id))) buffer-undo-list)))))
 
+(defun mc/all-fake-cursors (&optional start end)
+  (remove-if-not 'mc/fake-cursor-p
+                 (overlays-in (or start (point-min))
+                              (or end   (point-max)))))
+
 (defmacro mc/for-each-fake-cursor (&rest forms)
   "Runs the body for each fake cursor, bound to the name cursor"
-  `(mapc #'(lambda (cursor)
-             (when (mc/fake-cursor-p cursor)
-               ,@forms))
-         (overlays-in (point-min) (point-max))))
+  `(mapc #'(lambda (cursor) ,@forms)
+         (mc/all-fake-cursors)))
 
 (defmacro mc/save-excursion (&rest forms)
   "Saves and restores all the state that multiple-cursors cares about."

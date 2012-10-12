@@ -30,7 +30,7 @@
 
 (eval-when-compile (require 'cl))
 
-(defun mc/next-cursor-after-point ()
+(defun mc/next-fake-cursor-after-point ()
   (let ((pos (point))
         (next-pos (point-max))
         next)
@@ -42,7 +42,7 @@
          (setq next cursor))))
     next))
 
-(defun mc/prev-cursor-before-point ()
+(defun mc/prev-fake-cursor-before-point ()
   (let ((pos (point))
         (prev-pos (point-min))
         prev)
@@ -54,23 +54,58 @@
          (setq prev cursor))))
     prev))
 
+(defcustom mc/cycle-looping-behaviour 'continue
+  "What to do if asked to cycle beyond the last cursor or before the first cursor."
+  :type '(radio (const :tag "Loop around to beginning/end of document." continue)
+                (const :tag "Warn and then loop around." warn)
+                (const :tag "Signal an error." error)
+                (const :tag "Don't loop." stop)))
+
+(defun mc/handle-loop-condition (error-message)
+  (ecase mc/cycle-looping-behaviour
+    (error (error error-message))
+    (warn  (message error-message))
+    (continue 'continue)
+    (stop 'stop)))
+
+(defun mc/first-fake-cursor-after (point)
+  "Very similar to mc/furthest-cursor-before-point, but ignores (mark) and (point)."
+  (let* ((cursors (mc/all-fake-cursors))
+         (cursors-after-point (remove-if (lambda (cursor)
+                                           (< (mc/cursor-beg cursor) point))
+                                         cursors))
+         (cursors-in-order (sort* cursors-after-point '< :key 'mc/cursor-beg)))
+    (first cursors-in-order)))
+
+(defun mc/last-fake-cursor-before (point)
+  "Very similar to mc/furthest-cursor-before-point, but ignores (mark) and (point)."
+  (let* ((cursors (mc/all-fake-cursors))
+         (cursors-before-point (remove-if (lambda (cursor)
+                                            (> (mc/cursor-end cursor) point))
+                                          cursors))
+         (cursors-in-order (sort* cursors-before-point '> :key 'mc/cursor-end)))
+    (first cursors-in-order)))
+
+(defun* mc/cycle (next-cursor fallback-cursor loop-message)
+  (when (null next-cursor)
+    (when (eql 'stop (mc/handle-loop-condition loop-message))
+      (return-from mc/cycle nil))
+    (setf next-cursor fallback-cursor))
+  (mc/create-fake-cursor-at-point)
+  (mc/pop-state-from-overlay next-cursor)
+  (recenter))
+
 (defun mc/cycle-forward ()
   (interactive)
-  (let ((next-cursor (mc/next-cursor-after-point)))
-    (unless next-cursor
-      (error "We're already at the last cursor"))
-    (mc/create-fake-cursor-at-point)
-    (mc/pop-state-from-overlay next-cursor)
-    (recenter)))
+  (mc/cycle (mc/next-fake-cursor-after-point)
+            (mc/first-fake-cursor-after (point-min))
+             "We're already at the last cursor."))
 
 (defun mc/cycle-backward ()
   (interactive)
-  (let ((prev-cursor (mc/prev-cursor-before-point)))
-    (unless prev-cursor
-      (error "We're already at the first cursor"))
-    (mc/create-fake-cursor-at-point)
-    (mc/pop-state-from-overlay prev-cursor)
-    (recenter)))
+  (mc/cycle (mc/prev-fake-cursor-before-point)
+            (mc/last-fake-cursor-before (point-max))
+            "We're already at the last cursor"))
 
 (define-key mc/keymap (kbd "C-v") 'mc/cycle-forward)
 (define-key mc/keymap (kbd "M-v") 'mc/cycle-backward)
