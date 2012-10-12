@@ -50,8 +50,7 @@
              (cons (cons 'apply (cons 'activate-cursor-for-undo (list id))) buffer-undo-list)))))
 
 (defun mc/all-fake-cursors (&optional start end)
-  (remove-if-not (lambda (overlay)
-                   (mc/fake-cursor-p overlay))
+  (remove-if-not 'mc/fake-cursor-p
                  (overlays-in (or start (point-min))
                               (or end   (point-max)))))
 
