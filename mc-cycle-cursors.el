@@ -28,6 +28,14 @@
 
 (require 'multiple-cursors-core)
 
+(defcustom mc/cycle-looping-behaviour 'continue
+  "What to do if asked to cycle beyond the last cursor or before the first cursor."
+  :type '(radio (const :tag "Loop around to beginning/end of document." continue)
+                (const :tag "Warn and then loop around." warn)
+                (const :tag "Signal an error." error)
+                (const :tag "Don't loop." stop))
+  :group 'multiple-cursors)
+
 (eval-when-compile (require 'cl))
 
 (defun mc/next-fake-cursor-after-point ()
@@ -53,13 +61,6 @@
          (setq prev-pos cursor-pos)
          (setq prev cursor))))
     prev))
-
-(defcustom mc/cycle-looping-behaviour 'continue
-  "What to do if asked to cycle beyond the last cursor or before the first cursor."
-  :type '(radio (const :tag "Loop around to beginning/end of document." continue)
-                (const :tag "Warn and then loop around." warn)
-                (const :tag "Signal an error." error)
-                (const :tag "Don't loop." stop)))
 
 (defun mc/handle-loop-condition (error-message)
   (ecase mc/cycle-looping-behaviour
