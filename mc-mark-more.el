@@ -141,14 +141,36 @@ With zero ARG, skip the last one and mark next."
     (mc/mark-lines arg 'backwards))
   (mc/maybe-multiple-cursors-mode))
 
-(defun mc/mark-lines (num-lines direction)
-  (dotimes (i num-lines)
-    (mc/create-fake-cursor-at-point)
-    (ecase direction
-      (forwards (loop do (next-line 1 nil) 
-                      while (mc/all-fake-cursors (point) (1+ (point)))))
-      (backwards (loop do (previous-line 1 nil) 
-                       while (mc/all-fake-cursors (point) (1+ (point))))))))
+(defun mc/have-previous-line ()
+  (not (= (point-min) (line-beginning-position))))
+
+(defun mc/have-next-line ()
+  (if (= 0 (current-column))
+      ;; special case of allowing use to mark down past the trailing new line
+      (not (eobp))
+    (save-excursion
+      (forward-line 1)
+      (not (eobp)))))
+
+(defun* mc/mark-lines (num-lines direction)
+  "Puts cursors on the next NUM-LINES of buffer. Calls mc/error
+if there are no more lines in the buffer."
+  (flet ((have-next-line () (ecase direction
+                              (forwards (mc/have-next-line))
+                              (backwards (mc/have-previous-line))))
+         (next-line () (ecase direction
+                         (forwards (forward-line 1))
+                         (backwards (forward-line -1)))))
+    (dotimes (i num-lines)
+      (unless (have-next-line)
+        (return-from mc/mark-lines (mc/error "No more lines available.")))
+      ;; mark here
+      (mc/ensure-fake-cursor-at-point)
+      ;; jump over any already existing marks (this is so one can use
+      ;; mark-next/mark-previosu in whatever order to 'grow' the
+      ;; marked lines.
+      (loop do (next-line)
+            while (mc/all-fake-cursors (point) (1+ (point)))))))
 
 ;;;###autoload
 (defun mc/mark-next-lines (arg)
