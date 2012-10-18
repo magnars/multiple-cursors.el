@@ -180,6 +180,27 @@ Saves the current state in the overlay to be restored later."
                    (mc/make-region-overlay-between-point-and-mark)))
     overlay))
 
+(defun* mc/ensure-fake-cursor-at-point (&optional id)
+  "Creates a fake cursor at point unless one already exists. If
+  ID is non-nill the already existing cursor has to have the same
+  id (or a new one will be created)."
+  (let ((overlays (mc/all-fake-cursors (point) (1+ (point)))))
+    (cond
+     ((null overlays)
+      ;; no overlays, have to create a new one.
+      (mc/create-fake-cursor-at-point))
+     ((null id)
+      ;; have overlays and we're not looking for one with a specific
+      ;; id, any will do.
+      (first overlays))
+     (t ;; want an overlay with a specific id
+      (dolist (o overlays)
+        (when (= id (overlay-get o 'mc-id))
+          ;; found it.
+          (return-from mc/ensure-fake-cursor-at-point o)))
+      ;; didn't find it. create one.
+      (mc/create-fake-cursor-at-point id)))))
+
 (defun mc/execute-command (cmd)
   "Run command, simulating the parts of the command loop that makes sense for fake cursors."
   (setq this-command cmd)
