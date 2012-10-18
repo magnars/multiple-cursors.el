@@ -113,7 +113,7 @@
            (when point-out-of-order
              (exchange-point-and-mark))
            (mc/create-fake-cursor-at-point))
-       (error "no more matches found.")))))
+       (mc/error "no more matches found.")))))
 
 ;;;###autoload
 (defun mc/mark-next-like-this (arg)
@@ -175,11 +175,12 @@ With zero ARG, skip the last one and mark next."
   (mc/mark-previous-like-this -1))
 
 ;;;###autoload
-(defun mc/mark-all-like-this ()
+(defun* mc/mark-all-like-this ()
   "Find and mark all the parts of the buffer matching the currently active region"
   (interactive)
   (unless (region-active-p)
-    (error "Mark a region to match first."))
+    (return-from mc/mark-all-like-this
+      (mc/error "Mark a region to match first.")))
   (mc/remove-fake-cursors)
   (let ((master (point))
         (case-fold-search nil)
@@ -198,7 +199,7 @@ With zero ARG, skip the last one and mark next."
     (multiple-cursors-mode 0)))
 
 ;;;###autoload
-(defun mc/mark-all-in-region (beg end)
+(defun* mc/mark-all-in-region (beg end)
   "Find and mark all the parts in the region matching the given search"
   (interactive "r")
   (let ((search (read-from-minibuffer "Mark all in region: "))
@@ -209,9 +210,10 @@ With zero ARG, skip the last one and mark next."
       (push-mark (match-beginning 0))
       (mc/create-fake-cursor-at-point))
     (let ((first (mc/furthest-cursor-before-point)))
-      (if (not first)
-          (error "Search failed for %S" search)
-        (mc/pop-state-from-overlay first))))
+      (unless first
+        (return-from mc/mark-all-in-region
+          (mc/error "Search failed for %S" search)))
+      (mc/pop-state-from-overlay first)))
   (if (> (mc/num-cursors) 1)
       (multiple-cursors-mode 1)
     (multiple-cursors-mode 0)))
