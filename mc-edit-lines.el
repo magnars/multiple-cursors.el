@@ -29,14 +29,28 @@
 
 (require 'multiple-cursors-core)
 
+(defcustom mc/error-notification 'error
+  "How to notify the user that a DWIM operation, mc/edit-lines,
+mc/cycle, etc. doesn't have enough context to figure out what you
+mean."
+  :type '(radio (const :tag "Signal an error via `error'." error)
+                (const :tag "Display a message in the mini-buffer." message))
+  :group 'multiple-cursors)
+
+(defun mc/error (message &rest args)
+  (ecase mc/error-notification
+    (message (apply 'message message args))
+    (error (apply 'error message args))))
+
 ;;;###autoload
-(defun mc/edit-lines ()
+(defun* mc/edit-lines ()
   "Add one cursor to each line of the active region.
 Starts from mark and moves in straight down or up towards the
 line point is on."
   (interactive)
   (when (not (use-region-p))
-    (error "Mark a set of lines first."))
+    (return-from mc/edit-lines 
+      (mc/error "Mark a set of lines first.")))
   (mc/remove-fake-cursors)
   (let* ((col (current-column))
          (point-line (line-number-at-pos))
