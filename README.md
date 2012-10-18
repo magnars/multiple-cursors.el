@@ -119,6 +119,7 @@ Run the tests with:
 ## Contributors
 
 * [Takafumi Arakaki](https://github.com/tkf) made .mc-lists.el diff friendly
+* [segv](https://github.com/segv) contributed looping to mc/cycle and adding cursors without region for mark-more.
 
 Thanks!
 
