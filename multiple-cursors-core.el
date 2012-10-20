@@ -420,9 +420,15 @@ They are temporarily disabled when multiple-cursors are active.")
   (mapc 'mc/enable-minor-mode mc/temporarily-disabled-minor-modes)
   (setq mc/temporarily-disabled-minor-modes nil))
 
+(defcustom mc/mode-line
+  `(" mc:" (:eval (format ,(propertize "%d" 'face 'font-lock-warning-face)
+                          (mc/num-cursors))))
+  "What to display in the mode line while multiple-cursors-mode is active."
+  :group 'multiple-cursors)
+
 (define-minor-mode multiple-cursors-mode
   "Mode while multiple cursors are active."
-  nil " mc" mc/keymap
+  nil mc/mode-line mc/keymap
   (if multiple-cursors-mode
       (progn
         (mc/temporarily-disable-unsupported-minor-modes)
