@@ -425,6 +425,7 @@ They are temporarily disabled when multiple-cursors are active.")
                           (mc/num-cursors))))
   "What to display in the mode line while multiple-cursors-mode is active."
   :group 'multiple-cursors)
+(put 'mc/mode-line 'risky-local-variable t)
 
 (define-minor-mode multiple-cursors-mode
   "Mode while multiple cursors are active."
