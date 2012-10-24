@@ -551,6 +551,7 @@ for running commands with multiple cursors.")
                                      describe-function
                                      describe-bindings
                                      describe-prefix-bindings
+                                     view-echo-area-messages
                                      other-window
                                      kill-buffer-and-window
                                      split-window-right
@@ -558,6 +559,8 @@ for running commands with multiple cursors.")
                                      delete-other-windows
                                      toggle-window-split
                                      mwheel-scroll
+                                     scroll-up-command
+                                     scroll-down-command
                                      mouse-set-point
                                      mouse-drag-region
                                      quit-window
@@ -611,6 +614,8 @@ for running commands with multiple cursors.")
                                         backward-delete-char-untabify
                                         delete-char delete-forward-char
                                         delete-backward-char
+                                        c-electric-backspace
+                                        org-delete-backward-char
                                         just-one-space
                                         zap-to-char
                                         end-of-line
