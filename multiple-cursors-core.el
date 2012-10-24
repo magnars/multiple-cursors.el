@@ -616,6 +616,8 @@ for running commands with multiple cursors.")
                                         delete-backward-char
                                         c-electric-backspace
                                         org-delete-backward-char
+                                        paredit-backward-delete
+                                        autopair-backspace
                                         just-one-space
                                         zap-to-char
                                         end-of-line
