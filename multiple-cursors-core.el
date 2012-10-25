@@ -118,6 +118,17 @@ highlights the entire width of the window."
     (overlay-put overlay 'type 'additional-region)
     overlay))
 
+(defvar mc/cursor-specific-vars '(autopair-action
+                                  autopair-wrap-action
+                                  er/history)
+  "A list of vars that need to be tracked on a per-cursor basis.")
+
+(defun mc/store-cursor-specific-var (var)
+  (when (boundp var) (overlay-put o var (eval var))))
+
+(defun mc/restore-cursor-specific-var (var)
+  (when (boundp var) (set var (overlay-get o var))))
+
 (defun mc/store-current-state-in-overlay (o)
   "Store relevant info about point and mark in the given overlay."
   (overlay-put o 'point (set-marker (make-marker) (point)))
@@ -128,7 +139,7 @@ highlights the entire width of the window."
   (overlay-put o 'mark-active mark-active)
   (overlay-put o 'yank-undo-function yank-undo-function)
   (overlay-put o 'kill-ring-yank-pointer kill-ring-yank-pointer)
-  (when (boundp 'er/history) (overlay-put o 'er/history er/history))
+  (mapc 'mc/store-cursor-specific-var mc/cursor-specific-vars)
   o)
 
 (defun mc/restore-state-from-overlay (o)
@@ -141,7 +152,7 @@ highlights the entire width of the window."
   (setq mark-active (overlay-get o 'mark-active))
   (setq yank-undo-function (overlay-get o 'yank-undo-function))
   (setq kill-ring-yank-pointer (overlay-get o 'kill-ring-yank-pointer))
-  (when (boundp 'er/history) (setq er/history (overlay-get o 'er/history))))
+  (mapc 'mc/restore-cursor-specific-var mc/cursor-specific-vars))
 
 (defun mc/remove-fake-cursor (o)
   "Delete overlay with state, including dependent overlays and markers."
@@ -186,6 +197,7 @@ Saves the current state in the overlay to be restored later."
   (run-hooks 'pre-command-hook)
   (unless (eq this-command 'ignore)
     (call-interactively cmd))
+  (run-hooks 'post-command-hook)
   (when deactivate-mark (deactivate-mark)))
 
 (defvar mc--executing-command-for-fake-cursor nil)
