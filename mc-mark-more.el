@@ -85,9 +85,18 @@
       (multiple-cursors-mode 1)
     (multiple-cursors-mode 0)))
 
+(defvar mc/enclose-search-term nil
+  "How should mc/mark-more-* search for more matches?
+
+Match everything: nil
+Match only whole words: 'words
+Match only whole symbols: 'symbols
+
+Use like case-fold-search, don't recommend setting it globally.")
+
 (defun mc/mark-more-like-this (skip-last direction)
   (let ((case-fold-search nil)
-        (re (regexp-opt (mc/region-strings)))
+        (re (regexp-opt (mc/region-strings) mc/enclose-search-term))
         (point-out-of-order (ecase direction
                               (forwards       (< (point) (mark)))
                               (backwards (not (< (point) (mark))))))
@@ -107,7 +116,7 @@
      (goto-char start-char)
      (when skip-last
        (mc/remove-fake-cursor furthest-cursor))
-     (if (funcall search-function re nil t) 
+     (if (funcall search-function re nil t)
          (progn
            (push-mark (funcall match-point-getter 0))
            (when point-out-of-order
@@ -129,6 +138,18 @@ With zero ARG, skip the last one and mark next."
   (mc/maybe-multiple-cursors-mode))
 
 ;;;###autoload
+(defun mc/mark-next-word-like-this (arg)
+  (interactive "p")
+  (let ((mc/enclose-search-term 'words))
+    (mc/mark-next-like-this arg)))
+
+;;;###autoload
+(defun mc/mark-next-symbol-like-this (arg)
+  (interactive "p")
+  (let ((mc/enclose-search-term 'symbols))
+    (mc/mark-next-like-this arg)))
+
+;;;###autoload
 (defun mc/mark-previous-like-this (arg)
   "Find and mark the previous part of the buffer matching the currently active region
 With negative ARG, delete the last one instead.
@@ -141,13 +162,25 @@ With zero ARG, skip the last one and mark next."
     (mc/mark-lines arg 'backwards))
   (mc/maybe-multiple-cursors-mode))
 
+;;;###autoload
+(defun mc/mark-previous-word-like-this (arg)
+  (interactive "p")
+  (let ((mc/enclose-search-term 'words))
+    (mc/mark-previous-like-this arg)))
+
+;;;###autoload
+(defun mc/mark-previous-symbol-like-this (arg)
+  (interactive "p")
+  (let ((mc/enclose-search-term 'symbols))
+    (mc/mark-previous-like-this arg)))
+
 (defun mc/mark-lines (num-lines direction)
   (dotimes (i num-lines)
     (mc/create-fake-cursor-at-point)
     (ecase direction
-      (forwards (loop do (next-line 1 nil) 
+      (forwards (loop do (next-line 1 nil)
                       while (mc/all-fake-cursors (point) (1+ (point)))))
-      (backwards (loop do (previous-line 1 nil) 
+      (backwards (loop do (previous-line 1 nil)
                        while (mc/all-fake-cursors (point) (1+ (point))))))))
 
 ;;;###autoload
@@ -184,7 +217,7 @@ With zero ARG, skip the last one and mark next."
   (let ((master (point))
         (case-fold-search nil)
         (point-first (< (point) (mark)))
-        (re (regexp-opt (mc/region-strings))))
+        (re (regexp-opt (mc/region-strings) mc/enclose-search-term)))
     (mc/save-excursion
      (goto-char 0)
      (while (search-forward-regexp re nil t)
@@ -196,6 +229,18 @@ With zero ARG, skip the last one and mark next."
   (if (> (mc/num-cursors) 1)
       (multiple-cursors-mode 1)
     (multiple-cursors-mode 0)))
+
+;;;###autoload
+(defun mc/mark-all-words-like-this ()
+  (interactive)
+  (let ((mc/enclose-search-term 'words))
+    (mc/mark-all-like-this)))
+
+;;;###autoload
+(defun mc/mark-all-symbols-like-this ()
+  (interactive)
+  (let ((mc/enclose-search-term 'symbols))
+    (mc/mark-all-like-this)))
 
 ;;;###autoload
 (defun mc/mark-all-in-region (beg end)
