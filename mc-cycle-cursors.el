@@ -59,7 +59,8 @@
   :type '(radio (const :tag "Loop around to beginning/end of document." continue)
                 (const :tag "Warn and then loop around." warn)
                 (const :tag "Signal an error." error)
-                (const :tag "Don't loop." stop)))
+                (const :tag "Don't loop." stop))
+  :group 'multiple-cursors)
 
 (defun mc/handle-loop-condition (error-message)
   (ecase mc/cycle-looping-behaviour
