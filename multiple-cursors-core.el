@@ -330,35 +330,35 @@ Some commands are so unsupported that they are even prevented for
 the original cursor, to inform about the lack of support."
   (unless mc--executing-command-for-fake-cursor
 
-   (if (eq 1 (mc/num-cursors)) ;; no fake cursors? disable mc-mode
-       (multiple-cursors-mode 0)
+    (if (eq 1 (mc/num-cursors)) ;; no fake cursors? disable mc-mode
+        (multiple-cursors-mode 0)
 
-     (when this-original-command
-       (let ((original-command (or mc--this-command
-                                   (command-remapping this-original-command)
-                                   this-original-command)))
+      (when this-original-command
+        (let ((original-command (or mc--this-command
+                                    (command-remapping this-original-command)
+                                    this-original-command)))
 
-         ;; skip keyboard macros, since they will generate actual commands that are
-         ;; also run in the command loop - we'll handle those later instead.
-         (when (functionp original-command)
+          ;; skip keyboard macros, since they will generate actual commands that are
+          ;; also run in the command loop - we'll handle those later instead.
+          (when (functionp original-command)
 
-           ;; if it's a lambda, we can't know if it's supported or not
-           ;; - so go ahead and assume it's ok, because we're just optimistic like that
-           (if (not (symbolp original-command))
-               (mc/execute-command-for-all-fake-cursors original-command)
+            ;; if it's a lambda, we can't know if it's supported or not
+            ;; - so go ahead and assume it's ok, because we're just optimistic like that
+            (if (not (symbolp original-command))
+                (mc/execute-command-for-all-fake-cursors original-command)
 
-             ;; otherwise it's a symbol, and we can be more thorough
-             (if (get original-command 'mc--unsupported)
-                 (message "%S is not supported with multiple cursors%s"
-                          original-command
-                          (get original-command 'mc--unsupported))
-               (when (and original-command
-                          (not (memq original-command mc--default-cmds-to-run-once))
-                          (not (memq original-command mc/cmds-to-run-once))
-                          (or (memq original-command mc--default-cmds-to-run-for-all)
-                              (memq original-command mc/cmds-to-run-for-all)
-                              (mc/prompt-for-inclusion-in-whitelist original-command)))
-                 (mc/execute-command-for-all-fake-cursors original-command))))))))))
+              ;; otherwise it's a symbol, and we can be more thorough
+              (if (get original-command 'mc--unsupported)
+                  (message "%S is not supported with multiple cursors%s"
+                           original-command
+                           (get original-command 'mc--unsupported))
+                (when (and original-command
+                           (not (memq original-command mc--default-cmds-to-run-once))
+                           (not (memq original-command mc/cmds-to-run-once))
+                           (or (memq original-command mc--default-cmds-to-run-for-all)
+                               (memq original-command mc/cmds-to-run-for-all)
+                               (mc/prompt-for-inclusion-in-whitelist original-command)))
+                  (mc/execute-command-for-all-fake-cursors original-command))))))))))
 
 (defun mc/remove-fake-cursors ()
   "Remove all fake cursors.
@@ -536,9 +536,15 @@ for running commands with multiple cursors.")
                                      mc/edit-ends-of-lines
                                      mc/edit-beginnings-of-lines
                                      mc/mark-next-like-this
+                                     mc/mark-next-word-like-this
+                                     mc/mark-next-symbol-like-this
                                      mc/mark-previous-like-this
-                                     mc/mark-more-like-this-extended
+                                     mc/mark-previous-word-like-this
+                                     mc/mark-previous-symbol-like-this
                                      mc/mark-all-like-this
+                                     mc/mark-all-words-like-this
+                                     mc/mark-all-symbols-like-this
+                                     mc/mark-more-like-this-extended
                                      mc/cycle-forward
                                      mc/cycle-backward
                                      rrm/switch-to-multiple-cursors
