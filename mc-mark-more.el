@@ -308,6 +308,60 @@ is one of the above."
         (setq ev (read-event "Use arrow keys for more marks: "))))
     (push ev unread-command-events)))
 
+(defun mc/mark-all-like-this-dwim (arg)
+  "Uses some sane defaults to guess what the user want to do:
+
+- If inside a defun, find and mark all the parts of current defun matchign
+the currently active region. If no region is active, activate the word
+under cursor.
+- If in SGML/HTML mode and inside a tag, select the tag and its pair
+
+With prefix, it behaves the same as original `mc/mark-all-like-this'"
+  (interactive "P")
+  (if arg
+      (mc/mark-all-like-this)
+    (let ((mode (with-current-buffer (current-buffer) major-mode)))
+      (cond ((and (member mode '(sgml-mode html-mode))
+                  (mc/mark-tags)) t)
+            ((bounds-of-thing-at-point 'defun)
+             (mc/select-under-cursor)
+             (save-restriction
+               (widen)
+               (narrow-to-defun)
+               (mc/mark-all-like-this)))
+            (t (mc/select-under-cursor) (mc/mark-all-like-this))))))
+
+(defun mc/select-under-cursor ()
+  "Select the word under cursor"
+  (interactive)
+  (when (not (use-region-p))
+    (let ((b (bounds-of-thing-at-point 'word)))
+      (goto-char (car b))
+      (set-mark (cdr b)))))
+
+(defun mc/mark-tags ()
+  "Mark the tag we're in and its pair for renaming."
+  (interactive)
+  (let ((context (car (last (save-excursion (sgml-get-context))))))
+    (when (and context
+               (> (point) (aref context 2))
+               (< (point) (aref context 3)))
+      (let* ((tag-position (aref context 1))
+             (tag-length (length (aref context 4)))
+             (main-start (- (aref context 3) 1 tag-length))
+             (mirror-start (save-excursion
+                             (if (eq tag-position 'open)
+                                 (sgml-skip-tag-forward 1)
+                               (sgml-skip-tag-backward 1)
+                               (forward-sexp))
+                             (- (point) 1 tag-length))))
+        (goto-char main-start)
+        (set-mark (+ main-start tag-length))
+        (mc/save-excursion (goto-char mirror-start)
+                           (push-mark (+ mirror-start tag-length))
+                           (mc/create-fake-cursor-at-point))
+        (mc/maybe-multiple-cursors-mode)))))
+
 (provide 'mc-mark-more)
 
 ;;; mc-mark-more.el ends here
