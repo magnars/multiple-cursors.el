@@ -311,6 +311,7 @@ is one of the above."
 
 (defvar mc--restrict-mark-all-to-symbols nil)
 
+;;;###autoload
 (defun mc/mark-all-like-this-dwim (arg)
   "Tries to guess what you want to mark all of.
 Can be pressed multiple times to increase selection.
@@ -345,6 +346,7 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
 (defun mc--in-defun ()
   (bounds-of-thing-at-point 'defun))
 
+;;;###autoload
 (defun mc/mark-all-like-this-in-defun ()
   "Mark all like this in defun."
   (interactive)
@@ -355,6 +357,7 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
         (mc/mark-all-like-this))
     (mc/mark-all-like-this)))
 
+;;;###autoload
 (defun mc/mark-all-words-like-this-in-defun ()
   "Mark all words like this in defun."
   (interactive)
@@ -365,6 +368,7 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
         (mc/mark-all-words-like-this))
     (mc/mark-all-words-like-this)))
 
+;;;###autoload
 (defun mc/mark-all-symbols-like-this-in-defun ()
   "Mark all symbols like this in defun."
   (interactive)
@@ -400,6 +404,7 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
          (>= (point) beg)
          (<= (point) end))))
 
+;;;###autoload
 (defun mc/mark-sgml-tag-pair ()
   "Mark the tag we're in and its pair for renaming."
   (interactive)
