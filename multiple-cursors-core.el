@@ -458,6 +458,12 @@ They are temporarily disabled when multiple-cursors are active.")
 
 (add-hook 'after-revert-hook #'(lambda () (multiple-cursors-mode 0)))
 
+(defun mc/maybe-multiple-cursors-mode ()
+  "Enable multiple-cursors-mode if there is more than one currently active cursor."
+  (if (> (mc/num-cursors) 1)
+      (multiple-cursors-mode 1)
+    (multiple-cursors-mode 0)))
+
 (defmacro unsupported-cmd (cmd msg)
   "Adds command to list of unsupported commands and prevents it
 from being executed if in multiple-cursors-mode."

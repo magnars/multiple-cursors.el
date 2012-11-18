@@ -80,12 +80,6 @@
                             (mc/cursor-end cursor))))
     strings))
 
-(defun mc/maybe-multiple-cursors-mode ()
-  "Enable multiple-cursors-mode if there is more than one currently active cursor."
-  (if (> (mc/num-cursors) 1)
-      (multiple-cursors-mode 1)
-    (multiple-cursors-mode 0)))
-
 (defvar mc/enclose-search-term nil
   "How should mc/mark-more-* search for more matches?
 
