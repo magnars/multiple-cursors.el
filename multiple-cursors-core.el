@@ -545,6 +545,11 @@ for running commands with multiple cursors.")
                                      mc/mark-all-words-like-this
                                      mc/mark-all-symbols-like-this
                                      mc/mark-more-like-this-extended
+                                     mc/mark-all-like-this-in-defun
+                                     mc/mark-all-words-like-this-in-defun
+                                     mc/mark-all-symbols-like-this-in-defun
+                                     mc/mark-all-like-this-dwim
+                                     mc/mark-sgml-tags
                                      mc/cycle-forward
                                      mc/cycle-backward
                                      rrm/switch-to-multiple-cursors

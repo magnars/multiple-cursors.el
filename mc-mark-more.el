@@ -28,6 +28,7 @@
 ;;; Code:
 
 (require 'multiple-cursors-core)
+(require 'thingatpt)
 
 (defun mc/cursor-end (cursor)
   (if (overlay-get cursor 'mark-active)
@@ -308,59 +309,122 @@ is one of the above."
         (setq ev (read-event "Use arrow keys for more marks: "))))
     (push ev unread-command-events)))
 
-(defun mc/mark-all-like-this-dwim (arg)
-  "Uses some sane defaults to guess what the user want to do:
+(defvar mc--restrict-mark-all-to-symbols nil)
 
-- If inside a defun, find and mark all the parts of current defun matchign
-the currently active region. If no region is active, activate the word
-under cursor.
-- If in SGML/HTML mode and inside a tag, select the tag and its pair
+(defun mc/mark-all-like-this-dwim (arg)
+  "Tries to guess what you want to mark all of.
+Can be pressed multiple times to increase selection.
 
 With prefix, it behaves the same as original `mc/mark-all-like-this'"
   (interactive "P")
   (if arg
       (mc/mark-all-like-this)
-    (let ((mode (with-current-buffer (current-buffer) major-mode)))
-      (cond ((and (member mode '(sgml-mode html-mode))
-                  (mc/mark-tags)) t)
-            ((bounds-of-thing-at-point 'defun)
-             (mc/select-under-cursor)
-             (save-restriction
-               (widen)
-               (narrow-to-defun)
-               (mc/mark-all-like-this)))
-            (t (mc/select-under-cursor) (mc/mark-all-like-this))))))
+    (if (and (mc--no-region-and-in-sgmlish-mode)
+             (mc--on-tag-name-p))
+        (mc/mark-sgml-tags)
+      (let ((before (mc/num-cursors)))
+        (unless (eq last-command 'mc/mark-all-like-this-dwim)
+          (setq mc--restrict-mark-all-to-symbols nil))
+        (unless (use-region-p)
+          (mc--mark-symbol-at-point)
+          (setq mc--restrict-mark-all-to-symbols t))
+        (if mc--restrict-mark-all-to-symbols
+            (mc/mark-all-symbols-like-this-in-defun)
+          (mc/mark-all-like-this-in-defun))
+        (when (<= (mc/num-cursors) before)
+          (if mc--restrict-mark-all-to-symbols
+              (mc/mark-all-symbols-like-this)
+            (mc/mark-all-like-this)))
+        (when (<= (mc/num-cursors) before)
+          (mc/mark-all-like-this))))))
 
-(defun mc/select-under-cursor ()
-  "Select the word under cursor"
+(defun mc--no-region-and-in-sgmlish-mode ()
+  (and (not (use-region-p))
+       (memq major-mode '(sgml-mode html-mode))))
+
+(defun mc--in-defun ()
+  (bounds-of-thing-at-point 'defun))
+
+(defun mc/mark-all-like-this-in-defun ()
+  "Mark all like this in defun."
+  (interactive)
+  (if (mc--in-defun)
+      (save-restriction
+        (widen)
+        (narrow-to-defun)
+        (mc/mark-all-like-this))
+    (mc/mark-all-like-this)))
+
+(defun mc/mark-all-words-like-this-in-defun ()
+  "Mark all words like this in defun."
+  (interactive)
+  (if (mc--in-defun)
+      (save-restriction
+        (widen)
+        (narrow-to-defun)
+        (mc/mark-all-words-like-this))
+    (mc/mark-all-words-like-this)))
+
+(defun mc/mark-all-symbols-like-this-in-defun ()
+  "Mark all symbols like this in defun."
+  (interactive)
+  (if (mc--in-defun)
+      (save-restriction
+        (widen)
+        (narrow-to-defun)
+        (mc/mark-all-symbols-like-this))
+    (mc/mark-all-symbols-like-this)))
+
+(defun mc--mark-symbol-at-point ()
+  "Select the symbol under cursor"
   (interactive)
   (when (not (use-region-p))
-    (let ((b (bounds-of-thing-at-point 'word)))
+    (let ((b (bounds-of-thing-at-point 'symbol)))
       (goto-char (car b))
       (set-mark (cdr b)))))
 
-(defun mc/mark-tags ()
+(defun mc--get-nice-sgml-context ()
+  (car
+   (last
+    (progn
+      (when (looking-at "<") (forward-char 1))
+      (when (looking-back ">") (forward-char -1))
+      (sgml-get-context)))))
+
+(defun mc--on-tag-name-p ()
+  (let* ((context (save-excursion (mc--get-nice-sgml-context)))
+         (tag-name-len (length (aref context 4)))
+         (beg (aref context 2))
+         (end (+ beg tag-name-len (if (eq 'open (aref context 1)) 1 3))))
+    (and context
+         (>= (point) beg)
+         (<= (point) end))))
+
+(defun mc/mark-sgml-tags ()
   "Mark the tag we're in and its pair for renaming."
   (interactive)
-  (let ((context (car (last (save-excursion (sgml-get-context))))))
-    (when (and context
-               (> (point) (aref context 2))
-               (< (point) (aref context 3)))
-      (let* ((tag-position (aref context 1))
-             (tag-length (length (aref context 4)))
-             (main-start (- (aref context 3) 1 tag-length))
-             (mirror-start (save-excursion
-                             (if (eq tag-position 'open)
-                                 (sgml-skip-tag-forward 1)
-                               (sgml-skip-tag-backward 1)
-                               (forward-sexp))
-                             (- (point) 1 tag-length))))
-        (goto-char main-start)
-        (set-mark (+ main-start tag-length))
-        (mc/save-excursion (goto-char mirror-start)
-                           (push-mark (+ mirror-start tag-length))
-                           (mc/create-fake-cursor-at-point))
-        (mc/maybe-multiple-cursors-mode)))))
+  (when (not (mc--inside-tag-p))
+    (error "Place point inside tag to rename."))
+  (let ((context (mc--get-nice-sgml-context)))
+    (if (looking-at "</")
+        (setq context (car (last (sgml-get-context)))))
+    (goto-char (aref context 2))
+    (let* ((tag-name (aref context 4))
+           (num-chars (length tag-name))
+           (master-start (1+ (point)))
+           (mirror-end (save-excursion
+                         (sgml-skip-tag-forward 1)
+                         (1- (point)))))
+      (goto-char (- mirror-end num-chars))
+      (set-mark mirror-end)
+      (mc/create-fake-cursor-at-point)
+      (goto-char master-start)
+      (set-mark (+ (point) num-chars))))
+  (mc/maybe-multiple-cursors-mode))
+
+(defun mc--inside-tag-p ()
+  (save-excursion
+    (not (null (sgml-get-context)))))
 
 (provide 'mc-mark-more)
 
