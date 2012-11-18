@@ -121,6 +121,7 @@ Run the tests with:
 * [Takafumi Arakaki](https://github.com/tkf) made .mc-lists.el diff friendly
 * [Marco Baringer](https://github.com/segv) contributed looping to mc/cycle and adding cursors without region for mark-more.
 * [Ivan Andrus](https://github.com/gvol) added showing number of cursors in mode-line
+* [Fuco](https://github.com/Fuco1) added the first version of `mc/mark-all-like-this-dwim`
 
 Thanks!
 
