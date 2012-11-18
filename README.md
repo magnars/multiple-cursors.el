@@ -35,45 +35,55 @@ insert a newline in multiple-cursors-mode, use `C-j`.
 
 You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.com/e13.html).
 
-## More commands to play around with
+## Command overview
 
-I've set up my key-bindings like so:
+### Mark one more occurrence
 
-    ;; From active region to multiple cursors:
-    (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-    (global-set-key (kbd "C-S-c C-e") 'mc/edit-ends-of-lines)
-    (global-set-key (kbd "C-S-c C-a") 'mc/edit-beginnings-of-lines)
+ - `mc/mark-next-like-this`: Adds a cursor and region at the next part of the buffer forwards that matches the current region.
+ - `mc/mark-next-word-like-this`: Like `mc/mark-next-like-this` but only for whole words.
+ - `mc/mark-next-symbol-like-this`: Like `mc/mark-next-like-this` but only for whole symbols.
+ - `mc/mark-previous-like-this`: Adds a cursor and region at the next part of the buffer backwards that matches the current region.
+ - `mc/mark-previous-word-like-this`: Like `mc/mark-previous-like-this` but only for whole words.
+ - `mc/mark-previous-symbol-like-this`: Like `mc/mark-previous-like-this` but only for whole symbols.
+ - `mc/mark-more-like-this-extended`: Use arrow keys to quickly mark/skip next/previous occurances.
 
-When you have an active region that spans multiple lines, the preceeding three
-commands will add one cursor to each line.
+### Mark many occurrences
 
-    ;; Rectangular region mode
-    (global-set-key (kbd "H-SPC") 'set-rectangular-region-anchor)
+ - `mc/mark-all-like-this`: Marks all parts of the buffer that matches the current region.
+ - `mc/mark-all-words-like-this`: Like `mc/mark-all-like-this` but only for whole words.
+ - `mc/mark-all-symbols-like-this`: Like `mc/mark-all-like-this` but only for whole symbols.
+ - `mc/mark-all-in-region`: Prompts for a string to match in the region, adding cursors to all of them.
+ - `mc/mark-all-like-this-in-defun`: Marks all parts of the current defun that matches the current region.
+ - `mc/mark-all-words-like-this-in-defun`: Like `mc/mark-all-like-this-in-defun` but only for whole words.
+ - `mc/mark-all-symbols-like-this-in-defun`: Like `mc/mark-all-like-this-in-defun` but only for whole symbols.
+ - `mc/mark-all-like-this-dwim`: Tries to be smart about marking everything you want. Can be pressed multiple times.
 
-Think of this one as `set-mark` except you're marking a rectangular region. It is
-an exceedingly quick way of adding multiple cursors to multiple lines.
+### Special
 
-    ;; Mark more like this
-    (global-set-key (kbd "M-æ") 'mc/mark-all-like-this)
-    (global-set-key (kbd "C-å") 'mc/mark-previous-like-this)
-    (global-set-key (kbd "C-æ") 'mc/mark-next-like-this)
-    (global-set-key (kbd "C-Æ") 'mc/mark-more-like-this-extended)
-    (global-set-key (kbd "M-å") 'mc/mark-all-in-region)
+ - `set-rectangular-region-anchor`: Think of this one as `set-mark` except you're marking a rectangular region.
+ - `mc/mark-sgml-tag-pair`: Mark the current opening and closing tag.
 
-Okay, yes, I have a crazy norwegian keyboard. Regardless, these will look at
-whatever you've got selected at the moment, and mark more places like that in
-the buffer.
+## Tips and tricks
 
-If you would like to keep the global bindings clean, and get custom keybindings
-when the region is active, you can try [region-bindings-mode](https://github.com/fgallina/region-bindings-mode).
+- To get out of multiple-cursors-mode, press `<return>` or `C-g`. The latter will
+  first disable multiple regions before disabling multiple cursors. If you want to
+  insert a newline in multiple-cursors-mode, use `C-j`.
+
+- Sometimes you end up with cursors outside of your view. You can
+  scroll the screen to center on each cursor with `C-v` and `M-v`.
+
+- Try pressing `mc/mark-next-like-this` with no region selected. It will just add a cursor
+  on the next line.
+
+- Try pressing `mc/mark-all-like-this-dwim` on a tagname in html-mode.
+
+- Notice that the number of cursors active can be seen in the modeline.
+
+- If you would like to keep the global bindings clean, and get custom keybindings
+  when the region is active, you can try [region-bindings-mode](https://github.com/fgallina/region-bindings-mode).
 
 BTW, I highly recommend adding `mc/mark-next-like-this` to a key binding that's
 right next to the key for `er/expand-region`.
-
-## Scrolling
-
-Sometimes you end up with cursors outside of your view. You can scroll the
-screen to center on each cursor with `C-v` and `M-v`.
 
 ## Unknown commands
 
