@@ -321,7 +321,7 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
       (mc/mark-all-like-this)
     (if (and (mc--no-region-and-in-sgmlish-mode)
              (mc--on-tag-name-p))
-        (mc/mark-sgml-tags)
+        (mc/mark-sgml-tag-pair)
       (let ((before (mc/num-cursors)))
         (unless (eq last-command 'mc/mark-all-like-this-dwim)
           (setq mc--restrict-mark-all-to-symbols nil))
@@ -400,7 +400,7 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
          (>= (point) beg)
          (<= (point) end))))
 
-(defun mc/mark-sgml-tags ()
+(defun mc/mark-sgml-tag-pair ()
   "Mark the tag we're in and its pair for renaming."
   (interactive)
   (when (not (mc--inside-tag-p))

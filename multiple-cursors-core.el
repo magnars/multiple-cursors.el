@@ -549,7 +549,7 @@ for running commands with multiple cursors.")
                                      mc/mark-all-words-like-this-in-defun
                                      mc/mark-all-symbols-like-this-in-defun
                                      mc/mark-all-like-this-dwim
-                                     mc/mark-sgml-tags
+                                     mc/mark-sgml-tag-pair
                                      mc/cycle-forward
                                      mc/cycle-backward
                                      rrm/switch-to-multiple-cursors
