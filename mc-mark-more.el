@@ -335,7 +335,7 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
 
 (defun mc--no-region-and-in-sgmlish-mode ()
   (and (not (use-region-p))
-       (memq major-mode '(sgml-mode html-mode))))
+       (derived-mode-p 'sgml-mode)))
 
 (defun mc--in-defun ()
   (bounds-of-thing-at-point 'defun))
