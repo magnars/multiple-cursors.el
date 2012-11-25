@@ -513,9 +513,11 @@ for running commands with multiple cursors.")
     (insert "(setq " (symbol-name list-symbol) "\n"
             "      '(")
     (newline-and-indent)
+    (set list-symbol
+         (sort value (lambda (x y) (string-lessp (symbol-name x)
+                                                 (symbol-name y)))))
     (mapc #'(lambda (cmd) (insert (format "%S" cmd)) (newline-and-indent))
-          (sort value (lambda (x y) (string-lessp (symbol-name x)
-                                                  (symbol-name y)))))
+          value)
     (insert "))")
     (newline)))
 
