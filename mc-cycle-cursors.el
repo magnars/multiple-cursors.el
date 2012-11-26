@@ -113,4 +113,10 @@
 
 (provide 'mc-cycle-cursors)
 
+
+;; Local Variables:
+;; coding: utf-8
+;; byte-compile-warnings: (not cl-functions)
+;; End:
+
 ;;; mc-cycle-cursors.el ends here
