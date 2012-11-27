@@ -123,12 +123,6 @@ highlights the entire width of the window."
                                   er/history)
   "A list of vars that need to be tracked on a per-cursor basis.")
 
-(defun mc/store-cursor-specific-var (var)
-  (when (boundp var) (overlay-put o var (eval var))))
-
-(defun mc/restore-cursor-specific-var (var)
-  (when (boundp var) (set var (overlay-get o var))))
-
 (defun mc/store-current-state-in-overlay (o)
   "Store relevant info about point and mark in the given overlay."
   (overlay-put o 'point (set-marker (make-marker) (point)))
@@ -139,7 +133,8 @@ highlights the entire width of the window."
   (overlay-put o 'mark-active mark-active)
   (overlay-put o 'yank-undo-function yank-undo-function)
   (overlay-put o 'kill-ring-yank-pointer kill-ring-yank-pointer)
-  (mapc 'mc/store-cursor-specific-var mc/cursor-specific-vars)
+  (dolist (var mc/cursor-specific-vars)
+    (when (boundp var) (overlay-put o var (symbol-value var))))
   o)
 
 (defun mc/restore-state-from-overlay (o)
@@ -152,7 +147,8 @@ highlights the entire width of the window."
   (setq mark-active (overlay-get o 'mark-active))
   (setq yank-undo-function (overlay-get o 'yank-undo-function))
   (setq kill-ring-yank-pointer (overlay-get o 'kill-ring-yank-pointer))
-  (mapc 'mc/restore-cursor-specific-var mc/cursor-specific-vars))
+  (dolist (var mc/cursor-specific-vars)
+    (when (boundp var) (set var (overlay-get o var)))))
 
 (defun mc/remove-fake-cursor (o)
   "Delete overlay with state, including dependent overlays and markers."
@@ -683,5 +679,10 @@ for running commands with multiple cursors.")
 (load mc/list-file t) ;; load, but no errors if it does not exist yet please
 
 (provide 'multiple-cursors-core)
+
+;; Local Variables:
+;; coding: utf-8
+;; byte-compile-warnings: (not cl-functions)
+;; End:
 
 ;;; multiple-cursors-core.el ends here
