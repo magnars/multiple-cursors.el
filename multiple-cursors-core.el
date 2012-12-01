@@ -505,7 +505,7 @@ for running commands with multiple cursors.")
 
 (defun mc/dump-list (list-symbol)
   "Insert (setq 'LIST-SYMBOL LIST-VALUE) to current buffer."
-  (let ((value (symbol-value list-symbol)))
+  (symbol-macrolet ((value (symbol-value list-symbol)))
     (insert "(setq " (symbol-name list-symbol) "\n"
             "      '(")
     (newline-and-indent)
