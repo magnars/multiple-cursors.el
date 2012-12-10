@@ -145,12 +145,7 @@ With zero ARG, skip the last one and mark next."
   (not (= (point-min) (line-beginning-position))))
 
 (defun mc/have-next-line ()
-  (if (= 0 (current-column))
-      ;; special case of allowing use to mark down past the trailing new line
-      (not (eobp))
-    (save-excursion
-      (forward-line 1)
-      (not (eobp)))))
+  (not (= (point-max) (line-end-position))))
 
 (defun* mc/mark-lines (num-lines direction)
   "Puts cursors on the next NUM-LINES of buffer. Calls mc/error
@@ -158,9 +153,9 @@ if there are no more lines in the buffer."
   (flet ((have-next-line () (ecase direction
                               (forwards (mc/have-next-line))
                               (backwards (mc/have-previous-line))))
-         (next-line () (ecase direction
-                         (forwards (forward-line 1))
-                         (backwards (forward-line -1)))))
+         (move-one-line () (ecase direction
+                             (forwards (next-line 1))
+                             (backwards (previous-line 1)))))
     (dotimes (i num-lines)
       (unless (have-next-line)
         (return-from mc/mark-lines (mc/error "No more lines available.")))
@@ -169,7 +164,7 @@ if there are no more lines in the buffer."
       ;; jump over any already existing marks (this is so one can use
       ;; mark-next/mark-previosu in whatever order to 'grow' the
       ;; marked lines.
-      (loop do (next-line)
+      (loop do (move-one-line)
             while (mc/all-fake-cursors (point) (1+ (point)))))))
 
 ;;;###autoload

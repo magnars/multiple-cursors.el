@@ -4,3 +4,6 @@
 [submodule "util/espuds"]
 	path = util/espuds
 	url = git://github.com/rejeep/espuds.git
+[submodule "util/vendor/ansi"]
+	path = util/vendor/ansi
+	url = https://github.com/rejeep/ansi.git

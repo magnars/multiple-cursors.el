@@ -172,3 +172,23 @@ Feature: Multiple cursors core
     And I press "M-v"
     Then the cursor should be at point "2"
 
+  Scenario: Marking upwards at beginnig of buffer
+    Given I have cursors at "_" in "1_2\n3"
+    When I set mc/error-notification to nil
+    And I press "C-<"
+    And I press "C-<"
+    Then the cursor should be at point "2"
+
+  Scenario: Marking downwards at end of buffer (past end of line)
+    Given I have cursors at "_" in "1_2\n3"
+    When I set mc/error-notification to nil
+    And I press "C->"
+    And I press "C->"
+    Then the cursor should be at point "2"
+
+  Scenario: Marking downwards at end of buffer (at beginnig of line)
+    Given I have cursors at "_" in "_12\n3"
+    When I set mc/error-notification to nil
+    And I press "C->"
+    And I press "C->"
+    Then the cursor should be at point "1"

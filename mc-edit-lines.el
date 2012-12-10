@@ -34,13 +34,15 @@
 mc/cycle, etc. doesn't have enough context to figure out what you
 mean."
   :type '(radio (const :tag "Signal an error via `error'." error)
-                (const :tag "Display a message in the mini-buffer." message))
+                (const :tag "Display a message in the mini-buffer." message)
+                (const :tag "Do nothing." nil))
   :group 'multiple-cursors)
 
 (defun mc/error (message &rest args)
   (ecase mc/error-notification
     (message (apply 'message message args))
-    (error (apply 'error message args))))
+    (error (apply 'error message args))
+    ((nil) t)))
 
 ;;;###autoload
 (defun* mc/edit-lines ()
