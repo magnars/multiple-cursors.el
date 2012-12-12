@@ -340,8 +340,15 @@ the original cursor, to inform about the lack of support."
 
             ;; if it's a lambda, we can't know if it's supported or not
             ;; - so go ahead and assume it's ok, because we're just optimistic like that
-            (if (not (symbolp original-command))
+            (if (or (not (symbolp original-command))
+                    ;; lambda registered by smartrep
+                    (string-prefix-p "(" (symbol-name original-command)))
                 (mc/execute-command-for-all-fake-cursors original-command)
+
+              ;; smartrep `intern's commands into own obarray to help
+              ;; `describe-bindings'.  So, let's re-`intern' here to
+              ;; make the command comparable by `eq'.
+              (setq original-command (intern (symbol-name original-command)))
 
               ;; otherwise it's a symbol, and we can be more thorough
               (if (get original-command 'mc--unsupported)
