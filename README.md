@@ -79,6 +79,8 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
 
 - Notice that the number of cursors active can be seen in the modeline.
 
+- If you get out of multiple-cursors-mode and yank - it will yank only from the kill-ring of main cursor. To yank from the kill-rings of every cursor use yank-rectangle, normally found at C-x r y.
+
 - If you would like to keep the global bindings clean, and get custom keybindings
   when the region is active, you can try [region-bindings-mode](https://github.com/fgallina/region-bindings-mode).
 
