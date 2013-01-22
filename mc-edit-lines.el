@@ -35,7 +35,7 @@
 Starts from mark and moves in straight down or up towards the
 line point is on."
   (interactive)
-  (when (not (use-region-p))
+  (when (not (and mark-active (/= (point) (mark))))
     (error "Mark a set of lines first."))
   (mc/remove-fake-cursors)
   (let* ((col (current-column))
