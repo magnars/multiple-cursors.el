@@ -82,6 +82,7 @@
 
 ;;  - `set-rectangular-region-anchor`: Think of this one as `set-mark` except you're marking a rectangular region.
 ;;  - `mc/mark-sgml-tag-pair`: Mark the current opening and closing tag.
+;;  - `mc/insert-numbers`: Insert increasing numbers for each cursor, top to bottom.
 
 ;; ## Tips and tricks
 
@@ -98,6 +99,10 @@
 ;; - Try pressing `mc/mark-all-like-this-dwim` on a tagname in html-mode.
 
 ;; - Notice that the number of cursors active can be seen in the modeline.
+
+;; - If you get out of multiple-cursors-mode and yank - it will yank only
+;; from the kill-ring of main cursor. To yank from the kill-rings of
+;; every cursor use yank-rectangle, normally found at C-x r y.
 
 ;; - If you would like to keep the global bindings clean, and get custom keybindings
 ;;   when the region is active, you can try [region-bindings-mode](https://github.com/fgallina/region-bindings-mode).
@@ -159,6 +164,7 @@
 (require 'mc-cycle-cursors)
 (require 'mc-mark-more)
 (require 'rectangular-region-mode)
+(require 'mc-insert-numbers)
 
 (provide 'multiple-cursors)
 

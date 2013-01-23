@@ -72,12 +72,12 @@
 
 (defmacro mc/for-each-cursor-ordered (&rest forms)
   "Runs the body for each cursor, fake and real, bound to the name cursor"
-  `(let ((real-cursor (mc/create-fake-cursor-at-point)))
+  `(let ((real-cursor-id (overlay-get (mc/create-fake-cursor-at-point) 'mc-id)))
      (mapc #'(lambda (cursor)
                (when (mc/fake-cursor-p cursor)
                  ,@forms))
            (sort (overlays-in (point-min) (point-max)) 'mc--compare-by-overlay-start))
-     (mc/pop-state-from-overlay real-cursor)))
+     (mc/pop-state-from-overlay (mc/cursor-with-id real-cursor-id))))
 
 (defmacro mc/save-window-scroll (&rest forms)
   "Saves and restores the window scroll position"
@@ -198,6 +198,17 @@ Saves the current state in the overlay to be restored later."
 
 (defvar mc--executing-command-for-fake-cursor nil)
 
+(defun mc/execute-command-for-fake-cursor (cmd cursor)
+  (let ((mc--executing-command-for-fake-cursor t)
+        (id (overlay-get cursor 'mc-id))
+        (annoying-arrows-mode nil)
+        (smooth-scroll-margin 0))
+    (mc/add-fake-cursor-to-undo-list
+     (mc/pop-state-from-overlay cursor)
+     (ignore-errors
+       (mc/execute-command cmd)
+       (mc/create-fake-cursor-at-point id)))))
+
 (defun mc/execute-command-for-all-fake-cursors (cmd)
   "Calls CMD interactively for each cursor.
 It works by moving point to the fake cursor, setting
@@ -208,15 +219,7 @@ cursor with updated info."
    (mc/save-window-scroll
     (mc/for-each-fake-cursor
      (save-excursion
-       (let ((mc--executing-command-for-fake-cursor t)
-             (id (overlay-get cursor 'mc-id))
-             (annoying-arrows-mode nil)
-             (smooth-scroll-margin 0))
-         (mc/add-fake-cursor-to-undo-list
-          (mc/pop-state-from-overlay cursor)
-          (ignore-errors
-            (mc/execute-command cmd)
-            (mc/create-fake-cursor-at-point id))))))))
+       (mc/execute-command-for-fake-cursor cmd cursor)))))
   (mc--reset-read-prompts))
 
 ;; Intercept some reading commands so you won't have to
@@ -561,6 +564,7 @@ for running commands with multiple cursors.")
                                      mc/mark-all-symbols-like-this-in-defun
                                      mc/mark-all-like-this-dwim
                                      mc/mark-sgml-tag-pair
+                                     mc/insert-numbers
                                      mc/cycle-forward
                                      mc/cycle-backward
                                      rrm/switch-to-multiple-cursors
