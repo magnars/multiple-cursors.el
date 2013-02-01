@@ -132,3 +132,13 @@ Feature: Marking multiple parts of the buffer
     b_bb
     c_cc
     """
+
+  Scenario: Multiple cursor with shift selection
+    When I insert "This text contains the word text twice"
+    And I go to the front of the word "text"
+    And I press "M-S-f"
+    And I press "C->"
+    And I press "C-f"
+    And I press "<deletechar>"
+    Then I should see "This text ontains the word text wice"
+
