@@ -120,6 +120,7 @@ highlights the entire width of the window."
 
 (defvar mc/cursor-specific-vars '(autopair-action
                                   autopair-wrap-action
+                                  transient-mark-mode
                                   er/history)
   "A list of vars that need to be tracked on a per-cursor basis.")
 
