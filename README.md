@@ -49,6 +49,9 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
 
 ### Mark many occurrences
 
+ - `mc/edit-lines`: Adds one cursor to each line in the current region.
+ - `mc/edit-beginnings-of-lines`: Adds a cursor at the start of each line in the current region.
+ - `mc/edit-ends-of-lines`: Adds a cursor at the end of each line in the current region.
  - `mc/mark-all-like-this`: Marks all parts of the buffer that matches the current region.
  - `mc/mark-all-words-like-this`: Like `mc/mark-all-like-this` but only for whole words.
  - `mc/mark-all-symbols-like-this`: Like `mc/mark-all-like-this` but only for whole symbols.
