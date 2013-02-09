@@ -1,2 +1,2 @@
-(define-package "multiple-cursors" "1.1.3"
+(define-package "multiple-cursors" "1.1.5"
                 "Multiple cursors for Emacs.")
