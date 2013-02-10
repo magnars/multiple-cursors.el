@@ -66,6 +66,8 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
  - `set-rectangular-region-anchor`: Think of this one as `set-mark` except you're marking a rectangular region.
  - `mc/mark-sgml-tag-pair`: Mark the current opening and closing tag.
  - `mc/insert-numbers`: Insert increasing numbers for each cursor, top to bottom.
+ - `mc/sort-regions`: Sort the marked regions alphabetically.
+ - `mc/reverse-regions`: Reverse the order of the marked regions.
 
 ## Tips and tricks
 
