@@ -58,7 +58,7 @@
 (defun mc--replace-region-strings-1 ()
   (interactive)
   (delete-region (region-beginning) (region-end))
-  (insert (car mc--strings-to-replace))
+  (save-excursion (insert (car mc--strings-to-replace)))
   (setq mc--strings-to-replace (cdr mc--strings-to-replace)))
 
 (defun mc--replace-region-strings ()
@@ -68,18 +68,23 @@
 ;;;###autoload
 (defun mc/reverse-regions ()
   (interactive)
-  (if (not (use-region-p))
-      (message "Mark regions to reverse first.")
+  (if (not multiple-cursors-mode)
+      (progn
+        (mc/mark-next-lines 1)
+        (mc/reverse-regions)
+        (multiple-cursors-mode 0))
+    (unless (use-region-p)
+      (mc/execute-command-for-all-cursors 'mark-sexp))
     (setq mc--strings-to-replace (nreverse (mc--ordered-region-strings)))
     (mc--replace-region-strings)))
 
 ;;;###autoload
 (defun mc/sort-regions ()
   (interactive)
-  (if (not (use-region-p))
-      (message "Mark regions to sort first.")
-    (setq mc--strings-to-replace (sort (mc--ordered-region-strings) 'string<))
-    (mc--replace-region-strings)))
+  (unless (use-region-p)
+    (mc/execute-command-for-all-cursors 'mark-sexp))
+  (setq mc--strings-to-replace (sort (mc--ordered-region-strings) 'string<))
+  (mc--replace-region-strings))
 
 (provide 'mc-separate-operations)
 ;;; mc-separate-operations.el ends here

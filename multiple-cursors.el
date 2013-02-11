@@ -91,24 +91,27 @@
 ;; - To get out of multiple-cursors-mode, press `<return>` or `C-g`. The latter will
 ;;   first disable multiple regions before disabling multiple cursors. If you want to
 ;;   insert a newline in multiple-cursors-mode, use `C-j`.
-
+;;
 ;; - Sometimes you end up with cursors outside of your view. You can
 ;;   scroll the screen to center on each cursor with `C-v` and `M-v`.
-
+;;
 ;; - Try pressing `mc/mark-next-like-this` with no region selected. It will just add a cursor
 ;;   on the next line.
-
+;;
 ;; - Try pressing `mc/mark-all-like-this-dwim` on a tagname in html-mode.
-
+;;
 ;; - Notice that the number of cursors active can be seen in the modeline.
-
+;;
 ;; - If you get out of multiple-cursors-mode and yank - it will yank only
-;; from the kill-ring of main cursor. To yank from the kill-rings of
-;; every cursor use yank-rectangle, normally found at C-x r y.
-
+;;   from the kill-ring of main cursor. To yank from the kill-rings of
+;;   every cursor use yank-rectangle, normally found at C-x r y.
+;;
+;; - You can use `mc/reverse-regions` with nothing selected and just one cursor.
+;;   It will then flip the sexp at point and the one below it.
+;;
 ;; - If you would like to keep the global bindings clean, and get custom keybindings
 ;;   when the region is active, you can try [region-bindings-mode](https://github.com/fgallina/region-bindings-mode).
-
+;;
 ;; BTW, I highly recommend adding `mc/mark-next-like-this` to a key binding that's
 ;; right next to the key for `er/expand-region`.
 

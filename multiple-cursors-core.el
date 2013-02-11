@@ -223,6 +223,11 @@ cursor with updated info."
        (mc/execute-command-for-fake-cursor cmd cursor)))))
   (mc--reset-read-prompts))
 
+(defun mc/execute-command-for-all-cursors (cmd)
+  "Calls CMD interactively for the real cursor and all fakes."
+  (call-interactively cmd)
+  (mc/execute-command-for-all-fake-cursors cmd))
+
 ;; Intercept some reading commands so you won't have to
 ;; answer them for every single cursor
 

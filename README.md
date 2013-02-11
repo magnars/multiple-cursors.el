@@ -89,6 +89,9 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
   from the kill-ring of main cursor. To yank from the kill-rings of
   every cursor use yank-rectangle, normally found at C-x r y.
 
+- You can use `mc/reverse-regions` with nothing selected and just one cursor.
+  It will then flip the sexp at point and the one below it.
+
 - If you would like to keep the global bindings clean, and get custom keybindings
   when the region is active, you can try [region-bindings-mode](https://github.com/fgallina/region-bindings-mode).
 
