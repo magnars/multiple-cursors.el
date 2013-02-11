@@ -48,9 +48,9 @@
   (let (strings)
     (save-excursion
       (mc/for-each-cursor-ordered
-       (add-to-list 'strings (buffer-substring-no-properties
-                              (mc/cursor-beg cursor)
-                              (mc/cursor-end cursor))))strings)
+       (setq strings (cons (buffer-substring-no-properties
+                            (mc/cursor-beg cursor)
+                            (mc/cursor-end cursor)) strings))))
     (nreverse strings)))
 
 (defvar mc--strings-to-replace nil)
