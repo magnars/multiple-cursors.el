@@ -66,6 +66,8 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
  - `set-rectangular-region-anchor`: Think of this one as `set-mark` except you're marking a rectangular region.
  - `mc/mark-sgml-tag-pair`: Mark the current opening and closing tag.
  - `mc/insert-numbers`: Insert increasing numbers for each cursor, top to bottom.
+ - `mc/sort-regions`: Sort the marked regions alphabetically.
+ - `mc/reverse-regions`: Reverse the order of the marked regions.
 
 ## Tips and tricks
 
@@ -86,6 +88,9 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
 - If you get out of multiple-cursors-mode and yank - it will yank only
   from the kill-ring of main cursor. To yank from the kill-rings of
   every cursor use yank-rectangle, normally found at C-x r y.
+
+- You can use `mc/reverse-regions` with nothing selected and just one cursor.
+  It will then flip the sexp at point and the one below it.
 
 - If you would like to keep the global bindings clean, and get custom keybindings
   when the region is active, you can try [region-bindings-mode](https://github.com/fgallina/region-bindings-mode).

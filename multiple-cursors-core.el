@@ -244,6 +244,11 @@ cursor with updated info."
        (mc/execute-command-for-fake-cursor cmd cursor)))))
   (mc--reset-read-prompts))
 
+(defun mc/execute-command-for-all-cursors (cmd)
+  "Calls CMD interactively for the real cursor and all fakes."
+  (call-interactively cmd)
+  (mc/execute-command-for-all-fake-cursors cmd))
+
 ;; Intercept some reading commands so you won't have to
 ;; answer them for every single cursor
 
@@ -587,6 +592,8 @@ for running commands with multiple cursors.")
                                      mc/mark-all-like-this-dwim
                                      mc/mark-sgml-tag-pair
                                      mc/insert-numbers
+                                     mc/sort-regions
+                                     mc/reverse-regions
                                      mc/cycle-forward
                                      mc/cycle-backward
                                      rrm/switch-to-multiple-cursors

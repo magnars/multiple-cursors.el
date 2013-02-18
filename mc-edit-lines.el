@@ -72,16 +72,14 @@ line point is on."
   "Add one cursor to the end of each line in the active region."
   (interactive)
   (mc/edit-lines)
-  (mc/execute-command-for-all-fake-cursors 'end-of-line)
-  (end-of-line))
+  (mc/execute-command-for-all-cursors 'end-of-line))
 
 ;;;###autoload
 (defun mc/edit-beginnings-of-lines ()
   "Add one cursor to the beginning of each line in the active region."
   (interactive)
   (mc/edit-lines)
-  (mc/execute-command-for-all-fake-cursors 'beginning-of-line)
-  (beginning-of-line))
+  (mc/execute-command-for-all-cursors 'beginning-of-line))
 
 (provide 'mc-edit-lines)
 
