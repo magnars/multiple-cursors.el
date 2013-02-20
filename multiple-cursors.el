@@ -66,6 +66,7 @@
 ;;  - `mc/mark-previous-word-like-this`: Like `mc/mark-previous-like-this` but only for whole words.
 ;;  - `mc/mark-previous-symbol-like-this`: Like `mc/mark-previous-like-this` but only for whole symbols.
 ;;  - `mc/mark-more-like-this-extended`: Use arrow keys to quickly mark/skip next/previous occurances.
+;;  - `mc/add-cursor-on-click`: Bind to a mouse event to add cursors by clicking. See tips-section.
 
 ;; ### Mark many occurrences
 
@@ -114,6 +115,18 @@
 ;;
 ;; BTW, I highly recommend adding `mc/mark-next-like-this` to a key binding that's
 ;; right next to the key for `er/expand-region`.
+
+;; ### Binding mouse events
+
+;; To override a mouse event, you will likely have to also unbind the
+;; `down-mouse` part of the event. Like this:
+;;
+;;     (global-unset-key (kbd "M-<down-mouse-1>"))
+;;     (global-set-key (kbd "M-<mouse-1>") 'mc/add-cursor-on-click)
+;;
+;; Or you can do like me and find an unused, but less convenient, binding:
+;;
+;;     (global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
 
 ;; ## Unknown commands
 

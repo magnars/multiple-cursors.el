@@ -399,6 +399,23 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
          (<= (point) end))))
 
 ;;;###autoload
+(defun mc/add-cursor-on-click (event)
+  "Add a cursor where you click."
+  (interactive "e")
+  (mouse-minibuffer-check event)
+  ;; Use event-end in case called from mouse-drag-region.
+  ;; If EVENT is a click, event-end and event-start give same value.
+  (let ((position (event-end event)))
+    (if (not (windowp (posn-window position)))
+        (error "Position not in text area of window"))
+    (select-window (posn-window position))
+    (if (numberp (posn-point position))
+        (save-excursion
+          (goto-char (posn-point position))
+          (mc/create-fake-cursor-at-point)))
+    (mc/maybe-multiple-cursors-mode)))
+
+;;;###autoload
 (defun mc/mark-sgml-tag-pair ()
   "Mark the tag we're in and its pair for renaming."
   (interactive)
