@@ -575,6 +575,7 @@ for running commands with multiple cursors.")
                                      mc/reverse-regions
                                      mc/cycle-forward
                                      mc/cycle-backward
+                                     mc/add-cursor-on-click
                                      rrm/switch-to-multiple-cursors
                                      save-buffer
                                      ido-exit-minibuffer
