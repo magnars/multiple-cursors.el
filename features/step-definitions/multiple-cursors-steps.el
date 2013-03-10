@@ -95,3 +95,11 @@
           (assert search nil "The text '%s' was not found in the current buffer." text))
         (set-mark (point))
         (re-search-forward text)))
+
+(When "^I mark all \\(.+\\)$"
+      (lambda (rest)
+        (let ((func (intern (mapconcat 'identity
+                                       (cons  "mc/mark-all"
+                                              (split-string rest))
+                                       "-"))))
+          (call-interactively func))))
