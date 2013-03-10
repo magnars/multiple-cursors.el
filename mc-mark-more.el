@@ -225,15 +225,28 @@ With zero ARG, skip the last one and mark next."
       (multiple-cursors-mode 1)
     (multiple-cursors-mode 0)))
 
+(defun mc--select-thing-at-point (thing)
+  (let ((bound (bounds-of-thing-at-point thing)))
+    (when bound
+      (set-mark (car bound))
+      (goto-char (cdr bound))
+      bound)))
+
+(defun mc--select-thing-at-point-or-bark (thing)
+  (unless (or (region-active-p) (mc--select-thing-at-point thing))
+    (error "Mark a region or set cursor on a %s." thing)))
+
 ;;;###autoload
 (defun mc/mark-all-words-like-this ()
   (interactive)
+  (mc--select-thing-at-point-or-bark 'word)
   (let ((mc/enclose-search-term 'words))
     (mc/mark-all-like-this)))
 
 ;;;###autoload
 (defun mc/mark-all-symbols-like-this ()
   (interactive)
+  (mc--select-thing-at-point-or-bark 'symbol)
   (let ((mc/enclose-search-term 'symbols))
     (mc/mark-all-like-this)))
 
@@ -355,6 +368,7 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
 (defun mc/mark-all-words-like-this-in-defun ()
   "Mark all words like this in defun."
   (interactive)
+  (mc--select-thing-at-point-or-bark 'word)
   (if (mc--in-defun)
       (save-restriction
         (widen)
@@ -366,6 +380,7 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
 (defun mc/mark-all-symbols-like-this-in-defun ()
   "Mark all symbols like this in defun."
   (interactive)
+  (mc--select-thing-at-point-or-bark 'symbol)
   (if (mc--in-defun)
       (save-restriction
         (widen)
