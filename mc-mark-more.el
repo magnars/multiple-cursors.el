@@ -327,7 +327,8 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
   (interactive "P")
   (if arg
       (mc/mark-all-like-this)
-    (if (and (mc--no-region-and-in-sgmlish-mode)
+    (if (and (not (use-region-p))
+             (derived-mode-p 'sgml-mode)
              (mc--on-tag-name-p))
         (mc/mark-sgml-tag-pair)
       (let ((before (mc/num-cursors)))
@@ -345,10 +346,6 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
             (mc/mark-all-like-this)))
         (when (<= (mc/num-cursors) before)
           (mc/mark-all-like-this))))))
-
-(defun mc--no-region-and-in-sgmlish-mode ()
-  (and (not (use-region-p))
-       (derived-mode-p 'sgml-mode)))
 
 (defun mc--in-defun ()
   (bounds-of-thing-at-point 'defun))
