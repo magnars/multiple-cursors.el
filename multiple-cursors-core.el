@@ -41,13 +41,14 @@
 
 (defmacro mc/add-fake-cursor-to-undo-list (&rest forms)
   "Make sure point is in the right place when undoing"
-  `(let ((undo-cleaner (cons 'apply (cons 'deactivate-cursor-after-undo (list id)))))
-     (setq buffer-undo-list (cons undo-cleaner buffer-undo-list))
-     ,@forms
-     (if (eq undo-cleaner (car buffer-undo-list)) ;; if nothing has been added to the undo-list
-         (setq buffer-undo-list (cdr buffer-undo-list)) ;; then pop the cleaner right off again
-       (setq buffer-undo-list ;; otherwise add a function to activate this cursor
-             (cons (cons 'apply (cons 'activate-cursor-for-undo (list id))) buffer-undo-list)))))
+  (let ((uc (make-symbol "undo-cleaner")))
+   `(let ((,uc (cons 'apply (cons 'deactivate-cursor-after-undo (list id)))))
+      (setq buffer-undo-list (cons ,uc buffer-undo-list))
+      ,@forms
+      (if (eq ,uc (car buffer-undo-list)) ;; if nothing has been added to the undo-list
+          (setq buffer-undo-list (cdr buffer-undo-list)) ;; then pop the cleaner right off again
+        (setq buffer-undo-list ;; otherwise add a function to activate this cursor
+              (cons (cons 'apply (cons 'activate-cursor-for-undo (list id))) buffer-undo-list))))))
 
 (defun mc/all-fake-cursors (&optional start end)
   (remove-if-not 'mc/fake-cursor-p
@@ -61,35 +62,40 @@
 
 (defmacro mc/save-excursion (&rest forms)
   "Saves and restores all the state that multiple-cursors cares about."
-  `(let ((current-state (mc/store-current-state-in-overlay
-                         (make-overlay (point) (point) nil nil t))))
-     (overlay-put current-state 'type 'original-cursor)
-     (save-excursion ,@forms)
-     (mc/pop-state-from-overlay current-state)))
+  (let ((cs (make-symbol "current-state")))
+   `(let ((,cs (mc/store-current-state-in-overlay
+                          (make-overlay (point) (point) nil nil t))))
+      (overlay-put ,cs 'type 'original-cursor)
+      (save-excursion ,@forms)
+      (mc/pop-state-from-overlay ,cs))))
 
 (defun mc--compare-by-overlay-start (o1 o2)
   (< (overlay-start o1) (overlay-start o2)))
 
 (defmacro mc/for-each-cursor-ordered (&rest forms)
   "Runs the body for each cursor, fake and real, bound to the name cursor"
-  `(let ((real-cursor-id (overlay-get (mc/create-fake-cursor-at-point) 'mc-id)))
-     (mapc #'(lambda (cursor)
-               (when (mc/fake-cursor-p cursor)
-                 ,@forms))
-           (sort (overlays-in (point-min) (point-max)) 'mc--compare-by-overlay-start))
-     (mc/pop-state-from-overlay (mc/cursor-with-id real-cursor-id))))
+  (let ((rci (make-symbol "real-cursor-id")))
+   `(let ((,rci (overlay-get (mc/create-fake-cursor-at-point) 'mc-id)))
+      (mapc #'(lambda (cursor)
+                (when (mc/fake-cursor-p cursor)
+                  ,@forms))
+            (sort (overlays-in (point-min) (point-max)) 'mc--compare-by-overlay-start))
+      (mc/pop-state-from-overlay (mc/cursor-with-id ,rci)))))
 
 (defmacro mc/save-window-scroll (&rest forms)
   "Saves and restores the window scroll position"
-  `(let ((p (set-marker (make-marker) (point)))
-         (start (set-marker (make-marker) (window-start)))
-         (hscroll (window-hscroll)))
-     ,@forms
-     (goto-char p)
-     (set-window-start nil start t)
-     (set-window-hscroll nil hscroll)
-     (set-marker p nil)
-     (set-marker start nil)))
+  (let ((p (make-symbol "p"))
+        (s (make-symbol "start"))
+        (h (make-symbol "hscroll")))
+   `(let ((,p (set-marker (make-marker) (point)))
+          (,s (set-marker (make-marker) (window-start)))
+          (,h (window-hscroll)))
+      ,@forms
+      (goto-char ,p)
+      (set-window-start nil ,s t)
+      (set-window-hscroll nil ,h)
+      (set-marker ,p nil)
+      (set-marker ,s nil))))
 
 (defun mc/make-cursor-overlay-at-eol (pos)
   "Create overlay to look like cursor at end of line."
