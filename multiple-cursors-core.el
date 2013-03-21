@@ -86,7 +86,7 @@
          (hscroll (window-hscroll)))
      ,@forms
      (goto-char p)
-     (set-window-start nil start)
+     (set-window-start nil start t)
      (set-window-hscroll nil hscroll)
      (set-marker p nil)
      (set-marker start nil)))
