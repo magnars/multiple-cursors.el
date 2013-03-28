@@ -400,7 +400,9 @@ multiple cursors editing.")
     nil
   (setq mc/keymap (make-sparse-keymap))
   (define-key mc/keymap (kbd "C-g") 'mc/keyboard-quit)
-  (define-key mc/keymap (kbd "<return>") 'multiple-cursors-mode))
+  (define-key mc/keymap (kbd "<return>") 'multiple-cursors-mode)
+  (when (fboundp 'phi-search)
+    (define-key mc/keymap (kbd "C-s") 'phi-search)))
 
 (defun mc--all-equal (entries)
   "Are all these entries equal?"
