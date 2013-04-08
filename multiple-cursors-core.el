@@ -669,6 +669,7 @@ for running commands with multiple cursors.")
                                         backward-delete-char-untabify
                                         delete-char delete-forward-char
                                         delete-backward-char
+                                        py-electric-backspace
                                         c-electric-backspace
                                         org-delete-backward-char
                                         paredit-backward-delete
