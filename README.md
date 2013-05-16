@@ -47,6 +47,7 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
  - `mc/mark-previous-symbol-like-this`: Like `mc/mark-previous-like-this` but only for whole symbols.
  - `mc/mark-more-like-this-extended`: Use arrow keys to quickly mark/skip next/previous occurances.
  - `mc/add-cursor-on-click`: Bind to a mouse event to add cursors by clicking. See tips-section.
+ - `mc/pop-mark`: Set a cursor at the current point and move to the next (different) position on the mark stack.  This allows for fine grained control over the placement of cursors.
 
 ### Mark many occurrences
 
