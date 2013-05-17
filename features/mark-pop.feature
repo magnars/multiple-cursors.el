@@ -44,3 +44,22 @@ Feature: Popping cursors off of the mark stack
     And I press "C-S-p C-S-p"
     Then I should have 3 cursors
 
+  Scenario: Changing the text
+    Given I turn off transient-mark-mode
+    And I insert:
+    """
+    hello
+    there, my friend
+    """
+    And I go to the front of the word "hello"
+    And I set the mark
+    And I go to the front of the word "my"
+    And I set the mark
+    And I go to the front of the word "friend"
+    And I press "C-S-p C-S-p"
+    And I type "!"
+    Then I should see:
+    """
+    !hello
+    there, !my !friend
+    """
