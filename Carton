@@ -1,0 +1,8 @@
+(source "melpa" "http://melpa.milkbox.net/packages/")
+
+(package-file "multiple-cursors.el")
+
+(development
+ (depends-on "ecukes")
+ (depends-on "espuds")
+ (depends-on "wrap-region"))

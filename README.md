@@ -143,14 +143,16 @@ You'll find the repo at:
 
     https://github.com/magnars/multiple-cursors.el
 
-To fetch the test dependencies:
+To fetch the test dependencies, install
+[carton](https://github.com/rejeep/carton) if you haven't already,
+then:
 
     $ cd /path/to/multiple-cursors
-    $ git submodule update --init
+    $ carton
 
 Run the tests with:
 
-    $ ./util/ecukes/ecukes --graphical
+    $ ./run-tests.sh
 
 ## Contributors
 

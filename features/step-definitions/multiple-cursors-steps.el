@@ -2,6 +2,10 @@
      (lambda ()
        (delete-selection-mode 1)))
 
+(Given "^I turn off transient-mark-mode$"
+       (lambda ()
+         (transient-mark-mode -1)))
+
 (Then "^I should have \\([0-9]+\\) cursors$"
       (lambda (num)
         (let ((actual (mc/num-cursors)))
