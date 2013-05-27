@@ -586,6 +586,7 @@ for running commands with multiple cursors.")
                                      mc/cycle-forward
                                      mc/cycle-backward
                                      mc/add-cursor-on-click
+                                     mc/mark-pop
                                      rrm/switch-to-multiple-cursors
                                      save-buffer
                                      ido-exit-minibuffer
