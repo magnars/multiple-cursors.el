@@ -49,6 +49,14 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
  - `mc/add-cursor-on-click`: Bind to a mouse event to add cursors by clicking. See tips-section.
  - `mc/pop-mark`: Set a cursor at the current point and move to the next (different) position on the mark stack.  This allows for fine grained control over the placement of cursors.
 
+### Juggle around with the current cursors
+
+ - `mc/unmark-next-like-this`: Remove the cursor furthest down in the buffer.
+ - `mc/unmark-previous-like-this`: Remove the cursor furthest up in the buffer.
+ - `mc/skip-to-next-like-this`: Remove the cursor furthest down, marking the next occurance down.
+ - `mc/skip-to-previous-like-this`: Remove the cursor furthest up, marking the next occurance up.
+ - `mc/mark-next-like-this-extended`: Temporarily bind the arrow keys to mark/unmark/skip cursors.
+
 ### Mark many occurrences
 
  - `mc/edit-lines`: Adds one cursor to each line in the current region.

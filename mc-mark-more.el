@@ -191,16 +191,28 @@ With zero ARG, skip the last one and mark next."
   (mc/maybe-multiple-cursors-mode))
 
 ;;;###autoload
-(defun mc/unmark-next-like-this (arg)
+(defun mc/unmark-next-like-this ()
   "Deselect next part of the buffer matching the currently active region."
   (interactive)
   (mc/mark-next-like-this -1))
 
 ;;;###autoload
-(defun mc/unmark-previous-like-this (arg)
+(defun mc/unmark-previous-like-this ()
   "Deselect prev part of the buffer matching the currently active region."
   (interactive)
   (mc/mark-previous-like-this -1))
+
+;;;###autoload
+(defun mc/skip-to-next-like-this ()
+  "Skip the current one and select the next part of the buffer matching the currently active region."
+  (interactive)
+  (mc/mark-next-like-this 0))
+
+;;;###autoload
+(defun mc/skip-to-previous-like-this ()
+  "Skip the current one and select the prev part of the buffer matching the currently active region."
+  (interactive)
+  (mc/mark-previous-like-this 0))
 
 ;;;###autoload
 (defun mc/mark-all-like-this ()
@@ -272,49 +284,68 @@ With zero ARG, skip the last one and mark next."
 ;;;###autoload
 (defun mc/mark-more-like-this-extended ()
   "Like mark-more-like-this, but then lets you adjust with arrows key.
-The actual adjustment made depends on the final component of the
-key-binding used to invoke the command, with all modifiers removed:
+The adjustments work like this:
 
-   <up>    Mark previous like this
-   <down>  Mark next like this
-   <left>  If last was previous, skip it
-           If last was next, remove it
-   <right> If last was next, skip it
-           If last was previous, remove it
+   <up>    Mark previous like this and set direction to 'up
+   <down>  Mark next like this and set direction to 'down
 
-Then, continue to read input events and further add or move marks
-as long as the input event read (with all modifiers removed)
-is one of the above."
+If direction is 'up:
+
+   <left>  Skip past the cursor furthest up
+   <right> Remove the cursor furthest up
+
+If direction is 'down:
+
+   <left>  Remove the cursor furthest down
+   <right> Skip past the cursor furthest down
+
+The bindings for these commands can be changed. See `mc/mark-more-like-this-extended-keymap'."
   (interactive)
-  (let ((first t)
-        (ev last-command-event)
-        (cmd 'mc/mark-next-like-this)
-        (arg 1)
-        last echo-keystrokes)
-    (while cmd
-      (let ((base (event-basic-type ev)))
-        (cond ((eq base 'left)
-               (if (eq last 'mc/mark-previous-like-this)
-                   (setq cmd last arg 0)
-                 (setq cmd 'mc/mark-next-like-this arg -1)))
-              ((eq base 'up)
-               (setq cmd 'mc/mark-previous-like-this arg 1))
-              ((eq base 'right)
-               (if (eq last 'mc/mark-next-like-this)
-                   (setq cmd last arg 0)
-                 (setq cmd 'mc/mark-previous-like-this arg -1)))
-              ((eq base 'down)
-               (setq cmd 'mc/mark-next-like-this arg 1))
-              (first
-               (setq cmd 'mc/mark-next-like-this arg 1))
-              (t
-               (setq cmd nil))))
-      (when cmd
-        (ignore-errors
-          (funcall cmd arg))
-        (setq first nil last cmd)
-        (setq ev (read-event "Use arrow keys for more marks: "))))
-    (push ev unread-command-events)))
+  (mc/mmlte--down)
+  (set-temporary-overlay-map mc/mark-more-like-this-extended-keymap t))
+
+(defvar mc/mark-more-like-this-extended-direction nil
+  "When using mc/mark-more-like-this-extended are we working on the next or previous cursors?")
+
+(make-variable-buffer-local 'mc/mark-more-like-this-extended)
+
+(defun mc/mmlte--message ()
+  (if (eq mc/mark-more-like-this-extended-direction 'up)
+      (message "<up> to mark previous, <left> to skip, <right> to remove, <down> to mark next")
+    (message "<down> to mark next, <right> to skip, <left> to remove, <up> to mark previous")))
+
+(defun mc/mmlte--up ()
+  (interactive)
+  (mc/mark-previous-like-this 1)
+  (setq mc/mark-more-like-this-extended-direction 'up)
+  (mc/mmlte--message))
+
+(defun mc/mmlte--down ()
+  (interactive)
+  (mc/mark-next-like-this 1)
+  (setq mc/mark-more-like-this-extended-direction 'down)
+  (mc/mmlte--message))
+
+(defun mc/mmlte--left ()
+  (interactive)
+  (if (eq mc/mark-more-like-this-extended-direction 'down)
+      (mc/unmark-next-like-this)
+    (mc/skip-to-previous-like-this))
+  (mc/mmlte--message))
+
+(defun mc/mmlte--right ()
+  (interactive)
+  (if (eq mc/mark-more-like-this-extended-direction 'up)
+      (mc/unmark-previous-like-this)
+    (mc/skip-to-next-like-this))
+  (mc/mmlte--message))
+
+(defvar mc/mark-more-like-this-extended-keymap (make-sparse-keymap))
+
+(define-key mc/mark-more-like-this-extended-keymap (kbd "<up>") 'mc/mmlte--up)
+(define-key mc/mark-more-like-this-extended-keymap (kbd "<down>") 'mc/mmlte--down)
+(define-key mc/mark-more-like-this-extended-keymap (kbd "<left>") 'mc/mmlte--left)
+(define-key mc/mark-more-like-this-extended-keymap (kbd "<right>") 'mc/mmlte--right)
 
 (defvar mc--restrict-mark-all-to-symbols nil)
 
