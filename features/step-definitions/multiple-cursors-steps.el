@@ -1,3 +1,33 @@
+(When "^I mark next like this$"
+      (lambda () (call-interactively 'mc/mark-next-like-this)))
+
+(When "^I mark previous like this$"
+      (lambda () (call-interactively 'mc/mark-previous-like-this)))
+
+(When "^I mark all like this$"
+      (lambda () (call-interactively 'mc/mark-all-like-this)))
+
+(When "^I mark all like this dwim$"
+      (lambda () (call-interactively 'mc/mark-all-like-this-dwim)))
+
+(When "^I mark all in region$"
+      (lambda () (call-interactively 'mc/mark-all-in-region)))
+
+(When "^I insert numbers$"
+      (lambda () (call-interactively 'mc/insert-numbers)))
+
+(When "^I reverse regions$"
+      (lambda () (call-interactively 'mc/reverse-regions)))
+
+(When "^I sort regions$"
+      (lambda () (call-interactively 'mc/sort-regions)))
+
+(When "^I edit lines$"
+      (lambda () (call-interactively 'mc/edit-lines)))
+
+(When "^I set rectangular region anchor$"
+      (lambda () (call-interactively 'set-rectangular-region-anchor)))
+
 (And "^delete-selection-mode is active$"
      (lambda ()
        (delete-selection-mode 1)))

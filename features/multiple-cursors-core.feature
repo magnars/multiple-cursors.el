@@ -115,7 +115,7 @@ Feature: Multiple cursors core
     And I go to the front of the word "text"
     And I press "C-SPC"
     And I press "M-f"
-    And I press "C->"
+    And I mark next like this
     And I type "!"
     Then I should see "This ! contains the word ! twice"
 
@@ -124,7 +124,7 @@ Feature: Multiple cursors core
     And I insert "This text contains the word text twice"
     And I go to the front of the word "text"
     And I press "C-M-SPC"
-    And I press "C->"
+    And I mark next like this
     And I press "C-g"
     And I type "("
     Then I should see "This (text contains the word (text twice"
