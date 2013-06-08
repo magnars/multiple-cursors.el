@@ -587,6 +587,15 @@ for running commands with multiple cursors.")
                                      mc/cycle-backward
                                      mc/add-cursor-on-click
                                      mc/mark-pop
+                                     mc/add-cursors-to-all-matches
+                                     mc/mmlte--left
+                                     mc/mmlte--right
+                                     mc/mmlte--up
+                                     mc/mmlte--down
+                                     mc/unmark-next-like-this
+                                     mc/unmark-previous-like-this
+                                     mc/skip-to-next-like-this
+                                     mc/skip-to-previous-like-this
                                      rrm/switch-to-multiple-cursors
                                      save-buffer
                                      ido-exit-minibuffer
