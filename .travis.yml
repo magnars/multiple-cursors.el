@@ -16,7 +16,6 @@ before_install:
   - export PATH="/home/travis/.carton/bin:$PATH"
   - carton
 env:
-  - EMACS=emacs24 TAGS="--tags ~@requires-e24-3"
-  - EMACS=emacs-snapshot TAGS=""
+  - EMACS=emacs24 TAGS=""
 script:
   ./run-travis-ci.sh
