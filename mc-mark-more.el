@@ -281,6 +281,44 @@ With zero ARG, skip the last one and mark next."
       (multiple-cursors-mode 1)
     (multiple-cursors-mode 0)))
 
+(when (not (fboundp 'set-temporary-overlay-map))
+  ;; Backport this function from newer emacs versions
+  (defun set-temporary-overlay-map (map &optional keep-pred)
+    "Set a new keymap that will only exist for a short period of time.
+The new keymap to use must be given in the MAP variable. When to
+remove the keymap depends on user input and KEEP-PRED:
+
+- if KEEP-PRED is nil (the default), the keymap disappears as
+  soon as any key is pressed, whether or not the key is in MAP;
+
+- if KEEP-PRED is t, the keymap disappears as soon as a key *not*
+  in MAP is pressed;
+
+- otherwise, KEEP-PRED must be a 0-arguments predicate that will
+  decide if the keymap should be removed (if predicate returns
+  nil) or kept (otherwise). The predicate will be called after
+  each key sequence."
+
+    (let* ((clearfunsym (make-symbol "clear-temporary-overlay-map"))
+           (overlaysym (make-symbol "t"))
+           (alist (list (cons overlaysym map)))
+           (clearfun
+            `(lambda ()
+               (unless ,(cond ((null keep-pred) nil)
+                              ((eq t keep-pred)
+                               `(eq this-command
+                                    (lookup-key ',map
+                                                (this-command-keys-vector))))
+                              (t `(funcall ',keep-pred)))
+                 (remove-hook 'pre-command-hook ',clearfunsym)
+                 (setq emulation-mode-map-alists
+                       (delq ',alist emulation-mode-map-alists))))))
+      (set overlaysym overlaysym)
+      (fset clearfunsym clearfun)
+      (add-hook 'pre-command-hook clearfunsym)
+
+      (push alist emulation-mode-map-alists))))
+
 ;;;###autoload
 (defun mc/mark-more-like-this-extended ()
   "Like mark-more-like-this, but then lets you adjust with arrows key.
