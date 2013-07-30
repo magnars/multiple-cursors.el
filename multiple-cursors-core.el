@@ -125,8 +125,6 @@ highlights the entire width of the window."
     overlay))
 
 (defvar mc/cursor-specific-vars '(transient-mark-mode
-                                  pre-command-hook
-                                  post-command-hook
                                   kill-ring
                                   kill-ring-yank-pointer
                                   mark-ring
