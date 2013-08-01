@@ -173,9 +173,9 @@ With zero ARG, skip the last one and mark next."
   (dotimes (i num-lines)
     (mc/create-fake-cursor-at-point)
     (ecase direction
-      (forwards (loop do (next-line 1 nil)
+      (forwards (loop do (next-logical-line 1 nil)
                       while (mc/all-fake-cursors (point) (1+ (point)))))
-      (backwards (loop do (previous-line 1 nil)
+      (backwards (loop do (previous-logical-line 1 nil)
                        while (mc/all-fake-cursors (point) (1+ (point))))))))
 
 ;;;###autoload
