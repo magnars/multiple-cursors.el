@@ -306,8 +306,10 @@ been remapped. And certain modes (cua comes to mind) will change their
 remapping based on state. So a command that changes the state will afterwards
 not be recognized through the command-remapping lookup."
   (unless mc--executing-command-for-fake-cursor
-    (setq mc--this-command (or (command-remapping this-original-command)
-                               this-original-command))))
+    (let (cmd (or (command-remapping this-original-command)
+                  this-original-command))
+      (setq mc--this-command (and (not (eq cmd 'god-mode-self-insert))
+                                  cmd)))))
 
 (defun mc/execute-this-command-for-all-cursors ()
   "Wrap around `mc/execute-this-command-for-all-cursors-1' to protect hook."
@@ -337,7 +339,6 @@ the original cursor, to inform about the lack of support."
 
     (if (eq 1 (mc/num-cursors)) ;; no fake cursors? disable mc-mode
         (multiple-cursors-mode 0)
-
       (when this-original-command
         (let ((original-command (or mc--this-command
                                     (command-remapping this-original-command)
