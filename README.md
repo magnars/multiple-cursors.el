@@ -153,11 +153,11 @@ You'll find the repo at:
     https://github.com/magnars/multiple-cursors.el
 
 To fetch the test dependencies, install
-[carton](https://github.com/rejeep/carton) if you haven't already,
+[cask](https://github.com/rejeep/cask.el) if you haven't already,
 then:
 
     $ cd /path/to/multiple-cursors
-    $ carton
+    $ cask
 
 Run the tests with:
 

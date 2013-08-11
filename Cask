@@ -1,4 +1,4 @@
-(source "melpa" "http://melpa.milkbox.net/packages/")
+(source melpa)
 
 (package-file "multiple-cursors.el")
 
