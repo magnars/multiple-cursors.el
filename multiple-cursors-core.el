@@ -380,6 +380,19 @@ you should disable multiple-cursors-mode."
   (mc/for-each-fake-cursor
    (mc/remove-fake-cursor cursor)))
 
+(defun mc/remove-current-cursor ()
+  "Remove the current cursor by replacing the next fake cursor with the real cursor."
+  (interactive)
+  (let ((next-cursor
+         (or (mc/next-fake-cursor-after-point)
+             (mc/prev-fake-cursor-before-point)
+             (error "This is the only cursor."))))
+    (mapc 'mc/remove-fake-cursor
+          (remove-if-not 'mc/fake-cursor-p
+                         (overlays-at (point))))
+    (mc/pop-state-from-overlay next-cursor)
+    (recenter)))
+
 (defun mc/keyboard-quit ()
   "Deactivate mark if there are any active, otherwise exit multiple-cursors-mode."
   (interactive)
@@ -590,6 +603,7 @@ for running commands with multiple cursors.")
                                      mc/unmark-previous-like-this
                                      mc/skip-to-next-like-this
                                      mc/skip-to-previous-like-this
+                                     mc/remove-current-cursor
                                      rrm/switch-to-multiple-cursors
                                      save-buffer
                                      ido-exit-minibuffer
