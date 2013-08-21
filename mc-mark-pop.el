@@ -4,9 +4,8 @@
 
 ;;;###autoload
 (defun mc/mark-pop ()
-  "Add one cursor to each line of the active region.
-Starts from mark and moves in straight down or up towards the
-line point is on."
+  "Add a cursor at the current point, pop off mark ring and jump
+to the popped mark."
   (interactive)
   ;; If the mark happens to be at the current point, just pop that one off.
   (while (eql (mark) (point))
