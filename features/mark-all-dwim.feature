@@ -62,3 +62,31 @@ Feature: Mark all do-what-I-mean
     (defun def (humm) (message humm))
     (defun def (humm-humm) (message humm))
     """
+
+  Scenario: Mark dwim from selection
+    Given I turn on emacs-lisp-mode
+    And I turn on delete-selection-mode
+    And I insert:
+    """
+    (defun abc (ghi) (message ghi))
+    (defun def (ghi) (message some-other-ghi))
+    """
+    When I press "M-<"
+    And I press "S-M->"
+    And I press "C-$ ghi RET"
+    And I type "xyz"
+    Then I should see:
+    """
+    (defun abc (xyz) (message xyz))
+    (defun def (xyz) (message some-other-xyz))
+    """
+    When I press "C-g"
+    And I go to the front of the word "xyz"
+    And I press "C-M-SPC"
+    And I press "C-$"
+    And I type "foo"
+    Then I should see:
+    """
+    (defun abc (foo) (message foo))
+    (defun def (xyz) (message some-other-xyz))
+    """
