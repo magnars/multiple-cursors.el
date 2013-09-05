@@ -263,15 +263,16 @@ With zero ARG, skip the last one and mark next."
     (mc/mark-all-like-this)))
 
 ;;;###autoload
-(defun mc/mark-all-in-region (beg end)
+(defun* mc/mark-all-in-region (beg end)
   "Find and mark all the parts in the region matching the given search"
   (interactive "r")
   (let ((search (read-from-minibuffer "Mark all in region: "))
         (case-fold-search nil))
+    (when (string= search "")
+      (return-from mc/mark-all-in-region nil))
     (mc/remove-fake-cursors)
     (goto-char beg)
-    (while (and (not (string= search ""))
-                (search-forward search end t))
+    (while (search-forward search end t)
       (push-mark (match-beginning 0))
       (mc/create-fake-cursor-at-point))
     (let ((first (mc/furthest-cursor-before-point)))
