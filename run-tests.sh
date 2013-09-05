@@ -1,2 +1,2 @@
 #!/bin/sh -e
-cask exec ecukes "$@"
+cask exec ecukes "$@" --no-win
