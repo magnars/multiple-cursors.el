@@ -420,14 +420,18 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
   "Tries even harder to guess what you want to mark all of.
 
 If the region is active and spans multiple lines, it will behave
-as if `mc/mark-all-in-region'. Otherwise, it will delegate to
-`mc/mark-all-like-this-dwim' or `mc/mark-all-like-this' (if the
-prefix ARG is present)"
+as if `mc/mark-all-in-region'. With the prefix ARG, it will call
+`mc/edit-lines' instead.
+
+If the region is inactive or on a single line, it will behave like 
+`mc/mark-all-like-this-dwim'."
   (interactive "P")
   (if (and (use-region-p)
            (not (= (line-number-at-pos (region-beginning))
                    (line-number-at-pos (region-end)))))
-      (call-interactively 'mc/mark-all-in-region)
+      (if arg
+          (call-interactively 'mc/edit-lines)
+       (call-interactively 'mc/mark-all-in-region))
     (progn
       (setq this-command 'mc/mark-all-like-this-dwim)
       (mc/mark-all-like-this-dwim arg))))
