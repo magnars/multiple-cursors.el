@@ -70,6 +70,7 @@ Feature: Mark all do-what-I-mean
     """
     (defun abc (ghi) (message ghi))
     (defun def (ghi) (message some-other-ghi))
+
     """
     When I press "M-<"
     And I press "S-M->"
@@ -79,6 +80,7 @@ Feature: Mark all do-what-I-mean
     """
     (defun abc (xyz) (message xyz))
     (defun def (xyz) (message some-other-xyz))
+
     """
     When I press "C-g"
     And I go to the front of the word "xyz"
@@ -89,4 +91,16 @@ Feature: Mark all do-what-I-mean
     """
     (defun abc (foo) (message foo))
     (defun def (xyz) (message some-other-xyz))
+
+    """
+    When I press "C-g"
+    And I press "M-<"
+    And I press "S-M->"
+    And I press "C-u C-$"
+    And I type ";;"
+    Then I should see:
+    """
+    ;;(defun abc (foo) (message foo))
+    ;;(defun def (xyz) (message some-other-xyz))
+
     """
