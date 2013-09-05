@@ -70,6 +70,7 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
  - `mc/mark-all-words-like-this-in-defun`: Like `mc/mark-all-like-this-in-defun` but only for whole words.
  - `mc/mark-all-symbols-like-this-in-defun`: Like `mc/mark-all-like-this-in-defun` but only for whole symbols.
  - `mc/mark-all-like-this-dwim`: Tries to be smart about marking everything you want. Can be pressed multiple times.
+ - `mc/mark-all-dwim`: Combines `mc/mark-all-like-this-dwim`, `mc/mark-all-in-region` and `mc/edit-lines`, guessing which one you want.
 
 ### Special
 
