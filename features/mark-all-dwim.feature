@@ -17,6 +17,16 @@ Feature: Mark all do-what-I-mean
     (defun abc (hmm) (message hmm))
     (defun def (ghi) (message some-other-ghi))
     """
+    When I press "C-g"
+    And I go to the front of the word "hmm"
+    And I press "C-$"
+    And I type "foo"
+    Then I should see:
+    """
+    (defun abc (foo) (message foo))
+    (defun def (ghi) (message some-other-ghi))
+    """
+    
 
   Scenario: Mark all symbols by pressing twice
     Given I turn on emacs-lisp-mode
@@ -35,4 +45,20 @@ Feature: Mark all do-what-I-mean
     """
     (defun abc (hmm) (message hmm))
     (defun def (hmm) (message hmm))
+    """
+    When I press "C-g"
+    And I press "M-> RET"
+    And I insert:
+    """
+    (defun def (hmm-hmm) (message hmm))
+    """
+    And I go to the front of the word "hmm"
+    And I press "C-$"
+    And I press "C-$"
+    And I type "humm"
+    Then I should see:
+    """
+    (defun abc (humm) (message humm))
+    (defun def (humm) (message humm))
+    (defun def (humm-humm) (message humm))
     """
