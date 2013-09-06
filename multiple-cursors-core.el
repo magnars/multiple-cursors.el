@@ -573,6 +573,7 @@ for running commands with multiple cursors.")
                                      mc/mark-all-words-like-this-in-defun
                                      mc/mark-all-symbols-like-this-in-defun
                                      mc/mark-all-like-this-dwim
+                                     mc/mark-all-dwim
                                      mc/mark-sgml-tag-pair
                                      mc/insert-numbers
                                      mc/sort-regions
