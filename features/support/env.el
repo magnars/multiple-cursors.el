@@ -24,6 +24,7 @@
  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
  (global-set-key (kbd "M-!") 'mc/mark-all-like-this)
  (global-set-key (kbd "M-$") 'mc/mark-all-like-this-dwim)
+ (global-set-key (kbd "C-$") 'mc/mark-all-dwim)
  (global-set-key (kbd "M-#") 'mc/mark-all-in-region)
  (global-set-key (kbd "H-0") 'mc/insert-numbers)
  (global-set-key (kbd "H-1") 'mc/reverse-regions)
