@@ -427,7 +427,7 @@ If the region is inactive or on a single line, it will behave like
 `mc/mark-all-like-this-dwim'."
   (interactive "P")
   (if (and (use-region-p)
-           (not (> (mc/num-cursors) 0))
+           (not (> (mc/num-cursors) 1))
            (not (= (line-number-at-pos (region-beginning))
                    (line-number-at-pos (region-end)))))
       (if arg
