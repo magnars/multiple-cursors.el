@@ -170,6 +170,7 @@ Run the tests with:
 * [Ivan Andrus](https://github.com/gvol) added showing number of cursors in mode-line
 * [Fuco](https://github.com/Fuco1) added the first version of `mc/mark-all-like-this-dwim`
 * [Zach Kost-Smith](https://github.com/smithzvk) added `mc/mark-pop`
+* [Maciej Katafiasz](https://github.com/mathrick) added `mc/mark-all-dwim`
 
 Thanks!
 
