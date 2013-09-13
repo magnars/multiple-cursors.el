@@ -419,6 +419,7 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
         (when (<= (mc/num-cursors) before)
           (mc/mark-all-like-this))))))
 
+;;;###autoload
 (defun mc/mark-all-dwim (arg)
   "Tries even harder to guess what you want to mark all of.
 
