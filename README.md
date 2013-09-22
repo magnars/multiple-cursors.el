@@ -132,6 +132,7 @@ the location with:
 
     (setq mc/list-file "/my/preferred/file")
 
+NB! Make sure to do so before requiring multiple-cursors.
 
 ## Known limitations
 
