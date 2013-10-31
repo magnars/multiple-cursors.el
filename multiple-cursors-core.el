@@ -130,7 +130,6 @@ highlights the entire width of the window."
                                   mark-ring
                                   mark-active
                                   yank-undo-function
-                                  kill-ring-yank-pointer
                                   autopair-action
                                   autopair-wrap-action
                                   er/history)
