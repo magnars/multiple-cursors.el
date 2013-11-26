@@ -423,7 +423,7 @@ So you can paste it in later with `yank-rectangle'."
     (unless (mc--all-equal entries)
       (setq killed-rectangle entries))))
 
-(defvar mc/unsupported-minor-modes '(auto-complete-mode flyspell-mode)
+(defvar mc/unsupported-minor-modes '(auto-complete-mode flyspell-mode smartparens-mode)
   "List of minor-modes that does not play well with multiple-cursors.
 They are temporarily disabled when multiple-cursors are active.")
 
