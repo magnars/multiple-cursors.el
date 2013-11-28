@@ -55,3 +55,86 @@ Feature: Switching from a multiline region to multiple cursors
     And I go to the front of the word "there"
     And I press "C-S-c C-S-c"
     Then I should have 2 cursors
+
+  Scenario: Edit default short lines
+    When I insert:
+    """
+    hello
+
+    there
+    """
+    And I go to the end of the word "hello"
+    And I set the mark
+    And I go to the end of the word "there"
+    And I press "C-S-c C-S-c"
+    And I press "you"
+    Then I should see:
+    """
+    helloyou
+    you
+    thereyou
+    """
+
+  Scenario: Pad short lines
+    When I insert:
+    """
+    hello
+
+    there
+    """
+    And I go to the end of the word "hello"
+    And I set the mark
+    And I go to the end of the word "there"
+    And I press "M-1 C-S-c C-S-c"
+    Then I should have 3 cursors
+
+  Scenario: Edit padding short lines
+    When I insert:
+    """
+    hello
+
+    there
+    """
+    And I go to the end of the word "hello"
+    And I set the mark
+    And I go to the end of the word "there"
+    And I press "M-1 C-S-c C-S-c"
+    And I press "you"
+    Then I should see:
+    """
+    helloyou
+         you
+    thereyou
+    """
+
+  Scenario: Skip short lines
+    When I insert:
+    """
+    hello
+
+    there
+    """
+    And I go to the end of the word "hello"
+    And I set the mark
+    And I go to the end of the word "there"
+    And I press "M-- M-1 C-S-c C-S-c"
+    Then I should have 2 cursors
+
+  Scenario: Edit skipping short lines
+    When I insert:
+    """
+    hello
+
+    there
+    """
+    And I go to the end of the word "hello"
+    And I set the mark
+    And I go to the end of the word "there"
+    And I press "M-- M-1 C-S-c C-S-c"
+    And I press "you"
+    Then I should see:
+    """
+    helloyou
+
+    thereyou
+    """
