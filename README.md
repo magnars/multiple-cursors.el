@@ -102,6 +102,9 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
 - You can use `mc/reverse-regions` with nothing selected and just one cursor.
   It will then flip the sexp at point and the one below it.
 
+- When you use `mc/edit-lines`, you can give it a positive or negative
+  prefix to change how it behaves on too short lines.
+
 - If you would like to keep the global bindings clean, and get custom keybindings
   when the region is active, you can try [region-bindings-mode](https://github.com/fgallina/region-bindings-mode).
 
@@ -167,8 +170,8 @@ Run the tests with:
 ## Contributors
 
 * [Takafumi Arakaki](https://github.com/tkf) has contributed several small improvements
-* [Marco Baringer](https://github.com/segv) contributed looping to mc/cycle and adding cursors without region for mark-more.
-* [Ivan Andrus](https://github.com/gvol) added showing number of cursors in mode-line
+* [Marco Baringer](https://github.com/segv) contributed looping to `mc/cycle` and adding cursors without region for mark-more.
+* [Ivan Andrus](https://github.com/gvol) added showing number of cursors in mode-line, and different options for how to handle short lines in `mc/edit-lines`.
 * [Fuco](https://github.com/Fuco1) added the first version of `mc/mark-all-like-this-dwim`
 * [Zach Kost-Smith](https://github.com/smithzvk) added `mc/mark-pop`
 * [Maciej Katafiasz](https://github.com/mathrick) added `mc/mark-all-dwim`
