@@ -29,6 +29,7 @@
  (global-set-key (kbd "H-0") 'mc/insert-numbers)
  (global-set-key (kbd "H-1") 'mc/reverse-regions)
  (global-set-key (kbd "H-2") 'mc/sort-regions)
+ (global-set-key (kbd "H-3") 'mc/yank-rectangle)
  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
  (global-set-key (kbd "H-SPC") 'set-rectangular-region-anchor)
  (switch-to-buffer
