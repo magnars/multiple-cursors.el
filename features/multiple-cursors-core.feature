@@ -166,9 +166,23 @@ Feature: Multiple cursors core
     And I press "C-v"
     Then the cursor should be at point "8"
 
+  Scenario: Looping forwards around cursors including one at point-max
+    Given I have cursors at "_" in "1_34_67_"
+    And I press "C-f"
+    And I press "C-v"
+    And I press "C-v"
+    And I press "C-v"
+    Then the cursor should be at point "3"
+
   Scenario: Looping backwards around cursors
     Given I have cursors at "_" in "1_34567_9"
     And I press "M-v"
     And I press "M-v"
     Then the cursor should be at point "2"
 
+  Scenario: Looping backwards around cursors including one at point-min
+    Given I have cursors at "_" in "_234_67_9"
+    And I press "M-v"
+    And I press "M-v"
+    And I press "M-v"
+    Then the cursor should be at point "1"
