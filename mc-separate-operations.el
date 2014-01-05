@@ -56,6 +56,7 @@
 (defvar mc--strings-to-replace nil)
 
 (defun mc--replace-region-strings-1 ()
+  ;; Has to be interactive since `mc/execute` uses `call-interactively`
   (interactive)
   (delete-region (region-beginning) (region-end))
   (save-excursion (insert (car mc--strings-to-replace)))
@@ -85,6 +86,55 @@
     (mc/execute-command-for-all-cursors 'mark-sexp))
   (setq mc--strings-to-replace (sort (mc--ordered-region-strings) 'string<))
   (mc--replace-region-strings))
+
+(defun mc--insert-region-strings-1 ()
+  ;; Has to be interactive since `mc/execute` uses `call-interactively`
+  (interactive)
+  (save-excursion (insert (car mc--strings-to-replace)))
+  (setq mc--strings-to-replace (cdr mc--strings-to-replace)))
+
+;;;###autoload
+(defun mc/yank-rectangle (use-kill-ring)
+  "Insert one line of the killed rectangle at each cursor.
+Excess lines of the rectangle are ignored.  If there are excess
+cursors, it will prompt whether to \"wrap around\", i.e. to
+continue yanking, starting from the first line again.  If not
+then empty strings are inserted.
+
+When USE-KILL-RING (interactively with `prefix-arg') is non-nil
+use the regular `kill-ring' instead, splitting it on newlines."
+  (interactive "P")
+  (setq mc--strings-to-replace
+        (if use-kill-ring
+            (split-string (current-kill 0) "\n")
+          (copy-list killed-rectangle)))
+  (unless mc--strings-to-replace
+    (error "No rectangle to yank"))
+  (let ((num-cursors (mc/num-cursors))
+        (num-strings (length mc--strings-to-replace)))
+    ;; Handle mismatch between number of strings and cursors
+    (cond
+     ;; Just a warning
+     ((< num-cursors num-strings)
+      (message "Yanked %s lines (skipped %s)" num-cursors (- num-strings num-cursors)))
+     ;; Fill
+     ((> num-cursors num-strings)
+      (if (y-or-n-p (format
+                     "There are %s lines to yank, but you have %s cursors. Wrap around? "
+                     num-strings num-cursors))
+          ;; Wrap around
+          (while (< (setq num-strings (length mc--strings-to-replace))
+                    num-cursors)
+            (setq mc--strings-to-replace (append mc--strings-to-replace
+                                                 mc--strings-to-replace)))
+        ;; Pad with empty strings
+        (while (< (setq num-strings (length mc--strings-to-replace))
+                  num-cursors)
+          (setq mc--strings-to-replace (append mc--strings-to-replace
+                                               '("")))))))
+    ;; (mc--replace-region-strings)
+    (mc/for-each-cursor-ordered
+     (mc/execute-command-for-fake-cursor 'mc--replace-region-strings-1 cursor))))
 
 (provide 'mc-separate-operations)
 ;;; mc-separate-operations.el ends here
