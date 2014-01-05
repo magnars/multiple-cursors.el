@@ -32,7 +32,7 @@
 
 (defun mc/next-fake-cursor-after-point ()
   (let ((pos (point))
-        (next-pos (point-max))
+        (next-pos (1+ (point-max)))
         next)
     (mc/for-each-fake-cursor
      (let ((cursor-pos (overlay-get cursor 'point)))
@@ -44,7 +44,7 @@
 
 (defun mc/prev-fake-cursor-before-point ()
   (let ((pos (point))
-        (prev-pos (point-min))
+        (prev-pos (1- (point-min)))
         prev)
     (mc/for-each-fake-cursor
      (let ((cursor-pos (overlay-get cursor 'point)))
