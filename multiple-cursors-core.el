@@ -194,7 +194,9 @@ Saves the current state in the overlay to be restored later."
   (setq this-command cmd)
   (run-hooks 'pre-command-hook)
   (unless (eq this-command 'ignore)
-    (call-interactively cmd))
+    (if (commandp cmd)
+        (call-interactively cmd)
+      (message "mc/execute-command: `%s' is not an interactive command" cmd)))
   (run-hooks 'post-command-hook)
   (when deactivate-mark (deactivate-mark)))
 
