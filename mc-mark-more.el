@@ -55,7 +55,7 @@
     beg))
 
 (defun mc/furthest-cursor-before-point ()
-  (let ((beg (min (mark) (point)))
+  (let ((beg (if mark-active (min (mark) (point)) (point)))
         furthest)
     (mc/for-each-fake-cursor
      (when (< (mc/cursor-beg cursor) beg)
@@ -64,7 +64,7 @@
     furthest))
 
 (defun mc/furthest-cursor-after-point ()
-  (let ((end (max (mark) (point)))
+  (let ((end (if mark-active (max (mark) (point)) (point)))
         furthest)
     (mc/for-each-fake-cursor
      (when (> (mc/cursor-end cursor) end)
@@ -127,14 +127,15 @@ Use like case-fold-search, don't recommend setting it globally.")
 With negative ARG, delete the last one instead.
 With zero ARG, skip the last one and mark next."
   (interactive "p")
-  (if (region-active-p)
-      (if (< arg 0)
-          (let ((cursor (mc/furthest-cursor-after-point)))
-            (if cursor
-                (mc/remove-fake-cursor cursor)
-              (error "No cursors to be unmarked")))
-        (mc/mark-more-like-this (= arg 0) 'forwards))
-    (mc/mark-lines arg 'forwards))
+  (cond ((< arg 0)
+         (let ((cursor (mc/furthest-cursor-after-point)))
+           (if cursor
+               (mc/remove-fake-cursor cursor)
+             (error "No cursors to be unmarked"))))
+        ((region-active-p)
+         (mc/mark-more-like-this (= arg 0) 'forwards))
+        (t
+         (mc/mark-lines arg 'forwards)))
   (mc/maybe-multiple-cursors-mode))
 
 ;;;###autoload
@@ -155,14 +156,15 @@ With zero ARG, skip the last one and mark next."
 With negative ARG, delete the last one instead.
 With zero ARG, skip the last one and mark next."
   (interactive "p")
-  (if (region-active-p)
-      (if (< arg 0)
-          (let ((cursor (mc/furthest-cursor-before-point)))
-            (if cursor
-                (mc/remove-fake-cursor cursor)
-              (error "No cursors to be unmarked")))
-        (mc/mark-more-like-this (= arg 0) 'backwards))
-    (mc/mark-lines arg 'backwards))
+  (cond ((< arg 0)
+         (let ((cursor (mc/furthest-cursor-before-point)))
+           (if cursor
+               (mc/remove-fake-cursor cursor)
+             (error "No cursors to be unmarked"))))
+        ((region-active-p)
+         (mc/mark-more-like-this (= arg 0) 'backwards))
+        (t
+         (mc/mark-lines arg 'backwards)))
   (mc/maybe-multiple-cursors-mode))
 
 ;;;###autoload

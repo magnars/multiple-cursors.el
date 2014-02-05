@@ -80,6 +80,52 @@ Feature: Marking multiple parts of the buffer
     And I type "more"
     Then I should see "Here's text, more and more"
 
+  Scenario: Removing first cursor without an active region
+    When I insert:
+    """
+    aaa
+    bbb
+    ccc
+    ddd
+    """
+    And I go to the front of the word "bbb"
+    And I press "C->"
+    And I press "C->"
+    And I press "C-- C-<"
+    And I press "C-- C-<"
+    And I type "_"
+    Then I should have 1 cursors
+    And I should see:
+    """
+    aaa
+    bbb
+    ccc
+    _ddd
+    """
+
+  Scenario: Removing last cursor without an active region
+    When I insert:
+    """
+    aaa
+    bbb
+    ccc
+    ddd
+    """
+    And I go to the front of the word "ddd"
+    And I press "C-<"
+    And I press "C-<"
+    And I press "C-- C->"
+    And I press "C-- C->"
+    And I type "_"
+    Then I should have 1 cursors
+    And I should see:
+    """
+    aaa
+    _bbb
+    ccc
+    ddd
+    """
+
   Scenario: Marking all
     When I insert "Here's text, text and text"
     And I select "text"
