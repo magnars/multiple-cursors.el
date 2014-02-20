@@ -75,6 +75,7 @@
 ;;  - `mc/mark-all-words-like-this`: Like `mc/mark-all-like-this` but only for whole words.
 ;;  - `mc/mark-all-symbols-like-this`: Like `mc/mark-all-like-this` but only for whole symbols.
 ;;  - `mc/mark-all-in-region`: Prompts for a string to match in the region, adding cursors to all of them.
+;;  - `mc/mark-all-regexp-in-region`: Prompts for a regexp to match in the region, adding cursors to all of them.
 ;;  - `mc/mark-all-like-this-in-defun`: Marks all parts of the current defun that matches the current region.
 ;;  - `mc/mark-all-words-like-this-in-defun`: Like `mc/mark-all-like-this-in-defun` but only for whole words.
 ;;  - `mc/mark-all-symbols-like-this-in-defun`: Like `mc/mark-all-like-this-in-defun` but only for whole symbols.
