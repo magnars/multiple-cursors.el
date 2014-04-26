@@ -339,43 +339,44 @@ it will prompt for the proper action and then save that preference.
 
 Some commands are so unsupported that they are even prevented for
 the original cursor, to inform about the lack of support."
-  (unless mc--executing-command-for-fake-cursor
+  (when (eq unread-command-events nil)
+    (unless mc--executing-command-for-fake-cursor
 
-    (if (eq 1 (mc/num-cursors)) ;; no fake cursors? disable mc-mode
-        (multiple-cursors-mode 0)
-      (when this-original-command
-        (let ((original-command (or mc--this-command
-                                    (command-remapping this-original-command)
-                                    this-original-command)))
+      (if (eq 1 (mc/num-cursors)) ;; no fake cursors? disable mc-mode
+          (multiple-cursors-mode 0)
+        (when this-original-command
+          (let ((original-command (or mc--this-command
+                                      (command-remapping this-original-command)
+                                      this-original-command)))
 
-          ;; skip keyboard macros, since they will generate actual commands that are
-          ;; also run in the command loop - we'll handle those later instead.
-          (when (functionp original-command)
+            ;; skip keyboard macros, since they will generate actual commands that are
+            ;; also run in the command loop - we'll handle those later instead.
+            (when (functionp original-command)
 
-            ;; if it's a lambda, we can't know if it's supported or not
-            ;; - so go ahead and assume it's ok, because we're just optimistic like that
-            (if (or (not (symbolp original-command))
-                    ;; lambda registered by smartrep
-                    (string-prefix-p "(" (symbol-name original-command)))
-                (mc/execute-command-for-all-fake-cursors original-command)
+              ;; if it's a lambda, we can't know if it's supported or not
+              ;; - so go ahead and assume it's ok, because we're just optimistic like that
+              (if (or (not (symbolp original-command))
+                      ;; lambda registered by smartrep
+                      (string-prefix-p "(" (symbol-name original-command)))
+                  (mc/execute-command-for-all-fake-cursors original-command)
 
-              ;; smartrep `intern's commands into own obarray to help
-              ;; `describe-bindings'.  So, let's re-`intern' here to
-              ;; make the command comparable by `eq'.
-              (setq original-command (intern (symbol-name original-command)))
+                ;; smartrep `intern's commands into own obarray to help
+                ;; `describe-bindings'.  So, let's re-`intern' here to
+                ;; make the command comparable by `eq'.
+                (setq original-command (intern (symbol-name original-command)))
 
-              ;; otherwise it's a symbol, and we can be more thorough
-              (if (get original-command 'mc--unsupported)
-                  (message "%S is not supported with multiple cursors%s"
-                           original-command
-                           (get original-command 'mc--unsupported))
-                (when (and original-command
-                           (not (memq original-command mc--default-cmds-to-run-once))
-                           (not (memq original-command mc/cmds-to-run-once))
-                           (or (memq original-command mc--default-cmds-to-run-for-all)
-                               (memq original-command mc/cmds-to-run-for-all)
-                               (mc/prompt-for-inclusion-in-whitelist original-command)))
-                  (mc/execute-command-for-all-fake-cursors original-command))))))))))
+                ;; otherwise it's a symbol, and we can be more thorough
+                (if (get original-command 'mc--unsupported)
+                    (message "%S is not supported with multiple cursors%s"
+                             original-command
+                             (get original-command 'mc--unsupported))
+                  (when (and original-command
+                             (not (memq original-command mc--default-cmds-to-run-once))
+                             (not (memq original-command mc/cmds-to-run-once))
+                             (or (memq original-command mc--default-cmds-to-run-for-all)
+                                 (memq original-command mc/cmds-to-run-for-all)
+                                 (mc/prompt-for-inclusion-in-whitelist original-command)))
+                    (mc/execute-command-for-all-fake-cursors original-command)))))))))))
 
 (defun mc/remove-fake-cursors ()
   "Remove all fake cursors.
