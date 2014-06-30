@@ -4,6 +4,15 @@ Multiple cursors for Emacs. This is some pretty crazy functionality, so yes,
 there are kinks. Don't be afraid tho, I've been using it since 2011 with
 great success and much merriment.
 
+## Installation
+
+I highly recommend installing multiple-cursors through elpa.
+
+It's available on [marmalade](http://marmalade-repo.org/) and
+[melpa](http://melpa.milkbox.net/):
+
+    M-x package-install multiple-cursors
+
 ## Basic usage
 
 Start out with:
