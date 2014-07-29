@@ -133,6 +133,129 @@ Feature: Marking multiple parts of the buffer
     c_cc
     """
 
+  Scenario: Marking S-expressions
+    When I insert:
+    """
+    (let ((x 3) (y (+ 1 1))
+          (z 1))
+      (+ x y z))
+    """
+    And I go to the front of the word "x"
+    And I press "C-b"
+    And I press "C-2 M-x mc/mark-next-sexps"
+    Then I should have 3 cursors
+
+  Scenario: Marking S-expressions
+    When I insert:
+    """
+    (let ((x 3) (y (+ 1 1))
+          (z 1))
+      (+ x y z))
+    """
+    And I go to the front of the word "x"
+    And I press "C-b"
+    And I press "C-2 M-x mc/mark-next-sexps"
+    And I type "!"
+    Then I should have 3 cursors
+    And I should see:
+    """
+    (let (!(x 3)! (y (+ 1 1))!
+          (z 1))
+      (+ x y z))
+    """
+
+  Scenario: Marking S-expressions with comments
+    Given I turn on lisp-mode
+    When I insert:
+    """
+    (let (x
+          ;; y is bound to 2
+          (y (+ 1 1))
+          ;; z is bound to 1
+          (z 1))
+      (+ x y z))
+    """
+    And I go to the front of the word "x"
+    And I press "C-2 M-x mc/mark-next-sexps"
+    And I press "C-M-k"
+    Then I should have 3 cursors
+    And I should see:
+    """
+    (let ()
+      (+ x y z))
+    """
+
+  Scenario: Marking S-expressions with comments backwards
+    Given I turn on lisp-mode
+    When I insert:
+    """
+    (let (x
+          ;; y is bound to 2
+          (y (+ 1 1))
+          ;; z is bound to 1
+          (z 1))
+      (+ x y z))
+    """
+    And I go to the front of the word "x"
+    And I press "C-3 C-M-f C-M-b"
+    And I press "C-2 M-x mc/mark-previous-sexps"
+    And I press "C-M-k"
+    Then I should have 3 cursors
+    And I should see:
+    """
+    (let (
+          ;; y is bound to 2
+          
+          ;; z is bound to 1
+          )
+      (+ x y z))
+    """
+
+  Scenario: Editing S-expressions
+    When I insert:
+    """
+    (let (x y z)
+      (or x y z))
+    """
+    And I go to the front of the word "x"
+    And I press "M-x mc/mark-next-sexps"
+    And I press "C-M-f C-j C-g"
+    And I press "C-2 C-M-u"
+    And I press "M-x indent-sexp"
+    Then I should see:
+    """
+    (let (x
+          y
+          z)
+      (or x y z))
+    """
+
+  Scenario: Editing S-expressions
+    When I insert:
+    """
+    (let (x y z)
+      (+ x y z))
+    """
+    And I go to the front of the word "x"
+    And I press "M-x mc/mark-next-sexps"
+    And I press "C-M-f C-j"
+    And I press "M-x mc/mark-next-sexps"
+    And I press "C-M-b"
+    And I type "("
+    And I press "C-M-f"
+    And I type " "
+    And I press "M-x mc/insert-numbers"
+    And I type ")"
+    And I press "C-g C-2 C-M-u"
+    And I press "M-x indent-sexp"
+    Then I should see:
+    """
+    (let ((x 0)
+          (y 1)
+          (z 2))
+      (+ x y z))
+    """
+
   Scenario: Multiple cursor with shift selection
     When I insert "This text contains the word text twice"
     And I go to the front of the word "text"
