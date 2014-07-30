@@ -54,6 +54,7 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
  - `mc/mark-previous-like-this`: Adds a cursor and region at the next part of the buffer backwards that matches the current region.
  - `mc/mark-previous-word-like-this`: Like `mc/mark-previous-like-this` but only for whole words.
  - `mc/mark-previous-symbol-like-this`: Like `mc/mark-previous-like-this` but only for whole symbols.
+ - `mc/mark-next-sexps`: Mark the next sexp.
  - `mc/mark-more-like-this-extended`: Use arrow keys to quickly mark/skip next/previous occurances.
  - `mc/add-cursor-on-click`: Bind to a mouse event to add cursors by clicking. See tips-section.
  - `mc/mark-pop`: Set a cursor at the current point and move to the next (different) position on the mark stack.  This allows for fine grained control over the placement of cursors.
@@ -182,7 +183,7 @@ Run the tests with:
 * [Marco Baringer](https://github.com/segv) contributed looping to `mc/cycle` and adding cursors without region for mark-more.
 * [Ivan Andrus](https://github.com/gvol) added showing number of cursors in mode-line, and different options for how to handle short lines in `mc/edit-lines`.
 * [Fuco](https://github.com/Fuco1) added the first version of `mc/mark-all-like-this-dwim`
-* [Zach Kost-Smith](https://github.com/smithzvk) added `mc/mark-pop`
+* [Zach Kost-Smith](https://github.com/smithzvk) added `mc/mark-pop` and `mc/mark-next-sexps`
 * [Maciej Katafiasz](https://github.com/mathrick) added `mc/mark-all-dwim`
 
 Thanks!
