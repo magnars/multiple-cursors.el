@@ -185,6 +185,31 @@ Feature: Marking multiple parts of the buffer
       (+ x y z))
     """
 
+  Scenario: Marking S-expressions with comments backwards
+    Given I turn on lisp-mode
+    When I insert:
+    """
+    (let (x
+          ;; y is bound to 2
+          (y (+ 1 1))
+          ;; z is bound to 1
+          (z 1))
+      (+ x y z))
+    """
+    And I go to the front of the word "z"
+    And I press "C-b"
+    And I press "C-2 M-x mc/mark-previous-sexps"
+    And I press "C-M-k"
+    Then I should have 3 cursors
+    And I should see:
+    """
+    (let (
+          ;; y is bound to 2
+
+          ;; z is bound to 1
+          )
+    """
+
   Scenario: Editing S-expressions
     When I insert:
     """
