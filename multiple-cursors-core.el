@@ -717,9 +717,7 @@ for running commands with multiple cursors.")
 (defvar mc/cmds-to-run-for-all nil
   "Commands to run for all cursors in multiple-cursors-mode")
 
-(defun mc/load-list-file () (load mc/list-file t))
-
-(add-hook 'after-init-hook 'mc/load-list-file)
+(load mc/list-file t) ;; load, but no errors if it does not exist yet please
 
 (provide 'multiple-cursors-core)
 
