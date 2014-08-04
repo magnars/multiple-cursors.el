@@ -596,6 +596,9 @@ for running commands with multiple cursors.")
                                      mc/skip-to-next-like-this
                                      mc/skip-to-previous-like-this
                                      rrm/switch-to-multiple-cursors
+                                     mc-hide-unmatched-lines-mode
+                                     hum/keyboard-quit
+                                     hum/unhide-invisible-overlays
                                      save-buffer
                                      ido-exit-minibuffer
                                      exit-minibuffer
