@@ -79,6 +79,17 @@
          (mc/mark-all-like-this)
          (mc/keyboard-quit)))
 
+(Given "^I have cursors at \"\\(.+\\)\" in \\(?: \"\\(.+\\)\"\\|:\\)$"
+       (lambda (needle haystack)
+         (insert haystack)
+         (goto-char (point-min))
+         (search-forward needle)
+         (set-mark (point))
+         (goto-char (match-beginning 0))
+         (mc/mark-all-like-this)
+         (mc/keyboard-quit)))
+
+
 (When "^I copy \"\\(.+\\)\" in another program$"
        (lambda (text)
          (lexical-let ((text text))
@@ -137,3 +148,19 @@
                                               (split-string rest))
                                        "-"))))
           (call-interactively func))))
+
+(Then "^I should see exactly\\(?: \"\\(.+\\)\"\\|:\\)$"
+      "Asserts that the current buffer does not include some text with
+       respect of text hidden by overlays"
+      (lambda (expected)
+        (let ((p (point-min))
+              (visible-text "")
+              (message "Expected '%s' to be part of '%s', but was not found in current buffer.")
+              )
+          (while (not (= p (point-max)))
+            (if (not (invisible-p p))
+                (setq visible-text (concat visible-text  (buffer-substring p (1+ p))))
+              )
+            (setq p (1+ p))
+            )
+          (cl-assert (s-equals? expected visible-text) nil message expected visible-text))))
