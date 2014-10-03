@@ -459,6 +459,7 @@ They are temporarily disabled when multiple-cursors are active.")
   :group 'multiple-cursors)
 (put 'mc/mode-line 'risky-local-variable t)
 
+;;;###autoload
 (define-minor-mode multiple-cursors-mode
   "Mode while multiple cursors are active."
   nil mc/mode-line mc/keymap

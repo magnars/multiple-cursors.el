@@ -46,6 +46,7 @@
 (defun hum/disable-hum-mode ()
   (mc-hide-unmatched-lines-mode 0))
 
+;;;###autoload
 (define-minor-mode mc-hide-unmatched-lines-mode
   "Minor mode when enabled hides all lines where no cursos (and
 also hum/lines-to-expand below and above) To make use of this
