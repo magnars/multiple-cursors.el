@@ -29,7 +29,6 @@
 
 ;;; Code:
 
-
 (require 'multiple-cursors-core)
 
 (defvar hum/hide-unmatched-lines-mode-map (make-sparse-keymap)
@@ -45,15 +44,14 @@
 
 ;; used only in in multiple-cursors-mode-disabled-hook
 (defun hum/disable-hum-mode ()
-  (mc-hide-unmatched-lines-mode 0)
-)
+  (mc-hide-unmatched-lines-mode 0))
 
 (define-minor-mode mc-hide-unmatched-lines-mode
   "Minor mode when enabled hides all lines where no cursos (and
 also hum/lines-to-expand below and above) To make use of this
 mode press \"C-'\" while multiple-cursor-mode is active. You can
 still edit lines while you are in mc-hide-unmatched-lines
-mode. To leave this mode press <return> or \"C-g\"" 
+mode. To leave this mode press <return> or \"C-g\""
   nil " hu"
   hum/hide-unmatched-lines-mode-map
   (if mc-hide-unmatched-lines-mode
@@ -63,9 +61,7 @@ mode. To leave this mode press <return> or \"C-g\""
         (add-hook 'multiple-cursors-mode-disabled-hook 'hum/disable-hum-mode t t))
     (progn
       (hum/unhide-unmatched-lines)
-      (remove-hook 'multiple-cursors-mode-disabled-hook 'hum/disable-hum-mode))
-    )
-)
+      (remove-hook 'multiple-cursors-mode-disabled-hook 'hum/disable-hum-mode))))
 
 (defconst hum/invisible-overlay-name 'hum/invisible-overlay-name)
 
@@ -77,8 +73,7 @@ mode. To leave this mode press <return> or \"C-g\""
 (defcustom hum/placeholder "..."
   "Placeholder which will be placed insted of hiden text"
   :type '(string)
-  :group 'multiple-cursors
-)
+  :group 'multiple-cursors)
 
 (defun hum/add-invisible-overlay (begin end)
   (let ((overlay (make-overlay begin
@@ -91,10 +86,7 @@ mode. To leave this mode press <return> or \"C-g\""
     (overlay-put overlay 'invisible t)
     (overlay-put overlay 'intangible t)
     (overlay-put overlay 'evaporate t)
-    (overlay-put overlay 'after-string hum/placeholder)
-    )
-  )
-
+    (overlay-put overlay 'after-string hum/placeholder)))
 
 (defun hum/hide-unmatched-lines ()
   (let ((begin (point-min)))
@@ -102,18 +94,12 @@ mode. To leave this mode press <return> or \"C-g\""
      (save-excursion
        (goto-char (mc/cursor-beg cursor))
        (if (< begin (line-beginning-position (- hum/lines-to-expand)))
-           (hum/add-invisible-overlay begin (line-end-position (- hum/lines-to-expand)))
-         )
-       (setq begin (line-beginning-position (+ 2 hum/lines-to-expand)))
-       )
-     )
-    (hum/add-invisible-overlay begin (point-max))
-    )
-  )
+           (hum/add-invisible-overlay begin (line-end-position (- hum/lines-to-expand))))
+       (setq begin (line-beginning-position (+ 2 hum/lines-to-expand)))))
+    (hum/add-invisible-overlay begin (point-max))))
 
 (defun hum/unhide-unmatched-lines ()
-  (remove-overlays nil nil hum/invisible-overlay-name t)
-  )
+  (remove-overlays nil nil hum/invisible-overlay-name t))
 
 (provide 'mc-hide-unmatched-lines-mode)
 (define-key mc/keymap (kbd "C-'") 'mc-hide-unmatched-lines-mode)
