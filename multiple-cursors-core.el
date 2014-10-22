@@ -687,6 +687,7 @@ for running commands with multiple cursors.")
                                         py-electric-backspace
                                         c-electric-backspace
                                         org-delete-backward-char
+                                        cperl-electric-backspace
                                         python-indent-dedent-line-backspace
                                         paredit-backward-delete
                                         autopair-backspace
