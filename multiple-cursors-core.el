@@ -52,6 +52,14 @@
          (setq buffer-undo-list ;; otherwise add a function to activate this cursor
                (cons (cons 'apply (cons 'activate-cursor-for-undo (list id))) buffer-undo-list))))))
 
+
+(defun mc/get-all-fake-cursors-state ()
+  "Return list of all fake cursor states
+like this: ((CURSOR-POS MARK-POSITION (list of cursor specific variables)) ...)"
+  (mapcar (lambda (cursor)
+            (mc/get-state-from-overlay cursor))
+          (mc/all-fake-cursors)))
+
 (defun mc/all-fake-cursors (&optional start end)
   (remove-if-not 'mc/fake-cursor-p
                  (overlays-in (or start (point-min))
@@ -151,6 +159,23 @@ highlights the entire width of the window."
   (set-marker (mark-marker) (overlay-get o 'mark))
   (dolist (var mc/cursor-specific-vars)
     (when (boundp var) (set var (overlay-get o var)))))
+
+(defun mc/get-state-from-overlay (o)
+  "Return list describing state of cursor overlay"
+  (list
+   (marker-position (overlay-get o 'point))
+   (marker-position (overlay-get o 'mark))
+   (mapcar (lambda (var)
+             (when (boundp var) (cons var (overlay-get o var))))
+    mc/cursor-specific-vars)))
+
+(defun mc/create-overlay-from-state (point mark cursor-vars)
+  "Creates cursor overlay according to cursor-info"
+  (goto-char point)
+  (push-mark mark t)
+  (loop for (var . value) in cursor-vars
+        do (setq var value))
+  (mc/create-fake-cursor-at-point))
 
 (defun mc/remove-fake-cursor (o)
   "Delete overlay with state, including dependent overlays and markers."
@@ -459,6 +484,20 @@ They are temporarily disabled when multiple-cursors are active.")
   :group 'multiple-cursors)
 (put 'mc/mode-line 'risky-local-variable t)
 
+(defun mc/restore-mode (real-cursor real-mark fake-cursors)
+  "Restore state of mc mode after undo"
+  (save-excursion
+    ;; remove all existing fake cursors
+    (when multiple-cursors-mode
+      (mc/remove-fake-cursors))
+    ;; and create set a new one
+    (mapc #'(lambda (cursor)
+              (apply 'mc/create-overlay-from-state cursor))
+          fake-cursors))
+  (goto-char real-cursor)
+  (push-mark real-mark t)
+  (multiple-cursors-mode t))
+
 ;;;###autoload
 (define-minor-mode multiple-cursors-mode
   "Mode while multiple cursors are active."
@@ -471,6 +510,7 @@ They are temporarily disabled when multiple-cursors are active.")
         (run-hooks 'multiple-cursors-mode-enabled-hook))
     (remove-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t)
     (remove-hook 'pre-command-hook 'mc/make-a-note-of-the-command-being-run t)
+    (push `(apply mc/restore-mode . ,(list (point) (mark) (mc/get-all-fake-cursors-state))) buffer-undo-list)
     (setq mc--this-command nil)
     (mc--maybe-set-killed-rectangle)
     (mc/remove-fake-cursors)
