@@ -185,7 +185,7 @@ Run the tests with:
 * [Fuco](https://github.com/Fuco1) added the first version of `mc/mark-all-like-this-dwim`
 * [Zach Kost-Smith](https://github.com/smithzvk) added `mc/mark-pop`
 * [Maciej Katafiasz](https://github.com/mathrick) added `mc/mark-all-dwim`
-* [Aleksey Fedotov](https://github.com/lexa) added `mc-hide-unmatched-lines-mode` and made undo restore your cursors after leaving mc-mode.
+* [Aleksey Fedotov](https://github.com/lexa) added `mc-hide-unmatched-lines-mode`
 
 Thanks!
 
