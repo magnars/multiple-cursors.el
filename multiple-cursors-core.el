@@ -698,6 +698,7 @@ for running commands with multiple cursors.")
                                         exchange-point-and-mark
                                         cua-set-mark
                                         cua-replace-region
+                                        cua-delete-region
                                         move-end-of-line
                                         beginning-of-line
                                         move-beginning-of-line
