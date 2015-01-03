@@ -565,6 +565,8 @@ for running commands with multiple cursors.")
                                      mc/edit-ends-of-lines
                                      mc/edit-beginnings-of-lines
                                      mc/mark-next-like-this
+                                     mc/mark-next-sexps
+                                     mc/mark-previous-sexps
                                      mc/mark-next-word-like-this
                                      mc/mark-next-symbol-like-this
                                      mc/mark-previous-like-this

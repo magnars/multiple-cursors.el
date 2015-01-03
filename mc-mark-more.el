@@ -245,6 +245,27 @@ With zero ARG, skip the last one and mark next."
       (multiple-cursors-mode 1)
     (multiple-cursors-mode 0)))
 
+(defun mc/mark-sexps (num-sexps direction)
+  (dotimes (i num-sexps)
+    (mc/create-fake-cursor-at-point)
+    (ecase direction
+      (forwards (loop do (forward-sexp 1)
+                      while (mc/all-fake-cursors (point) (1+ (point)))))
+      (backwards (loop do (forward-sexp -1)
+                       while (mc/all-fake-cursors (point) (1+ (point))))))))
+
+;;;###autoload
+(defun mc/mark-next-sexps (arg)
+  (interactive "p")
+  (mc/mark-sexps arg 'forwards)
+  (mc/maybe-multiple-cursors-mode))
+
+;;;###autoload
+(defun mc/mark-previous-sexps (arg)
+  (interactive "p")
+  (mc/mark-sexps arg 'backwards)
+  (mc/maybe-multiple-cursors-mode))
+
 (defun mc--select-thing-at-point (thing)
   (let ((bound (bounds-of-thing-at-point thing)))
     (when bound
