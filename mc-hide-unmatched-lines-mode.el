@@ -48,7 +48,7 @@
 
 ;;;###autoload
 (define-minor-mode mc-hide-unmatched-lines-mode
-  "Minor mode when enabled hides all lines where no cursos (and
+  "Minor mode when enabled hides all lines where no cursors (and
 also hum/lines-to-expand below and above) To make use of this
 mode press \"C-'\" while multiple-cursor-mode is active. You can
 still edit lines while you are in mc-hide-unmatched-lines
