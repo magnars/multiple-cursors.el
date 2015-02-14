@@ -674,6 +674,11 @@ for running commands with multiple cursors.")
                                         capitalize-word
                                         forward-list
                                         backward-list
+                                        backward-up-list
+                                        up-list
+                                        down-list
+                                        forward-sexp
+                                        backward-sexp
                                         hippie-expand
                                         hippie-expand-lines
                                         yank
@@ -682,6 +687,8 @@ for running commands with multiple cursors.")
                                         kill-word
                                         kill-line
                                         kill-whole-line
+                                        kill-sexp
+                                        raise-sexp
                                         backward-kill-word
                                         backward-delete-char-untabify
                                         delete-char delete-forward-char
