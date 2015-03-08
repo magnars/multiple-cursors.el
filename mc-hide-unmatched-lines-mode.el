@@ -30,6 +30,7 @@
 ;;; Code:
 
 (require 'multiple-cursors-core)
+(require 'mc-mark-more)
 
 (defvar hum/hide-unmatched-lines-mode-map (make-sparse-keymap)
   "Keymap for hide unmatched lines is mainly for rebinding C-g")
