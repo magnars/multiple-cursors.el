@@ -271,10 +271,10 @@ With zero ARG, skip the last one and mark next."
     (mc/mark-all-like-this)))
 
 ;;;###autoload
-(defun mc/mark-all-in-region (beg end)
+(defun mc/mark-all-in-region (beg end &optional search)
   "Find and mark all the parts in the region matching the given search"
   (interactive "r")
-  (let ((search (read-from-minibuffer "Mark all in region: "))
+  (let ((search (or search (read-from-minibuffer "Mark all in region: ")))
         (case-fold-search nil))
     (if (string= search "")
         (message "Mark aborted")
