@@ -86,5 +86,36 @@
   (setq mc--strings-to-replace (sort (mc--ordered-region-strings) 'string<))
   (mc--replace-region-strings))
 
+
+;;;###autoload
+(defun mc/vertical-align (character)
+  "Aligns all cursors vertically with a given CHARACTER to the one with the
+highest colum number (the rightest).
+Might not behave as intended if more than one cursors are on the same line."
+  (interactive "c")
+  (let ((rightest-column (current-column)))
+    (mc/execute-command-for-all-cursors 
+     (lambda () "get the rightest cursor"
+       (interactive)
+       (setq rightest-column (max (current-column) rightest-column))
+       ))
+    (mc/execute-command-for-all-cursors 
+     (lambda () 
+       (interactive)
+       (let ((missing-spaces (- rightest-column (current-column))))
+	 (save-excursion (insert (make-string missing-spaces character)))
+	 (forward-char missing-spaces)
+	 )
+       ))
+      )
+    )
+
+;;;###autoload
+(defun mc/vertical-align-with-space ()
+  "Aligns all cursors with whitespace like `mc/vertical-align' does"
+  (interactive)
+  (mc/vertical-align 32)
+  )
+
 (provide 'mc-separate-operations)
 ;;; mc-separate-operations.el ends here
