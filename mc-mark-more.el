@@ -127,14 +127,14 @@ Use like case-fold-search, don't recommend setting it globally.")
 With negative ARG, delete the last one instead.
 With zero ARG, skip the last one and mark next."
   (interactive "p")
-  (if (< arg 0)
-      (let ((cursor (mc/furthest-cursor-after-point)))
-	(if cursor
-	    (mc/remove-fake-cursor cursor)
-	  (error "No cursors to be unmarked")))
-    (if (region-active-p)
-        (mc/mark-more-like-this (= arg 0) 'forwards)
-      (mc/mark-lines arg 'forwards)))
+  (if (region-active-p)
+      (if (< arg 0)
+          (let ((cursor (mc/furthest-cursor-after-point)))
+            (if cursor
+                (mc/remove-fake-cursor cursor)
+              (error "No cursors to be unmarked")))
+        (mc/mark-more-like-this (= arg 0) 'forwards))
+    (mc/mark-lines arg 'forwards))
   (mc/maybe-multiple-cursors-mode))
 
 ;;;###autoload
@@ -155,14 +155,14 @@ With zero ARG, skip the last one and mark next."
 With negative ARG, delete the last one instead.
 With zero ARG, skip the last one and mark next."
   (interactive "p")
-  (if (< arg 0)
-      (let ((cursor (mc/furthest-cursor-before-point)))
-	(if cursor
-	    (mc/remove-fake-cursor cursor)
-	  (error "No cursors to be unmarked")))
-    (if (region-active-p)
-        (mc/mark-more-like-this (= arg 0) 'backwards)
-      (mc/mark-lines arg 'backwards)))
+  (if (region-active-p)
+      (if (< arg 0)
+          (let ((cursor (mc/furthest-cursor-before-point)))
+            (if cursor
+                (mc/remove-fake-cursor cursor)
+              (error "No cursors to be unmarked")))
+        (mc/mark-more-like-this (= arg 0) 'backwards))
+    (mc/mark-lines arg 'backwards))
   (mc/maybe-multiple-cursors-mode))
 
 ;;;###autoload
@@ -179,16 +179,12 @@ With zero ARG, skip the last one and mark next."
 
 (defun mc/mark-lines (num-lines direction)
   (dotimes (i num-lines)
-    (mc/save-excursion
-     (let ((furthest-cursor (ecase direction
-			      (forwards  (mc/furthest-cursor-after-point))
-			      (backwards (mc/furthest-cursor-before-point)))))
-       (if (overlayp furthest-cursor)
-	   (goto-char (overlay-get furthest-cursor 'point))))
-     (ecase direction
-       (forwards (next-logical-line 1 nil))
-       (backwards (previous-logical-line 1 nil)))
-     (mc/create-fake-cursor-at-point))))
+    (mc/create-fake-cursor-at-point)
+    (ecase direction
+      (forwards (loop do (next-logical-line 1 nil)
+                      while (mc/all-fake-cursors (point) (1+ (point)))))
+      (backwards (loop do (previous-logical-line 1 nil)
+                       while (mc/all-fake-cursors (point) (1+ (point))))))))
 
 ;;;###autoload
 (defun mc/mark-next-lines (arg)
