@@ -157,7 +157,8 @@ highlights the entire width of the window."
   (set-marker (overlay-get o 'point) nil)
   (set-marker (overlay-get o 'mark) nil)
   (mc/delete-region-overlay o)
-  (delete-overlay o))
+  (delete-overlay o)
+  (decf mc--active-cursor-count))
 
 (defun mc/pop-state-from-overlay (o)
   "Restore the state stored in given overlay and then remove the overlay."
@@ -176,9 +177,43 @@ highlights the entire width of the window."
   "Returns a unique cursor id"
   (incf mc--current-cursor-id))
 
+(defvar mc--active-cursor-count 1
+  "Number of active cursors.
+This number is incremented by `mc/create-fake-cursor-at-point'
+and decremented by `mc/remove-fake-cursor'.")
+
+(defvar mc--max-cursors-original nil
+  "This variable maintains the original maximum number of cursors.
+When `mc/create-fake-cursor-at-point' is called and
+`mc/max-cursors' is overridden, this value serves as a backup so
+that `mc/max-cursors' can take on a new value.  When
+`mc/remove-fake-cursors' is called, the values are reset.")
+
+(defcustom mc/max-cursors nil
+  "Safety ceiling for the number of active cursors.
+If your emacs slows down or freezes when using too many cursors,
+customize this value appropriately.
+
+Cursors will be added until this value is reached, at which point
+you can either temporarily override the value or abort the
+operation entirely.
+
+If this value is nil, there is no ceiling."
+  :type '(integer)
+  :group 'multiple-cursors)
+
 (defun mc/create-fake-cursor-at-point (&optional id)
   "Add a fake cursor and possibly a fake active region overlay based on point and mark.
 Saves the current state in the overlay to be restored later."
+  (unless mc--max-cursors-original
+    (setq mc--max-cursors-original mc/max-cursors))
+  (when mc/max-cursors
+    (unless (< mc--active-cursor-count mc/max-cursors)
+      (if (yes-or-no-p (format "%d active cursors. Continue? " mc--active-cursor-count))
+          (setq mc/max-cursors (read-number "Enter a new, temporary maximum: "))
+        (mc/remove-fake-cursors)
+        (error "Aborted: too many cursors"))))
+  (incf mc--active-cursor-count)
   (let ((overlay (mc/make-cursor-overlay-at-point)))
     (overlay-put overlay 'mc-id (or id (mc/create-cursor-id)))
     (overlay-put overlay 'type 'fake-cursor)
@@ -382,7 +417,10 @@ the original cursor, to inform about the lack of support."
 Do not use to conclude editing with multiple cursors. For that
 you should disable multiple-cursors-mode."
   (mc/for-each-fake-cursor
-   (mc/remove-fake-cursor cursor)))
+   (mc/remove-fake-cursor cursor))
+  (when mc--max-cursors-original
+    (setq mc/max-cursors mc--max-cursors-original))
+  (setq mc--max-cursors-original nil))
 
 (defun mc/keyboard-quit ()
   "Deactivate mark if there are any active, otherwise exit multiple-cursors-mode."
@@ -424,7 +462,8 @@ The entries are returned in the order they are found in the buffer."
 (defun mc--maybe-set-killed-rectangle ()
   "Add the latest kill-ring entry for each cursor to killed-rectangle.
 So you can paste it in later with `yank-rectangle'."
-  (let ((entries (mc--kill-ring-entries)))
+  (let ((entries (let ((mc--active-cursor-count -1))
+                   (mc--kill-ring-entries))))
     (unless (mc--all-equal entries)
       (setq killed-rectangle entries))))
 
