@@ -157,8 +157,7 @@ highlights the entire width of the window."
   (set-marker (overlay-get o 'point) nil)
   (set-marker (overlay-get o 'mark) nil)
   (mc/delete-region-overlay o)
-  (delete-overlay o)
-  (decf mc--active-cursor-count))
+  (delete-overlay o))
 
 (defun mc/pop-state-from-overlay (o)
   "Restore the state stored in given overlay and then remove the overlay."
@@ -176,11 +175,6 @@ highlights the entire width of the window."
 (defun mc/create-cursor-id ()
   "Returns a unique cursor id"
   (incf mc--current-cursor-id))
-
-(defvar mc--active-cursor-count 1
-  "Number of active cursors.
-This number is incremented by `mc/create-fake-cursor-at-point'
-and decremented by `mc/remove-fake-cursor'.")
 
 (defvar mc--max-cursors-original nil
   "This variable maintains the original maximum number of cursors.
@@ -208,12 +202,11 @@ Saves the current state in the overlay to be restored later."
   (unless mc--max-cursors-original
     (setq mc--max-cursors-original mc/max-cursors))
   (when mc/max-cursors
-    (unless (< mc--active-cursor-count mc/max-cursors)
-      (if (yes-or-no-p (format "%d active cursors. Continue? " mc--active-cursor-count))
+    (unless (< (mc/num-cursors) mc/max-cursors)
+      (if (yes-or-no-p (format "%d active cursors. Continue? " (mc/num-cursors)))
           (setq mc/max-cursors (read-number "Enter a new, temporary maximum: "))
         (mc/remove-fake-cursors)
         (error "Aborted: too many cursors"))))
-  (incf mc--active-cursor-count)
   (let ((overlay (mc/make-cursor-overlay-at-point)))
     (overlay-put overlay 'mc-id (or id (mc/create-cursor-id)))
     (overlay-put overlay 'type 'fake-cursor)
