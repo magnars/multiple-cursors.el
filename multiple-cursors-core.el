@@ -462,8 +462,7 @@ The entries are returned in the order they are found in the buffer."
 (defun mc--maybe-set-killed-rectangle ()
   "Add the latest kill-ring entry for each cursor to killed-rectangle.
 So you can paste it in later with `yank-rectangle'."
-  (let ((entries (let ((mc--active-cursor-count -1))
-                   (mc--kill-ring-entries))))
+  (let ((entries (let (mc/max-cursors) (mc--kill-ring-entries))))
     (unless (mc--all-equal entries)
       (setq killed-rectangle entries))))
 
