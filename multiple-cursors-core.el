@@ -141,7 +141,11 @@ highlights the entire width of the window."
                                   yank-undo-function
                                   autopair-action
                                   autopair-wrap-action
-                                  er/history)
+                                  er/history
+                                  evil-state
+                                  evil-previous-state
+                                  evil-next-state
+                                  evil-previous-state-alist)
   "A list of vars that need to be tracked on a per-cursor basis.")
 
 (defun mc/store-current-state-in-overlay (o)
