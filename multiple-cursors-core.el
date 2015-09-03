@@ -770,6 +770,20 @@ for running commands with multiple cursors.")
 
 (load mc/list-file t) ;; load, but no errors if it does not exist yet please
 
+(defvar mc--evil-motion-read-results nil
+  "Stored results from the last call to `evil-motion-read'. The
+  results are stored so that a motion doesn't need to be read by
+  each fake cursor.")
+
+(defun mc/evil-read-motion-advice (orig-fun &optional motion count type modifier)
+  (if mc--executing-command-for-fake-cursor
+      mc--evil-motion-read-results
+    (let ((res (apply orig-fun motion count type modifier)))
+      (setq mc--evil-motion-read-results res)
+      res)))
+
+(advice-add 'evil-read-motion :around #'mc/evil-read-motion-advice)
+
 (provide 'multiple-cursors-core)
 
 ;; Local Variables:
