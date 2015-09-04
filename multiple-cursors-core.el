@@ -784,6 +784,20 @@ for running commands with multiple cursors.")
 
 (advice-add 'evil-read-motion :around #'mc/evil-read-motion-advice)
 
+(defvar mc--this-command-keys-result nil
+  "Stores the last pressed keys that executed the main cursor's
+  command. This function returns the wrong results for fake
+  cursors.")
+
+(defun mc/this-command-keys-advice (orig-fun)
+  (if mc--executing-command-for-fake-cursor
+      mc--this-command-keys-result
+    (let ((res (funcall orig-fun)))
+      (setq mc--this-command-keys-result res)
+      res)))
+
+(advice-add 'this-command-keys :around #'mc/this-command-keys-advice)
+
 (provide 'multiple-cursors-core)
 
 ;; Local Variables:
