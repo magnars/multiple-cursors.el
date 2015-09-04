@@ -142,6 +142,7 @@ highlights the entire width of the window."
                                   autopair-action
                                   autopair-wrap-action
                                   er/history
+                                  temporary-goal-column
                                   evil-state
                                   evil-previous-state
                                   evil-next-state
