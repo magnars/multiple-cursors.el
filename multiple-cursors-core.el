@@ -799,6 +799,12 @@ for running commands with multiple cursors.")
 
 (advice-add 'this-command-keys :around #'mc/this-command-keys-advice)
 
+;; This makes commands in evil-visual-state work because this refreshes the
+;; `evil-visual-beginning' and `evil-visual-end' variables. If they are not
+;; refreshed the next Evil command is executed with the last fake-cursor's
+;; variables instead of the main-cursor's variables.
+(add-hook 'pre-command-hook (lambda () (evil-visual-refresh (mark) (point))))
+
 (provide 'multiple-cursors-core)
 
 ;; Local Variables:
