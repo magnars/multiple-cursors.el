@@ -116,6 +116,12 @@ Use like case-fold-search, don't recommend setting it globally.")
        (if (funcall search-function re nil t)
            (progn
              (push-mark (funcall match-point-getter 0))
+             ;; Evil has a different notion of cursor position than vanilla
+             ;; Emacs. We have to account for this off-by-one error here.
+             (when (and (fboundp 'evil-visual-state-p) (evil-visual-state-p))
+               (ecase direction
+                 (forwards  (goto-char (1- (point))))
+                 (backwards (push-mark (1- (mark))))))
              (when point-out-of-order
                (exchange-point-and-mark))
              (mc/create-fake-cursor-at-point))
