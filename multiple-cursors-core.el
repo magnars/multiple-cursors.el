@@ -502,6 +502,10 @@ They are temporarily disabled when multiple-cursors are active.")
   :group 'multiple-cursors)
 (put 'mc/mode-line 'risky-local-variable t)
 
+(defun mc/evil-visual-refresh ()
+  "Refreshes the Evil visual range based on the current mark and point."
+  (evil-visual-refresh (mark) (point)))
+
 ;;;###autoload
 (define-minor-mode multiple-cursors-mode
   "Mode while multiple cursors are active."
@@ -511,9 +515,15 @@ They are temporarily disabled when multiple-cursors are active.")
         (mc/temporarily-disable-unsupported-minor-modes)
         (add-hook 'pre-command-hook 'mc/make-a-note-of-the-command-being-run nil t)
         (add-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t t)
+        ;; This makes commands in evil-visual-state work because this refreshes the
+        ;; `evil-visual-beginning' and `evil-visual-end' variables. If they are not
+        ;; refreshed the next Evil command is executed with the last fake-cursor's
+        ;; variables instead of the main-cursor's variables.
+        (when (featurep 'evil) (add-hook 'pre-command-hook 'mc/evil-visual-refresh))
         (run-hooks 'multiple-cursors-mode-enabled-hook))
     (remove-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t)
     (remove-hook 'pre-command-hook 'mc/make-a-note-of-the-command-being-run t)
+    (remove-hook 'pre-command-hook 'mc/evil-visual-refresh)
     (setq mc--this-command nil)
     (mc--maybe-set-killed-rectangle)
     (mc/remove-fake-cursors)
@@ -798,12 +808,6 @@ for running commands with multiple cursors.")
       res)))
 
 (advice-add 'this-command-keys :around #'mc/this-command-keys-advice)
-
-;; This makes commands in evil-visual-state work because this refreshes the
-;; `evil-visual-beginning' and `evil-visual-end' variables. If they are not
-;; refreshed the next Evil command is executed with the last fake-cursor's
-;; variables instead of the main-cursor's variables.
-(add-hook 'pre-command-hook (lambda () (evil-visual-refresh (mark) (point))))
 
 (provide 'multiple-cursors-core)
 
