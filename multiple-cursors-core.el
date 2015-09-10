@@ -774,7 +774,38 @@ for running commands with multiple cursors.")
                                         smart-forward
                                         smart-backward
                                         smart-up
-                                        smart-down))
+                                        smart-down
+                                        c-electric-paren
+                                        evil-append
+                                        evil-append-line
+                                        evil-backward-char
+                                        evil-backward-paragraph
+                                        evil-backward-word-begin
+                                        evil-change
+                                        evil-delete
+                                        evil-delete-backward-char-and-join
+                                        evil-delete-char
+                                        evil-downcase
+                                        evil-end-of-line
+                                        evil-escape-insert-state
+                                        evil-first-non-blank
+                                        evil-force-normal-state
+                                        evil-forward-char
+                                        evil-forward-paragraph
+                                        evil-forward-word-begin
+                                        evil-forward-word-end
+                                        evil-goto-line
+                                        evil-insert
+                                        evil-jump-item
+                                        evil-next-line
+                                        evil-normal-state
+                                        evil-paste-after
+                                        evil-previous-line
+                                        evil-search-next
+                                        evil-snipe-f
+                                        evil-visual-char
+                                        evil-visual-line
+                                        evil-yank))
 
 (defvar mc/cmds-to-run-for-all nil
   "Commands to run for all cursors in multiple-cursors-mode")
