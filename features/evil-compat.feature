@@ -52,3 +52,10 @@ Feature: Evil compatibility
     First line
     Secondline
     """
+
+  Scenario: All cursors deactivate region on when pressing ESC
+    Given I have cursors at "text" in "This text contains the word text twice"
+    And I press "i"
+    And I press "<escape>"
+    And I press "x"
+    Then I should see "Thistext contains the wordtext twice"
