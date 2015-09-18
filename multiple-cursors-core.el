@@ -598,9 +598,11 @@ for running commands with multiple cursors.")
                                      mc/mark-next-like-this
                                      mc/mark-next-word-like-this
                                      mc/mark-next-symbol-like-this
+                                     mc/mark-next-like-this-dwim
                                      mc/mark-previous-like-this
                                      mc/mark-previous-word-like-this
                                      mc/mark-previous-symbol-like-this
+                                     mc/mark-previous-like-this-dwim
                                      mc/mark-all-like-this
                                      mc/mark-all-words-like-this
                                      mc/mark-all-symbols-like-this
@@ -625,8 +627,12 @@ for running commands with multiple cursors.")
                                      mc/mmlte--down
                                      mc/unmark-next-like-this
                                      mc/unmark-previous-like-this
+                                     mc/unmark-next-like-this-dwim
+                                     mc/unmark-previous-like-this-dwim
                                      mc/skip-to-next-like-this
                                      mc/skip-to-previous-like-this
+                                     mc/skip-to-next-like-this-dwim
+                                     mc/skip-to-previous-like-this-dwim
                                      rrm/switch-to-multiple-cursors
                                      mc-hide-unmatched-lines-mode
                                      hum/keyboard-quit

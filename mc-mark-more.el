@@ -177,6 +177,63 @@ With zero ARG, skip the last one and mark next."
   (let ((mc/enclose-search-term 'symbols))
     (mc/mark-previous-like-this arg)))
 
+;;;###autoload
+(defun mc/mark-next-like-this-dwim (arg)
+  "Tries to guess what you want to mark. And mark next you want to mark."
+  (interactive "p")
+  (if (< arg 0)
+      (let ((cursor (mc/furthest-cursor-after-point)))
+        (if cursor
+            (mc/remove-fake-cursor cursor)
+          (error "No cursors to be unmarked")))
+    (if (region-active-p)
+        (mc/mark-more-like-this (= arg 0) 'forwards)
+      (mc/mark-thing-at-point (= arg 0) 'forwards)))
+  (mc/maybe-multiple-cursors-mode))
+
+;;;###autoload
+(defun mc/mark-previous-like-this-dwim (arg)
+  "Tries to guess what you want to mark. And mark previous you want to mark."
+  (interactive "p")
+  (if (< arg 0)
+      (let ((cursor (mc/furthest-cursor-before-point)))
+        (if cursor
+            (mc/remove-fake-cursor cursor)
+          (error "No cursors to be unmarked")))
+    (if (region-active-p)
+        (mc/mark-more-like-this (= arg 0) 'backwards)
+      (mc/mark-thing-at-point (= arg 0) 'backwards)))
+  (mc/maybe-multiple-cursors-mode))
+
+(defun mc/mark-thing-at-point (skip-last direction)
+  "Set a cursor on next or previous thing at point."
+  (let* ((sym (thing-at-point 'symbol))
+         (bounds (when sym (bounds-of-thing-at-point 'symbol)))
+         (offset (when sym (- (point) (car bounds)))))
+    (if (not sym)
+        (error "No symbol at point.")
+      (mc/save-excursion
+       (let ((furthest-cursor
+              (cl-ecase direction
+                (forwards (mc/furthest-cursor-after-point))
+                (backwards (mc/furthest-cursor-before-point)))))
+         (if (overlayp furthest-cursor)
+             (goto-char (overlay-get furthest-cursor 'point)))
+         (when skip-last
+           (mc/remove-fake-cursor furthest-cursor)))
+       (if (= offset 0)
+           (forward-char 1))
+       (ecase direction
+         (forwards
+          (search-forward sym nil t)
+          (beginning-of-thing 'symbol)
+          (forward-char offset))
+         (backwards
+          (search-backward sym nil t)
+          (beginning-of-thing 'symbol)
+          (forward-char offset)))
+       (mc/create-fake-cursor-at-point)))))
+
 (defun mc/mark-lines (num-lines direction)
   (dotimes (i num-lines)
     (mc/save-excursion
@@ -225,6 +282,30 @@ With zero ARG, skip the last one and mark next."
   "Skip the current one and select the prev part of the buffer matching the currently active region."
   (interactive)
   (mc/mark-previous-like-this 0))
+
+;;;###autoload
+(defun mc/unmark-next-like-this-dwim ()
+  "Deselect next part of the buffer matching the currently active region."
+  (interactive)
+  (mc/mark-next-like-this-dwim -1))
+
+;;;###autoload
+(defun mc/unmark-previous-like-this-dwim ()
+  "Deselect prev part of the buffer matching the currently active region."
+  (interactive)
+  (mc/mark-previous-like-this-dwim -1))
+
+;;;###autoload
+(defun mc/skip-to-next-like-this-dwim ()
+  "Skip the current one and select the next part of the buffer matching the currently active region."
+  (interactive)
+  (mc/mark-next-like-this-dwim 0))
+
+;;;###autoload
+(defun mc/skip-to-previous-like-this-dwim ()
+  "Skip the current one and select the prev part of the buffer matching the currently active region."
+  (interactive)
+  (mc/mark-previous-like-this-dwim 0))
 
 ;;;###autoload
 (defun mc/mark-all-like-this ()
@@ -461,7 +542,7 @@ If the region is active and spans multiple lines, it will behave
 as if `mc/mark-all-in-region'. With the prefix ARG, it will call
 `mc/edit-lines' instead.
 
-If the region is inactive or on a single line, it will behave like 
+If the region is inactive or on a single line, it will behave like
 `mc/mark-all-like-this-dwim'."
   (interactive "P")
   (if (and (use-region-p)
