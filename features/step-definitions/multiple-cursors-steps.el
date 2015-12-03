@@ -16,6 +16,9 @@
 (When "^I insert numbers$"
       (lambda () (call-interactively 'mc/insert-numbers)))
 
+(When "^I insert letters$"
+      (lambda () (call-interactively 'mc/insert-letters)))
+
 (When "^I reverse regions$"
       (lambda () (call-interactively 'mc/reverse-regions)))
 
