@@ -49,6 +49,8 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
 ### Mark one more occurrence
 
  - `mc/mark-next-like-this`: Adds a cursor and region at the next part of the buffer forwards that matches the current region.
+ - `mc/mark-next-like-this-word`: Adds a cursor and region at the next part of the buffer forwards that matches the current region, if  no region is selected it selects the word at the point.
+ - `mc/mark-next-like-this-symbol`: Adds a cursor and region at the next part of the buffer forwards that matches the current region, if  no region is selected it selects the symbol at the point.
  - `mc/mark-next-word-like-this`: Like `mc/mark-next-like-this` but only for whole words.
  - `mc/mark-next-symbol-like-this`: Like `mc/mark-next-like-this` but only for whole symbols.
  - `mc/mark-previous-like-this`: Adds a cursor and region at the next part of the buffer backwards that matches the current region.
@@ -100,6 +102,10 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
 
 - Try pressing `mc/mark-next-like-this` with no region selected. It
   will just add a cursor on the next line.
+
+- Try pressing `mc/mark-next-like-this-word` or
+  `mc/mark-next-like-this-symbol` with no region selected. It will
+  mark the word or symbol and add a cursor at the next occurance
 
 - Try pressing `mc/mark-all-like-this-dwim` on a tagname in html-mode.
 

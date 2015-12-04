@@ -1,6 +1,12 @@
 (When "^I mark next like this$"
       (lambda () (call-interactively 'mc/mark-next-like-this)))
 
+(When "^I mark next like this word$"
+      (lambda () (call-interactively 'mc/mark-next-like-this-word)))
+
+(When "^I mark next like this symbol$"
+      (lambda () (call-interactively 'mc/mark-next-like-this-symbol)))
+
 (When "^I mark previous like this$"
       (lambda () (call-interactively 'mc/mark-previous-like-this)))
 
