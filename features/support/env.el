@@ -21,6 +21,7 @@
  (multiple-cursors-mode 0)
  (rectangular-region-mode 0)
  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+ (global-set-key (kbd "C-S-c C->") 'mc/mark-next-like-this)
  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
  (global-set-key (kbd "M-!") 'mc/mark-all-like-this)
  (global-set-key (kbd "M-$") 'mc/mark-all-like-this-dwim)

@@ -30,7 +30,7 @@ add a cursor to each line:
 When you want to add multiple cursors not based on continuous lines, but based on
 keywords in the buffer, use:
 
-    (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+    (global-set-key (kbd "C->") 'mc/mark-next-like-this) or (global-set-key (kbd "C->") 'mc/mark-next-like-this-word)
     (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
     (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
@@ -49,6 +49,7 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
 ### Mark one more occurrence
 
  - `mc/mark-next-like-this`: Adds a cursor and region at the next part of the buffer forwards that matches the current region.
+ - `mc/mark-next-like-this-word`: Adds a cursor and region at the next part of the buffer forwards that matches the current region, if  no region is selected it selects the word at the point.
  - `mc/mark-next-word-like-this`: Like `mc/mark-next-like-this` but only for whole words.
  - `mc/mark-next-symbol-like-this`: Like `mc/mark-next-like-this` but only for whole symbols.
  - `mc/mark-previous-like-this`: Adds a cursor and region at the next part of the buffer backwards that matches the current region.
@@ -101,6 +102,9 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
 - Try pressing `mc/mark-next-like-this` with no region selected. It
   will just add a cursor on the next line.
 
+- Try pressing `mc/mark-next-like-this-word` with no region selected. It will mark the word and
+  add a cursor at the next occurance
+
 - Try pressing `mc/mark-all-like-this-dwim` on a tagname in html-mode.
 
 - Notice that the number of cursors active can be seen in the modeline.
@@ -118,7 +122,7 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
 - If you would like to keep the global bindings clean, and get custom keybindings
   when the region is active, you can try [region-bindings-mode](https://github.com/fgallina/region-bindings-mode).
 
-BTW, I highly recommend adding `mc/mark-next-like-this` to a key binding that's
+BTW, I highly recommend adding `mc/mark-next-like-this` or `mc/mark-next-like-this-word` to a key binding that's
 right next to the key for `er/expand-region`.
 
 ### Binding mouse events
