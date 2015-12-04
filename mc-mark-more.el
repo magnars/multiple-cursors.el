@@ -152,7 +152,7 @@ With zero ARG, skip the last one and mark next."
 	  (error "No cursors to be unmarked")))
     (if (region-active-p)
         (mc/mark-more-like-this (= arg 0) 'forwards)
-      (mark-word)
+      (mc--select-thing-at-point 'word)
       (mc/mark-more-like-this (= arg 0) 'forwards)))
   (mc/maybe-multiple-cursors-mode))
 
