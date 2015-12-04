@@ -192,6 +192,7 @@ Run the tests with:
 * [Zach Kost-Smith](https://github.com/smithzvk) added `mc/mark-pop`
 * [Maciej Katafiasz](https://github.com/mathrick) added `mc/mark-all-dwim`
 * [Aleksey Fedotov](https://github.com/lexa) added `mc-hide-unmatched-lines-mode`
+* [Jules Tamagnan](https://github.com/jtamagnan) added `mc/mark-next-like-this-word` and `mc/mark-next-like-this-symbol`
 
 Thanks!
 
