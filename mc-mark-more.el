@@ -156,6 +156,23 @@ With zero ARG, skip the last one and mark next."
       (mc/mark-more-like-this (= arg 0) 'forwards)))
   (mc/maybe-multiple-cursors-mode))
 
+(defun mc/mark-next-like-this-symbol (arg)
+  "Find and mark the next part of the buffer matching the currently active region
+If no region is active, mark the symbol at the point and find the next match
+With negative ARG, delete the last one instead.
+With zero ARG, skip the last one and mark next."
+  (interactive "p")
+  (if (< arg 0)
+      (let ((cursor (mc/furthest-cursor-after-point)))
+	(if cursor
+	    (mc/remove-fake-cursor cursor)
+	  (error "No cursors to be unmarked")))
+    (if (region-active-p)
+        (mc/mark-more-like-this (= arg 0) 'forwards)
+      (mc--select-thing-at-point 'symbol)
+      (mc/mark-more-like-this (= arg 0) 'forwards)))
+  (mc/maybe-multiple-cursors-mode))
+
 
 ;;;###autoload
 (defun mc/mark-next-word-like-this (arg)
