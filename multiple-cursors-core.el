@@ -614,6 +614,7 @@ for running commands with multiple cursors.")
                                      mc/mark-all-dwim
                                      mc/mark-sgml-tag-pair
                                      mc/insert-numbers
+				     mc/insert-letters
                                      mc/sort-regions
                                      mc/reverse-regions
                                      mc/cycle-forward
