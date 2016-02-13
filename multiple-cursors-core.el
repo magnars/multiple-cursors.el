@@ -25,7 +25,14 @@
 
 ;;; Code:
 
-(require 'cl)
+(if (require 'cl-lib nil t)
+    (eval-and-compile
+      (defalias 'count-if 'cl-count-if)
+      (defalias 'find-if 'cl-find-if)
+      (defalias 'incf 'cl-incf)
+      (defalias 'remove-if-not 'cl-remove-if-not)
+      (defalias 'symbol-macrolet 'cl-symbol-macrolet))
+  (require 'cl))
 
 (require 'rect)
 
