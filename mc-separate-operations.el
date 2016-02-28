@@ -142,5 +142,31 @@ Might not behave as intended if more than one cursors are on the same line."
   (mc/vertical-align 32)
   )
 
+;;;###autoload
+(defun mc/add-fake-cursor-at-point (&optional activate-mc)
+  (interactive "P")
+  (unless (find-if #'mc/fake-cursor-p (overlays-at (point)))
+    (mc/create-fake-cursor-at-point)
+    (when activate-mc
+      (mc/maybe-multiple-cursors-mode))))
+
+;;;###autoload
+(defun mc/remove-fake-cursor-at-point-or-in-region (&optional at-point-only)
+  (interactive "P")
+  (mapc #'mc/remove-fake-cursor
+        (remove-if-not #'mc/fake-cursor-p
+                       (if (and (use-region-p) (not at-point-only))
+                           (let ((beg (point)) (end (mark)))
+                             (when (> beg end)
+                               (rotatef beg end))
+                             (overlays-in beg end))
+                         (overlays-at (point))))))
+
+;;;###autoload
+(defun mc/toggle-fake-cursor-at-point (&optional activate-mc)
+  (interactive "P")
+  (unless (mc/add-fake-cursor-at-point activate-mc)
+    (mc/remove-fake-cursor-at-point-or-in-region t)))
+
 (provide 'mc-separate-operations)
 ;;; mc-separate-operations.el ends here
