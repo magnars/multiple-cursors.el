@@ -30,6 +30,8 @@
       (defalias 'count-if 'cl-count-if)
       (defalias 'find-if 'cl-find-if)
       (defalias 'incf 'cl-incf)
+      (defalias 'sort* 'cl-sort)
+      (defalias 'remove-if 'cl-remove-if)
       (defalias 'remove-if-not 'cl-remove-if-not)
       (defalias 'symbol-macrolet 'cl-symbol-macrolet))
   (require 'cl))
