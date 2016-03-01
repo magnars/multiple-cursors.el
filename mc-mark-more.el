@@ -576,8 +576,9 @@ If the region is inactive or on a single line, it will behave like
          (<= (point) end))))
 
 ;;;###autoload
-(defun mc/add-cursor-on-click (event)
-  "Add a cursor where you click."
+(defun mc/toggle-cursor-on-click (event)
+  "Add a cursor where you click, or remove a fake cursor that is
+already there."
   (interactive "e")
   (mouse-minibuffer-check event)
   ;; Use event-end in case called from mouse-drag-region.
@@ -589,8 +590,15 @@ If the region is inactive or on a single line, it will behave like
     (if (numberp (posn-point position))
         (save-excursion
           (goto-char (posn-point position))
-          (mc/create-fake-cursor-at-point)))
+          (let ((existing (mc/last-fake-cursor-before (point))))
+            (if (and existing
+                     (eq (overlay-get existing 'point) (point)))
+                (mc/remove-fake-cursor existing)
+              (mc/create-fake-cursor-at-point)))))
     (mc/maybe-multiple-cursors-mode)))
+
+;;;###autoload
+(defalias 'mc/add-cursor-on-click 'mc/toggle-cursor-on-click)
 
 ;;;###autoload
 (defun mc/mark-sgml-tag-pair ()
