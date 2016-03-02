@@ -72,6 +72,18 @@
        (setq furthest cursor)))
     furthest))
 
+(defun mc/fake-cursor-at-point (&optional point)
+  "Return the fake cursor with its point right at POINT (defaults
+to (point)), or nil."
+  (setq point (or point (point)))
+  (let ((cursors (mc/all-fake-cursors))
+        (c nil))
+    (catch 'found
+      (while (setq c (pop cursors))
+        (when (eq (marker-position (overlay-get c 'point))
+                  point)
+          (throw 'found c))))))
+
 (defun mc/region-strings ()
   (let ((strings (list (buffer-substring-no-properties (point) (mark)))))
     (mc/for-each-fake-cursor
@@ -587,14 +599,15 @@ already there."
     (if (not (windowp (posn-window position)))
         (error "Position not in text area of window"))
     (select-window (posn-window position))
-    (if (numberp (posn-point position))
-        (save-excursion
-          (goto-char (posn-point position))
-          (let ((existing (mc/last-fake-cursor-before (point))))
-            (if (and existing
-                     (eq (overlay-get existing 'point) (point)))
+    (let ((pt (posn-point position)))
+      (if (numberp pt)
+          ;; is there a fake cursor with the actual *point* right where we are?
+          (let ((existing (mc/fake-cursor-at-point pt)))
+            (if existing
                 (mc/remove-fake-cursor existing)
-              (mc/create-fake-cursor-at-point)))))
+              (save-excursion
+                (goto-char pt)
+                (mc/create-fake-cursor-at-point))))))
     (mc/maybe-multiple-cursors-mode)))
 
 ;;;###autoload
