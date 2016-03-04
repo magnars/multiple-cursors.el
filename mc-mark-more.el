@@ -347,7 +347,7 @@ With zero ARG, skip the last one and mark next."
 
 ;;;###autoload
 (defun mc/mark-all-in-region-regexp (beg end)
-  "Find and mark all the parts in the region matching the given regexp"
+  "Find and mark all the parts in the region matching the given regexp."
   (interactive "r")
   (let ((search (read-regexp "Mark regexp in region: "))
         (case-fold-search nil))
@@ -356,9 +356,17 @@ With zero ARG, skip the last one and mark next."
       (progn
         (mc/remove-fake-cursors)
         (goto-char beg)
-        (while (search-forward-regexp search end t)
-          (push-mark (match-beginning 0))
-          (mc/create-fake-cursor-at-point))
+        (let ((lastmatch))
+          (while (and (< (point) end) ; can happen because of (forward-char)
+                      (search-forward-regexp search end t))
+            (push-mark (match-beginning 0))
+            (mc/create-fake-cursor-at-point)
+            (setq lastmatch (point))
+            (when (= (point) (match-beginning 0))
+              (forward-char)))
+          (when lastmatch (goto-char lastmatch)))
+        (when (> (mc/num-cursors) 0)
+          (goto-char (match-end 0)))
         (let ((first (mc/furthest-cursor-before-point)))
           (if (not first)
               (error "Search failed for %S" search)
