@@ -508,6 +508,9 @@ They are temporarily disabled when multiple-cursors are active.")
   "Refreshes the Evil visual range based on the current mark and point."
   (evil-visual-refresh (mark) (point)))
 
+(defun mc/evil-p ()
+  (and (featurep 'evil) evil-mode))
+
 ;;;###autoload
 (define-minor-mode multiple-cursors-mode
   "Mode while multiple cursors are active."

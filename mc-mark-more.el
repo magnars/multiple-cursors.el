@@ -111,6 +111,10 @@ This function adjusts the mark for this off-by-one error."
       (forwards  (goto-char (1- (point))))
       (backwards (push-mark (1- (mark)))))))
 
+(defun mc/evil-visual-state ()
+  (when (mc/evil-p)
+    (evil-visual-state)))
+
 (defun mc/mark-more-like-this (skip-last direction)
   (let ((case-fold-search nil)
         (re (regexp-opt (mc/region-strings) mc/enclose-search-term))
@@ -141,6 +145,7 @@ This function adjusts the mark for this off-by-one error."
              (mc/evil-adjust-mark direction)
              (when point-out-of-order
                (exchange-point-and-mark))
+             (mc/evil-visual-state)
              (mc/create-fake-cursor-at-point))
          (error "no more matches found."))))))
 
@@ -304,6 +309,7 @@ With zero ARG, skip the last one and mark next."
        (when point-first (exchange-point-and-mark))
        (unless (= master (point))
          (mc/evil-adjust-mark 'forwards)
+         (mc/evil-visual-state)
          (mc/create-fake-cursor-at-point))
        (when point-first (exchange-point-and-mark)))))
   (if (> (mc/num-cursors) 1)
