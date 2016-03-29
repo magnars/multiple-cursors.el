@@ -72,6 +72,18 @@
        (setq furthest cursor)))
     furthest))
 
+(defun mc/fake-cursor-at-point (&optional point)
+  "Return the fake cursor with its point right at POINT (defaults
+to (point)), or nil."
+  (setq point (or point (point)))
+  (let ((cursors (mc/all-fake-cursors))
+        (c nil))
+    (catch 'found
+      (while (setq c (pop cursors))
+        (when (eq (marker-position (overlay-get c 'point))
+                  point)
+          (throw 'found c))))))
+
 (defun mc/region-strings ()
   (let ((strings (list (buffer-substring-no-properties (point) (mark)))))
     (mc/for-each-fake-cursor
@@ -341,7 +353,7 @@ With zero ARG, skip the last one and mark next."
 
 ;;;###autoload
 (defun mc/mark-all-in-region-regexp (beg end)
-  "Find and mark all the parts in the region matching the given regexp"
+  "Find and mark all the parts in the region matching the given regexp."
   (interactive "r")
   (let ((search (read-regexp "Mark regexp in region: "))
         (case-fold-search nil))
@@ -350,9 +362,17 @@ With zero ARG, skip the last one and mark next."
       (progn
         (mc/remove-fake-cursors)
         (goto-char beg)
-        (while (search-forward-regexp search end t)
-          (push-mark (match-beginning 0))
-          (mc/create-fake-cursor-at-point))
+        (let ((lastmatch))
+          (while (and (< (point) end) ; can happen because of (forward-char)
+                      (search-forward-regexp search end t))
+            (push-mark (match-beginning 0))
+            (mc/create-fake-cursor-at-point)
+            (setq lastmatch (point))
+            (when (= (point) (match-beginning 0))
+              (forward-char)))
+          (when lastmatch (goto-char lastmatch)))
+        (when (> (mc/num-cursors) 0)
+          (goto-char (match-end 0)))
         (let ((first (mc/furthest-cursor-before-point)))
           (if (not first)
               (error "Search failed for %S" search)
@@ -582,8 +602,9 @@ If the region is inactive or on a single line, it will behave like
          (<= (point) end))))
 
 ;;;###autoload
-(defun mc/add-cursor-on-click (event)
-  "Add a cursor where you click."
+(defun mc/toggle-cursor-on-click (event)
+  "Add a cursor where you click, or remove a fake cursor that is
+already there."
   (interactive "e")
   (mouse-minibuffer-check event)
   ;; Use event-end in case called from mouse-drag-region.
@@ -592,11 +613,19 @@ If the region is inactive or on a single line, it will behave like
     (if (not (windowp (posn-window position)))
         (error "Position not in text area of window"))
     (select-window (posn-window position))
-    (if (numberp (posn-point position))
-        (save-excursion
-          (goto-char (posn-point position))
-          (mc/create-fake-cursor-at-point)))
+    (let ((pt (posn-point position)))
+      (if (numberp pt)
+          ;; is there a fake cursor with the actual *point* right where we are?
+          (let ((existing (mc/fake-cursor-at-point pt)))
+            (if existing
+                (mc/remove-fake-cursor existing)
+              (save-excursion
+                (goto-char pt)
+                (mc/create-fake-cursor-at-point))))))
     (mc/maybe-multiple-cursors-mode)))
+
+;;;###autoload
+(defalias 'mc/add-cursor-on-click 'mc/toggle-cursor-on-click)
 
 ;;;###autoload
 (defun mc/mark-sgml-tag-pair ()

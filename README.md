@@ -194,6 +194,7 @@ Run the tests with:
 * [Maciej Katafiasz](https://github.com/mathrick) added `mc/mark-all-dwim`
 * [Aleksey Fedotov](https://github.com/lexa) added `mc-hide-unmatched-lines-mode`
 * [Jules Tamagnan](https://github.com/jtamagnan) added `mc/mark-next-like-this-word` and `mc/mark-next-like-this-symbol`
+* [Ingo Lohmar](https://github.com/ilohmar) extended `mc/add-cursor-on-click` to toggle cursors.
 
 Thanks!
 
