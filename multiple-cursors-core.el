@@ -432,9 +432,12 @@ you should disable multiple-cursors-mode."
 (defun mc/keyboard-quit ()
   "Deactivate mark if there are any active, otherwise exit multiple-cursors-mode."
   (interactive)
-  (if (not (use-region-p))
-      (multiple-cursors-mode 0)
-    (deactivate-mark)))
+  (cond ((not (use-region-p))
+         (multiple-cursors-mode 0))
+        ((mc/evil-p)
+         (call-interactively 'evil-normal-state))
+        (t
+         (deactivate-mark))))
 
 (defvar mc/keymap nil
   "Keymap while multiple cursors are active.
