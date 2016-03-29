@@ -101,6 +101,16 @@ Match only whole symbols: 'symbols
 
 Use like case-fold-search, don't recommend setting it globally.")
 
+(defun mc/evil-adjust-mark (direction)
+  "Adjust mark when evil-mode is enabled.
+
+Evil has a different notion of cursor position than vanilla Emacs.
+This function adjusts the mark for this off-by-one error."
+  (when (and (fboundp 'evil-visual-state-p) (evil-visual-state-p))
+    (ecase direction
+      (forwards  (goto-char (1- (point))))
+      (backwards (push-mark (1- (mark)))))))
+
 (defun mc/mark-more-like-this (skip-last direction)
   (let ((case-fold-search nil)
         (re (regexp-opt (mc/region-strings) mc/enclose-search-term))
@@ -128,12 +138,7 @@ Use like case-fold-search, don't recommend setting it globally.")
        (if (funcall search-function re nil t)
            (progn
              (push-mark (funcall match-point-getter 0))
-             ;; Evil has a different notion of cursor position than vanilla
-             ;; Emacs. We have to account for this off-by-one error here.
-             (when (and (fboundp 'evil-visual-state-p) (evil-visual-state-p))
-               (ecase direction
-                 (forwards  (goto-char (1- (point))))
-                 (backwards (push-mark (1- (mark))))))
+             (mc/evil-adjust-mark direction)
              (when point-out-of-order
                (exchange-point-and-mark))
              (mc/create-fake-cursor-at-point))
@@ -298,6 +303,7 @@ With zero ARG, skip the last one and mark next."
        (push-mark (match-beginning 0))
        (when point-first (exchange-point-and-mark))
        (unless (= master (point))
+         (mc/evil-adjust-mark 'forwards)
          (mc/create-fake-cursor-at-point))
        (when point-first (exchange-point-and-mark)))))
   (if (> (mc/num-cursors) 1)
