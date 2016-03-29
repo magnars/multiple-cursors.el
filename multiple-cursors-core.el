@@ -442,7 +442,7 @@ Main goal of the keymap is to rebind C-g and <return> to conclude
 multiple cursors editing.")
 (unless mc/keymap
   (setq mc/keymap (make-sparse-keymap))
-  (define-key mc/keymap (kbd "C-g") 'mc/keyboard-quit)
+  (define-key mc/keymap [remap keyboard-quit] 'mc/keyboard-quit)
   (define-key mc/keymap (kbd "<return>") 'multiple-cursors-mode)
   (when (fboundp 'phi-search)
     (define-key mc/keymap (kbd "C-s") 'phi-search))
