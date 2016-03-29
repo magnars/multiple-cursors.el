@@ -805,6 +805,7 @@ for running commands with multiple cursors.")
                                         evil-next-line
                                         evil-normal-state
                                         evil-paste-after
+                                        evil-paste-before
                                         evil-previous-line
                                         evil-search-next
                                         evil-snipe-f
