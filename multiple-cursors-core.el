@@ -783,6 +783,7 @@ for running commands with multiple cursors.")
                                         evil-backward-char
                                         evil-backward-paragraph
                                         evil-backward-word-begin
+                                        evil-backward-WORD-begin
                                         evil-change
                                         evil-delete
                                         evil-delete-backward-char-and-join
@@ -796,6 +797,8 @@ for running commands with multiple cursors.")
                                         evil-forward-paragraph
                                         evil-forward-word-begin
                                         evil-forward-word-end
+                                        evil-forward-WORD-begin
+                                        evil-forward-WORD-end
                                         evil-goto-line
                                         evil-insert
                                         evil-jump-item
