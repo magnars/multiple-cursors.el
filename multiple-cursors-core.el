@@ -37,6 +37,7 @@
   (require 'cl))
 
 (require 'rect)
+(require 'mc-evil)
 
 (defvar mc--read-char)
 
@@ -507,13 +508,6 @@ They are temporarily disabled when multiple-cursors are active.")
   :group 'multiple-cursors)
 (put 'mc/mode-line 'risky-local-variable t)
 
-(defun mc/evil-visual-refresh ()
-  "Refreshes the Evil visual range based on the current mark and point."
-  (evil-visual-refresh (mark) (point)))
-
-(defun mc/evil-p ()
-  (and (featurep 'evil) evil-mode))
-
 ;;;###autoload
 (define-minor-mode multiple-cursors-mode
   "Mode while multiple cursors are active."
@@ -828,15 +822,6 @@ for running commands with multiple cursors.")
   "Stored results from the last call to `evil-motion-read'. The
   results are stored so that a motion doesn't need to be read by
   each fake cursor.")
-
-(defun mc/evil-read-motion-advice (orig-fun &optional motion count type modifier)
-  (if mc--executing-command-for-fake-cursor
-      mc--evil-motion-read-results
-    (let ((res (apply orig-fun motion count type modifier)))
-      (setq mc--evil-motion-read-results res)
-      res)))
-
-(advice-add 'evil-read-motion :around #'mc/evil-read-motion-advice)
 
 (defvar mc--this-command-keys-result nil
   "Stores the last pressed keys that executed the main cursor's
