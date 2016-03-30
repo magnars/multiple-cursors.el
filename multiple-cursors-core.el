@@ -134,9 +134,25 @@ highlights the entire width of the window."
       (mc/make-cursor-overlay-at-eol (point))
     (mc/make-cursor-overlay-inline (point))))
 
+(defun mc/unadjusted-point ()
+  "Remove Evil adjustments to get apparent mark."
+  (let ((forwards (> (point) (mark))))
+    (if (and (mc/evil-p) forwards)
+        (1+ (point))
+      (point))))
+
+(defun mc/unadjusted-mark ()
+  "Remove Evil adjustments to get apparent mark."
+  (let ((backwards (< (point) (mark))))
+    (if (and (mc/evil-p) backwards)
+        (1+ (mark))
+      (mark))))
+
 (defun mc/make-region-overlay-between-point-and-mark ()
   "Create overlay to look like active region."
-  (let ((overlay (make-overlay (mark) (point) nil nil t)))
+  (let* ((point (mc/unadjusted-point))
+         (mark (mc/unadjusted-mark))
+         (overlay (make-overlay mark point nil nil t)))
     (overlay-put overlay 'face 'mc/region-face)
     (overlay-put overlay 'type 'additional-region)
     overlay))
