@@ -101,20 +101,6 @@ Match only whole symbols: 'symbols
 
 Use like case-fold-search, don't recommend setting it globally.")
 
-(defun mc/evil-adjust-mark (direction)
-  "Adjust mark when evil-mode is enabled.
-
-Evil has a different notion of cursor position than vanilla Emacs.
-This function adjusts the mark for this off-by-one error."
-  (when (mc/evil-p)
-    (ecase direction
-      (forwards  (goto-char (1- (point))))
-      (backwards (push-mark (1- (mark)))))))
-
-(defun mc/evil-visual-state ()
-  (when (mc/evil-p)
-    (setq evil-state 'visual)))
-
 (defun mc/mark-more-like-this (skip-last direction)
   (let ((case-fold-search nil)
         (re (regexp-opt (mc/region-strings) mc/enclose-search-term))

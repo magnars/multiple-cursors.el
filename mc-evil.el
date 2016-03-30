@@ -30,6 +30,20 @@
 (defun mc/evil-p ()
   (and (featurep 'evil) evil-mode))
 
+(defun mc/evil-adjust-mark (direction)
+  "Adjust mark when evil-mode is enabled.
+
+Evil has a different notion of cursor position than vanilla Emacs.
+This function adjusts the mark for this off-by-one error."
+  (when (mc/evil-p)
+    (ecase direction
+      (forwards  (goto-char (1- (point))))
+      (backwards (push-mark (1- (mark)))))))
+
+(defun mc/evil-visual-state ()
+  (when (mc/evil-p)
+    (setq evil-state 'visual)))
+
 (defun mc/evil-visual-refresh ()
   "Refreshes the Evil visual range based on the current mark and point."
   (evil-visual-refresh (mark) (point)))
