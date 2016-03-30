@@ -106,14 +106,14 @@ Use like case-fold-search, don't recommend setting it globally.")
 
 Evil has a different notion of cursor position than vanilla Emacs.
 This function adjusts the mark for this off-by-one error."
-  (when (and (fboundp 'evil-visual-state-p) (evil-visual-state-p))
+  (when (mc/evil-p)
     (ecase direction
       (forwards  (goto-char (1- (point))))
       (backwards (push-mark (1- (mark)))))))
 
 (defun mc/evil-visual-state ()
   (when (mc/evil-p)
-    (evil-visual-state)))
+    (setq evil-state 'visual)))
 
 (defun mc/mark-more-like-this (skip-last direction)
   (let ((case-fold-search nil)
@@ -298,17 +298,18 @@ With zero ARG, skip the last one and mark next."
   (unless (region-active-p)
     (error "Mark a region to match first."))
   (mc/remove-fake-cursors)
-  (let ((master (point))
-        (case-fold-search nil)
-        (point-first (< (point) (mark)))
-        (re (regexp-opt (mc/region-strings) mc/enclose-search-term)))
+  (let* ((master (point))
+         (case-fold-search nil)
+         (point-first (< (point) (mark)))
+         (direction (if point-first 'backwards 'forwards))
+         (re (regexp-opt (mc/region-strings) mc/enclose-search-term)))
     (mc/save-excursion
      (goto-char 0)
      (while (search-forward-regexp re nil t)
        (push-mark (match-beginning 0))
        (when point-first (exchange-point-and-mark))
        (unless (= master (point))
-         (mc/evil-adjust-mark 'forwards)
+         (mc/evil-adjust-mark direction)
          (mc/evil-visual-state)
          (mc/create-fake-cursor-at-point))
        (when point-first (exchange-point-and-mark)))))
