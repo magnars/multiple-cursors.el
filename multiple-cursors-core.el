@@ -53,6 +53,7 @@
 
 (defmacro mc/add-fake-cursor-to-undo-list (&rest forms)
   "Make sure point is in the right place when undoing"
+  (declare (debug (&rest form)))
   (let ((uc (make-symbol "undo-cleaner")))
     `(let ((,uc (cons 'apply (cons 'deactivate-cursor-after-undo (list id)))))
        (setq buffer-undo-list (cons ,uc buffer-undo-list))
@@ -69,11 +70,13 @@
 
 (defmacro mc/for-each-fake-cursor (&rest forms)
   "Runs the body for each fake cursor, bound to the name cursor"
+  (declare (debug (&rest form)))
   `(mapc #'(lambda (cursor) ,@forms)
          (mc/all-fake-cursors)))
 
 (defmacro mc/save-excursion (&rest forms)
   "Saves and restores all the state that multiple-cursors cares about."
+  (declare (debug (&rest form)))
   (let ((cs (make-symbol "current-state")))
     `(let ((,cs (mc/store-current-state-in-overlay
                  (make-overlay (point) (point) nil nil t))))
@@ -86,6 +89,7 @@
 
 (defmacro mc/for-each-cursor-ordered (&rest forms)
   "Runs the body for each cursor, fake and real, bound to the name cursor"
+  (declare (debug (&rest form)))
   (let ((rci (make-symbol "real-cursor-id")))
     `(let ((,rci (overlay-get (mc/create-fake-cursor-at-point) 'mc-id)))
        (mapc #'(lambda (cursor)
@@ -96,6 +100,7 @@
 
 (defmacro mc/save-window-scroll (&rest forms)
   "Saves and restores the window scroll position"
+  (declare (debug (&rest form)))
   (let ((p (make-symbol "p"))
         (s (make-symbol "start"))
         (h (make-symbol "hscroll")))
