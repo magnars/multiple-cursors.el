@@ -6,12 +6,16 @@ great success and much merriment.
 
 ## Installation
 
-I highly recommend installing multiple-cursors through elpa.
+I highly recommend installing multiple-cursors through `package.el`.
 
 It's available on [marmalade](http://marmalade-repo.org/) and
 [melpa](http://melpa.milkbox.net/):
 
     M-x package-install multiple-cursors
+
+The package depends on the `cl-lib` package, so if you do not use
+`package.el` or have a recent Emacs, you would need to install that
+too: see [GNU ELPA](http://elpa.gnu.org/packages/cl-lib.html).
 
 ## Basic usage
 

@@ -104,19 +104,19 @@ Use like case-fold-search, don't recommend setting it globally.")
 (defun mc/mark-more-like-this (skip-last direction)
   (let ((case-fold-search nil)
         (re (regexp-opt (mc/region-strings) mc/enclose-search-term))
-        (point-out-of-order (ecase direction
+        (point-out-of-order (cl-ecase direction
                               (forwards       (< (point) (mark)))
                               (backwards (not (< (point) (mark))))))
-        (furthest-cursor (ecase direction
+        (furthest-cursor (cl-ecase direction
                            (forwards  (mc/furthest-cursor-after-point))
                            (backwards (mc/furthest-cursor-before-point))))
-        (start-char (ecase direction
+        (start-char (cl-ecase direction
                       (forwards  (mc/furthest-region-end))
                       (backwards (mc/first-region-start))))
-        (search-function (ecase direction
+        (search-function (cl-ecase direction
                            (forwards  'search-forward-regexp)
                            (backwards 'search-backward-regexp)))
-        (match-point-getter (ecase direction
+        (match-point-getter (cl-ecase direction
                               (forwards 'match-beginning)
                               (backwards 'match-end))))
     (if (and skip-last (not furthest-cursor))
@@ -229,12 +229,12 @@ With zero ARG, skip the last one and mark next."
 (defun mc/mark-lines (num-lines direction)
   (dotimes (i num-lines)
     (mc/save-excursion
-     (let ((furthest-cursor (ecase direction
+     (let ((furthest-cursor (cl-ecase direction
 			      (forwards  (mc/furthest-cursor-after-point))
 			      (backwards (mc/furthest-cursor-before-point)))))
        (if (overlayp furthest-cursor)
 	   (goto-char (overlay-get furthest-cursor 'point))))
-     (ecase direction
+     (cl-ecase direction
        (forwards (next-logical-line 1 nil))
        (backwards (previous-logical-line 1 nil)))
      (mc/create-fake-cursor-at-point))))

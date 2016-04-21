@@ -1,3 +1,5 @@
+(require 'cl) ;; For lexical-let
+
 (When "^I mark next like this$"
       (lambda () (call-interactively 'mc/mark-next-like-this)))
 
@@ -48,25 +50,25 @@
 (Then "^I should have \\([0-9]+\\) cursors$"
       (lambda (num)
         (let ((actual (mc/num-cursors)))
-          (assert (eq (string-to-number num) actual) nil
-                  "Expected to have %s cursors, but was %d." num actual))))
+          (cl-assert (eq (string-to-number num) actual) nil
+                     "Expected to have %s cursors, but was %d." num actual))))
 
 (Then "^I should have one cursor$"
       (lambda ()
-        (assert (not multiple-cursors-mode) nil
-                "Expected to have one cursor, but multiple-cursors-mode is still active.")
-        (assert (eq 1 (mc/num-cursors)) nil
-                "Expected to have one cursor, but there are still fake cursor overlays.")))
+        (cl-assert (not multiple-cursors-mode) nil
+                   "Expected to have one cursor, but multiple-cursors-mode is still active.")
+        (cl-assert (eq 1 (mc/num-cursors)) nil
+                   "Expected to have one cursor, but there are still fake cursor overlays.")))
 
 (Then "^rectangular-region-mode should be off$"
-       (lambda ()
-         (assert (not rectangular-region-mode) nil
-                 "Expected rectangular-region-mode mode to be off, but wasn't.")))
+      (lambda ()
+        (cl-assert (not rectangular-region-mode) nil
+                   "Expected rectangular-region-mode mode to be off, but wasn't.")))
 
 (Then "^rectangular-region-mode should be on$"
-       (lambda ()
-         (assert rectangular-region-mode nil
-                 "Expected rectangular-region-mode mode to be on, but wasn't.")))
+      (lambda ()
+        (cl-assert rectangular-region-mode nil
+                   "Expected rectangular-region-mode mode to be on, but wasn't.")))
 
 (When "^I press \"\\(.+\\)\"$"
       (lambda (keybinding)
@@ -132,21 +134,21 @@
         (goto-char (point-min))
         (let ((search (re-search-forward (format "%s" char) nil t))
               (message "Can not go to character '%s' since it does not exist in the current buffer: %s"))
-          (assert search nil message char (espuds-buffer-contents)))))
+          (cl-assert search nil message char (espuds-buffer-contents)))))
 
 (When "^I go to the \\(front\\|end\\) of the word \"\\(.+\\)\"$"
       (lambda (pos word)
         (goto-char (point-min))
         (let ((search (re-search-forward (format "%s" word) nil t))
               (message "Can not go to character '%s' since it does not exist in the current buffer: %s"))
-          (assert search nil message word (espuds-buffer-contents))
+          (cl-assert search nil message word (espuds-buffer-contents))
           (if (string-equal "front" pos) (backward-word)))))
 
 (When "^I select the last \"\\(.+\\)\"$"
       (lambda (text)
         (goto-char (point-max))
         (let ((search (re-search-backward text nil t)))
-          (assert search nil "The text '%s' was not found in the current buffer." text))
+          (cl-assert search nil "The text '%s' was not found in the current buffer." text))
         (set-mark (point))
         (re-search-forward text)))
 
@@ -173,3 +175,8 @@
             (setq p (1+ p))
             )
           (cl-assert (s-equals? expected visible-text) nil message expected visible-text))))
+
+
+;; Local Variables:
+;; byte-compile-warnings: (not cl-functions)
+;; End:

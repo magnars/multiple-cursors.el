@@ -25,17 +25,7 @@
 
 ;;; Code:
 
-(if (require 'cl-lib nil t)
-    (eval-and-compile
-      (defalias 'count-if 'cl-count-if)
-      (defalias 'find-if 'cl-find-if)
-      (defalias 'incf 'cl-incf)
-      (defalias 'sort* 'cl-sort)
-      (defalias 'remove-if 'cl-remove-if)
-      (defalias 'remove-if-not 'cl-remove-if-not)
-      (defalias 'symbol-macrolet 'cl-symbol-macrolet))
-  (require 'cl))
-
+(require 'cl-lib)
 (require 'rect)
 
 (defvar mc--read-char)
@@ -62,9 +52,9 @@
                (cons (cons 'apply (cons 'activate-cursor-for-undo (list id))) buffer-undo-list))))))
 
 (defun mc/all-fake-cursors (&optional start end)
-  (remove-if-not 'mc/fake-cursor-p
-                 (overlays-in (or start (point-min))
-                              (or end   (point-max)))))
+  (cl-remove-if-not 'mc/fake-cursor-p
+                    (overlays-in (or start (point-min))
+                                 (or end   (point-max)))))
 
 (defmacro mc/for-each-fake-cursor (&rest forms)
   "Runs the body for each fake cursor, bound to the name cursor"
@@ -183,7 +173,7 @@ highlights the entire width of the window."
 
 (defun mc/create-cursor-id ()
   "Returns a unique cursor id"
-  (incf mc--current-cursor-id))
+  (cl-incf mc--current-cursor-id))
 
 (defvar mc--max-cursors-original nil
   "This variable maintains the original maximum number of cursors.
@@ -298,9 +288,9 @@ cursor with updated info."
 
 (defun mc/cursor-with-id (id)
   "Find the first cursor with the given id, or nil"
-  (find-if #'(lambda (o) (and (mc/fake-cursor-p o)
-                              (= id (overlay-get o 'mc-id))))
-           (overlays-in (point-min) (point-max))))
+  (cl-find-if #'(lambda (o) (and (mc/fake-cursor-p o)
+                            (= id (overlay-get o 'mc-id))))
+              (overlays-in (point-min) (point-max))))
 
 (defvar mc--stored-state-for-undo nil
   "Variable to keep the state of the real cursor while undoing a fake one")
@@ -331,8 +321,8 @@ cursor with updated info."
 
 (defun mc/num-cursors ()
   "The number of cursors (real and fake) in the buffer."
-  (1+ (count-if 'mc/fake-cursor-p
-                (overlays-in (point-min) (point-max)))))
+  (1+ (cl-count-if 'mc/fake-cursor-p
+                   (overlays-in (point-min) (point-max)))))
 
 (defvar mc--this-command nil
   "Used to store the original command being run.")
@@ -570,13 +560,13 @@ for running commands with multiple cursors.")
 
 (defun mc/dump-list (list-symbol)
   "Insert (setq 'LIST-SYMBOL LIST-VALUE) to current buffer."
-  (symbol-macrolet ((value (symbol-value list-symbol)))
+  (cl-symbol-macrolet ((value (symbol-value list-symbol)))
     (insert "(setq " (symbol-name list-symbol) "\n"
             "      '(")
     (newline-and-indent)
     (set list-symbol
          (sort value (lambda (x y) (string-lessp (symbol-name x)
-                                                 (symbol-name y)))))
+                                            (symbol-name y)))))
     (mapc #'(lambda (cmd) (insert (format "%S" cmd)) (newline-and-indent))
           value)
     (insert "))")
@@ -772,7 +762,6 @@ for running commands with multiple cursors.")
 
 ;; Local Variables:
 ;; coding: utf-8
-;; byte-compile-warnings: (not cl-functions)
 ;; End:
 
 ;;; multiple-cursors-core.el ends here
