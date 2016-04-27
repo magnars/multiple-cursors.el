@@ -32,7 +32,7 @@
 ;;;###autoload
 (defun mc/insert-numbers (arg)
   "Insert increasing numbers for each cursor, starting at 0 or ARG."
-  (interactive "P")
+  (interactive "p")
   (setq mc--insert-numbers-number (or arg 0))
   (mc/for-each-cursor-ordered
    (mc/execute-command-for-fake-cursor 'mc--insert-number-and-increase cursor)))
@@ -57,7 +57,7 @@
 (defun mc/insert-letters (arg)
   "Insert increasing letters for each cursor, starting at 0 or ARG.
      Where letter[0]=a letter[2]=c letter[26]=aa"
-  (interactive "P")
+  (interactive "p")
   (setq mc--insert-letters-number (or arg 0))
   (mc/for-each-cursor-ordered
    (mc/execute-command-for-fake-cursor 'mc--insert-letter-and-increase cursor)))
