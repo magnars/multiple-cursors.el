@@ -65,7 +65,7 @@
 (defun mc--number-to-letters (number)
   (let ((letter
 	 (char-to-string
-	  (nth (mod number 26) '(?a ?b ?c ?d ?e ?f ?g ?h ?i ?j ?k ?l ?m ?n ?o ?p ?q ?r ?s ?t ?u ?v ?w ?x ?y ?z))))
+	  (+ (mod number 26) ?a)))
 	(number2 (/ number 26)))
     (if (> number2 0)
 	(concat (mc--number-to-letters (- number2 1)) letter)
