@@ -17,3 +17,9 @@ Feature: Insert increasing letters
     When I press "C-u 2 5 H-3"
     And I press "SPC"
     Then I should see "This z text contains the word aa text thrice (ab text)"
+
+  Scenario: Three cursors, a-b-c
+    Given I have cursors at "text" in "This text contains the word text thrice (text)"
+    When I press "C-u H-3"
+    And I press "SPC"
+    Then I should see "This e text contains the word f text thrice (g text)"
