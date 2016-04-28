@@ -75,6 +75,26 @@
 
 (defvar mc--insert-letters-number 0)
 
+(defvar mc/id 0)
+
+(defun mc--eval-and-replace ()
+  (interactive)
+  (backward-kill-sexp)
+  (condition-case nil
+      (prin1 (eval (read (current-kill 0)))
+             (current-buffer))
+    (error (message "Invalid expression")
+           (insert (current-kill 0))))
+  (setq mc/id (1+ mc/id)))
+
+(defun mc/eval-and-replace (arg)
+  (interactive "P")
+  (setq mc/id (or (and arg (prefix-numeric-value arg)) 0))
+  (mc/for-each-cursor-ordered
+   (mc/execute-command-for-fake-cursor
+    'mc--eval-and-replace
+    cursor)))
+
 (defun mc--insert-letter-and-increase ()
   (interactive)
   (insert (mc--number-to-letters mc--insert-letters-number))

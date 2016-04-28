@@ -27,6 +27,9 @@
 (When "^I insert letters$"
       (lambda () (call-interactively 'mc/insert-letters)))
 
+(When "^I eval and replace$"
+      (lambda () (call-interactively 'mc/eval-and-replace)))
+
 (When "^I reverse regions$"
       (lambda () (call-interactively 'mc/reverse-regions)))
 
