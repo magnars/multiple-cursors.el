@@ -75,7 +75,8 @@
 
 (defvar mc--insert-letters-number 0)
 
-(defvar mc/id 0)
+(defvar mc/id 0 "The number of the cursor that
+mc/eval-and-replace is acting on. Can be use in evaluated sexp.")
 
 (defun mc--eval-and-replace ()
   (interactive)
@@ -88,6 +89,10 @@
   (setq mc/id (1+ mc/id)))
 
 (defun mc/eval-and-replace (arg)
+  "Eval the sexp before every cursor. The sexp will be deleted
+and replaced with the result of the evaultion. mc/id is a
+variable that holds the number of the cursor evaluating the
+sexp. The starting value for mc/id can be offset using ARG."
   (interactive "P")
   (setq mc/id (or (and arg (prefix-numeric-value arg)) 0))
   (mc/for-each-cursor-ordered
