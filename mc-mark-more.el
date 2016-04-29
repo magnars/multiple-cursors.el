@@ -227,13 +227,15 @@ With zero ARG, skip the last one and mark next."
     (mc/mark-previous-like-this arg)))
 
 (defun mc/mark-lines (num-lines direction)
-  (dotimes (i num-lines)
+  (dotimes (i (if (= num-lines 0) 1 num-lines))
     (mc/save-excursion
      (let ((furthest-cursor (cl-ecase direction
 			      (forwards  (mc/furthest-cursor-after-point))
 			      (backwards (mc/furthest-cursor-before-point)))))
-       (if (overlayp furthest-cursor)
-	   (goto-char (overlay-get furthest-cursor 'point))))
+       (when (overlayp furthest-cursor)
+         (goto-char (overlay-get furthest-cursor 'point))
+         (when (= num-lines 0)
+           (mc/remove-fake-cursor furthest-cursor))))
      (cl-ecase direction
        (forwards (next-logical-line 1 nil))
        (backwards (previous-logical-line 1 nil)))
