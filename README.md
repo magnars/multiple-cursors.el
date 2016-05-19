@@ -8,8 +8,7 @@ great success and much merriment.
 
 I highly recommend installing multiple-cursors through `package.el`.
 
-It's available on [marmalade](http://marmalade-repo.org/) and
-[melpa](http://melpa.milkbox.net/):
+It's available on [melpa](http://melpa.milkbox.net/):
 
     M-x package-install multiple-cursors
 
