@@ -3,7 +3,7 @@
 ;; Copyright (C) 2012-2013 Magnar Sveen
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
-;; Version: 1.2.2
+;; Version: 1.4.0
 ;; Keywords: editing cursors
 
 ;; This program is free software; you can redistribute it and/or modify
