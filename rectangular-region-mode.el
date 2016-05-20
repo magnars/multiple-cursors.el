@@ -1,6 +1,6 @@
 ;;; rectangular-region-mode.el
 
-;; Copyright (C) 2012 Magnar Sveen
+;; Copyright (C) 2012-2016 Magnar Sveen
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
 ;; Keywords: editing cursors
