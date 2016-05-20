@@ -8,7 +8,7 @@ great success and much merriment.
 
 I highly recommend installing multiple-cursors through `package.el`.
 
-It's available on [melpa](http://melpa.milkbox.net/):
+It's available on [MELPA](http://melpa.org/) and [MELPA Stable](http://stable.melpa.org):
 
     M-x package-install multiple-cursors
 
