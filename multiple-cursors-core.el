@@ -35,6 +35,11 @@
   "The face used for fake cursors"
   :group 'multiple-cursors)
 
+(defface mc/cursor-bar-face
+  `((t (:height 1 :background ,(face-attribute 'cursor :background))))
+  "The face used for fake cursors if the cursor-type is bar"
+  :group 'multiple-cursors)
+
 (defface mc/region-face
   '((t :inherit region))
   "The face used for fake regions"
@@ -98,16 +103,26 @@
        (set-marker ,p nil)
        (set-marker ,s nil))))
 
+(defun mc/cursor-is-bar ()
+  "returns true if the cursor is a bar"
+  (cond ((equalp cursor-type 'bar) t)
+   ((when (listp cursor-type) (equalp (car cursor-type) 'bar)) t)
+   (t nil)))
+
 (defun mc/make-cursor-overlay-at-eol (pos)
   "Create overlay to look like cursor at end of line."
   (let ((overlay (make-overlay pos pos nil nil nil)))
-    (overlay-put overlay 'after-string (propertize " " 'face 'mc/cursor-face))
+    (if (mc/cursor-is-bar)
+	(overlay-put overlay 'before-string (propertize "|" 'face 'mc/cursor-bar-face))
+      (overlay-put overlay 'after-string (propertize " " 'face 'mc/cursor-face)))
     overlay))
 
 (defun mc/make-cursor-overlay-inline (pos)
   "Create overlay to look like cursor inside text."
   (let ((overlay (make-overlay pos (1+ pos) nil nil nil)))
-    (overlay-put overlay 'face 'mc/cursor-face)
+    (if (mc/cursor-is-bar)
+	(overlay-put overlay 'before-string (propertize "|" 'face 'mc/cursor-bar-face))
+      (overlay-put overlay 'face 'mc/cursor-face))
     overlay))
 
 (defun mc/make-cursor-overlay-at-point ()
