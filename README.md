@@ -8,8 +8,7 @@ great success and much merriment.
 
 I highly recommend installing multiple-cursors through `package.el`.
 
-It's available on [marmalade](http://marmalade-repo.org/) and
-[melpa](http://melpa.milkbox.net/):
+It's available on [MELPA](http://melpa.org/) and [MELPA Stable](http://stable.melpa.org):
 
     M-x package-install multiple-cursors
 
@@ -204,7 +203,7 @@ Thanks!
 
 ## License
 
-Copyright (C) 2012 Magnar Sveen
+Copyright (C) 2012-2016 Magnar Sveen
 
 Author: Magnar Sveen <magnars@gmail.com>
 Keywords: editing cursors

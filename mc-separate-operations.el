@@ -1,6 +1,6 @@
 ;;; mc-separate-operations.el - functions that work differently on each cursor
 
-;; Copyright (C) 2012 Magnar Sveen
+;; Copyright (C) 2012-2016 Magnar Sveen
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
 ;; Keywords: editing cursors
@@ -31,12 +31,19 @@
 
 ;;;###autoload
 (defun mc/insert-numbers (arg)
-  "Insert increasing numbers for each cursor, starting at 0 or ARG."
+  "Insert increasing numbers for each cursor, starting at
+`mc/insert-numbers-default' or ARG."
   (interactive "P")
   (setq mc--insert-numbers-number (or (and arg (prefix-numeric-value arg))
-                                      0))
+                                      mc/insert-numbers-default))
   (mc/for-each-cursor-ordered
    (mc/execute-command-for-fake-cursor 'mc--insert-number-and-increase cursor)))
+
+(defcustom mc/insert-numbers-default 0
+  "The default number at which to start counting for
+`mc/insert-numbers'"
+  :type 'integer
+  :group 'multiple-cursors)
 
 (defvar mc--insert-numbers-number 0)
 
