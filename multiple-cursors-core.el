@@ -404,10 +404,10 @@ the original cursor, to inform about the lack of support."
                 (when (and original-command
                            (not (memq original-command mc--default-cmds-to-run-once))
                            (not (memq original-command mc/cmds-to-run-once))
-                           (or (memq original-command mc--default-cmds-to-run-for-all)
+                           (or mc/always-run-for-all
+                               (memq original-command mc--default-cmds-to-run-for-all)
                                (memq original-command mc/cmds-to-run-for-all)
-                               (or mc/always-run-for-all
-                                   (mc/prompt-for-inclusion-in-whitelist original-command))))
+                               (mc/prompt-for-inclusion-in-whitelist original-command)))
                   (mc/execute-command-for-all-fake-cursors original-command))))))))))
 
 (defun mc/remove-fake-cursors ()
