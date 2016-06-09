@@ -310,17 +310,9 @@ cursor with updated info."
     (mc/pop-state-from-overlay mc--stored-state-for-undo)
     (setq mc--stored-state-for-undo nil)))
 
-(defcustom mc/black-list-prefer nil
-  "Disables whitelist mechanism and executes commands that are defined
-in mc/black-list only once. If you are a novice multiple-cursors or
-Emacs user, it is benefitical to stick to whitelists."
+(defcustom mc/always-run-for-all nil
+  "Disables whitelisting and always executes commands for every fake cursor."
   :type '(boolean)
-  :group 'multiple-cursors)
-
-(defcustom mc/black-list nil
-  "Commands to execute once while using multiple-cursors. Requires
-mc/black-list-prefer to be non-nil."
-  :type '(repeat function)
   :group 'multiple-cursors)
 
 (defun mc/prompt-for-inclusion-in-whitelist (original-command)
@@ -409,19 +401,14 @@ the original cursor, to inform about the lack of support."
                   (message "%S is not supported with multiple cursors%s"
                            original-command
                            (get original-command 'mc--unsupported))
-                (if mc/black-list-prefer
-                    (when (and original-command
-                               (not (memq original-command mc--default-cmds-to-run-once))
-                               (or (memq original-command mc--default-cmds-to-run-for-all)
-                                   (not (memq original-command mc/black-list))))
-                      (mc/execute-command-for-all-fake-cursors original-command))
-                  (when (and original-command
-                             (not (memq original-command mc--default-cmds-to-run-once))
-                             (not (memq original-command mc/cmds-to-run-once))
-                             (or (memq original-command mc--default-cmds-to-run-for-all)
-                                 (memq original-command mc/cmds-to-run-for-all)
-                                 (mc/prompt-for-inclusion-in-whitelist original-command)))
-                    (mc/execute-command-for-all-fake-cursors original-command)))))))))))
+                (when (and original-command
+                           (not (memq original-command mc--default-cmds-to-run-once))
+                           (not (memq original-command mc/cmds-to-run-once))
+                           (or (memq original-command mc--default-cmds-to-run-for-all)
+                               (memq original-command mc/cmds-to-run-for-all)
+                               (or mc/always-run-for-all
+                                   (mc/prompt-for-inclusion-in-whitelist original-command))))
+                  (mc/execute-command-for-all-fake-cursors original-command))))))))))
 
 (defun mc/remove-fake-cursors ()
   "Remove all fake cursors.
