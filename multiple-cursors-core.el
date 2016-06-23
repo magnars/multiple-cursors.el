@@ -105,8 +105,8 @@
 
 (defun mc/cursor-is-bar ()
   "returns true if the cursor is a bar"
-  (cond ((equalp cursor-type 'bar) t)
-   ((when (listp cursor-type) (equalp (car cursor-type) 'bar)) t)
+  (cond ((cl-equalp cursor-type 'bar) t)
+   ((when (listp cursor-type) (cl-equalp (car cursor-type) 'bar)) t)
    (t nil)))
 
 (defun mc/make-cursor-overlay-at-eol (pos)
