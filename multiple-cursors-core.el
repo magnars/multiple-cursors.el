@@ -104,10 +104,10 @@
        (set-marker ,s nil))))
 
 (defun mc/cursor-is-bar ()
-  "returns true if the cursor is a bar"
-  (cond ((equalp cursor-type 'bar) t)
-   ((when (listp cursor-type) (equalp (car cursor-type) 'bar)) t)
-   (t nil)))
+  "returns non-nil if the cursor is a bar"
+  (or (eq cursor-type 'bar)
+    (and (listp cursor-type)
+         (eq (car cursor-type) 'bar))))
 
 (defun mc/make-cursor-overlay-at-eol (pos)
   "Create overlay to look like cursor at end of line."
