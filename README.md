@@ -157,6 +157,11 @@ the location with:
 
 NB! Make sure to do so before requiring multiple-cursors.
 
+It is possible to set multiple-cursors to "run-for-all" for every
+command except for those that are listed in `mc/cmds-to-run-once`. To
+enable this set `mc/always-run-for-all` to non-nil. Add commands to be
+run once to `mc/cmds-to-run-once` in ".mc-lists.el".
+
 ## Known limitations
 
 * isearch-forward and isearch-backward aren't supported with multiple cursors.
