@@ -157,6 +157,12 @@ the location with:
 
 NB! Make sure to do so before requiring multiple-cursors.
 
+It is possible to tell multiple-cursors to stop asking for inclusion into whitelists
+and always execeute commands for every fake cursor. Then if you have trouble with
+a command, you just add it into `mc/cmds-to-run-once`. You can set:
+
+      (setq mc/always-run-for-all t)
+
 ## Known limitations
 
 * isearch-forward and isearch-backward aren't supported with multiple cursors.
