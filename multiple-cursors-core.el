@@ -104,7 +104,7 @@
        (set-marker ,s nil))))
 
 (defun mc/cursor-is-bar ()
-  "returns non-nil if the cursor is a bar"
+  "Return non-nil if the cursor is a bar."
   (or (eq cursor-type 'bar)
     (and (listp cursor-type)
          (eq (car cursor-type) 'bar))))
