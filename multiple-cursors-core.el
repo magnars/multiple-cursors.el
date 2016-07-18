@@ -621,6 +621,8 @@ for running commands with multiple cursors.")
                                      mc/mark-next-word-like-this
                                      mc/mark-next-symbol-like-this
                                      mc/mark-previous-like-this
+                                     mc/mark-previous-like-this-word
+                                     mc/mark-previous-like-this-symbol
                                      mc/mark-previous-word-like-this
                                      mc/mark-previous-symbol-like-this
                                      mc/mark-all-like-this
