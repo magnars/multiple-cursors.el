@@ -12,6 +12,12 @@
 (When "^I mark previous like this$"
       (lambda () (call-interactively 'mc/mark-previous-like-this)))
 
+(When "^I mark previous like this word$"
+      (lambda () (call-interactively 'mc/mark-previous-like-this-word)))
+
+(When "^I mark previous like this symbol$"
+      (lambda () (call-interactively 'mc/mark-previous-like-this-symbol)))
+
 (When "^I mark all like this$"
       (lambda () (call-interactively 'mc/mark-all-like-this)))
 
@@ -143,6 +149,12 @@
               (message "Can not go to character '%s' since it does not exist in the current buffer: %s"))
           (cl-assert search nil message word (espuds-buffer-contents))
           (if (string-equal "front" pos) (backward-word)))))
+
+(When "^I go to last word \"\\(.+\\)\"$"
+      (lambda (text)
+        (goto-char (point-max))
+        (let ((search (re-search-backward text nil t)))
+          (cl-assert search nil "The text '%s' was not found in the current buffer." text))))
 
 (When "^I select the last \"\\(.+\\)\"$"
       (lambda (text)

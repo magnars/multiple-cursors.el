@@ -226,6 +226,42 @@ With zero ARG, skip the last one and mark next."
   (mc/maybe-multiple-cursors-mode))
 
 ;;;###autoload
+(defun mc/mark-previous-like-this-word (arg)
+  "Find and mark the previous part of the buffer matching the currently active region
+If no region is active, mark the word at the point and find the previous match
+With negative ARG, delete the last one instead.
+With zero ARG, skip the last one and mark previous."
+  (interactive "p")
+  (if (< arg 0)
+      (let ((cursor (mc/furthest-cursor-after-point)))
+	(if cursor
+	    (mc/remove-fake-cursor cursor)
+	  (error "No cursors to be unmarked")))
+    (if (region-active-p)
+        (mc/mark-more-like-this (= arg 0) 'backwards)
+      (mc--select-thing-at-point 'word)
+      (mc/mark-more-like-this (= arg 0) 'backwards)))
+  (mc/maybe-multiple-cursors-mode))
+
+(defun mc/mark-previous-like-this-symbol (arg)
+  "Find and mark the previous part of the buffer matching the currently active region
+If no region is active, mark the symbol at the point and find the previous match
+With negative ARG, delete the last one instead.
+With zero ARG, skip the last one and mark previous."
+  (interactive "p")
+  (if (< arg 0)
+      (let ((cursor (mc/furthest-cursor-after-point)))
+	(if cursor
+	    (mc/remove-fake-cursor cursor)
+	  (error "No cursors to be unmarked")))
+    (if (region-active-p)
+        (mc/mark-more-like-this (= arg 0) 'backwards)
+      (mc--select-thing-at-point 'symbol)
+      (mc/mark-more-like-this (= arg 0) 'backwards)))
+  (mc/maybe-multiple-cursors-mode))
+
+
+;;;###autoload
 (defun mc/mark-previous-word-like-this (arg)
   "Find and mark the previous part of the buffer matching the currently active region
 The matching region must be a whole word to be a match

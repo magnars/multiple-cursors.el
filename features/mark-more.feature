@@ -14,6 +14,14 @@ Feature: Marking multiple parts of the buffer
     And I type "sentence"
     Then I should see "This sentence has the word sentence in it"
 
+  Scenario: Marking next like this, word
+    Given I turn on delete-selection-mode
+    When I insert "This text has the word text in it"
+    And I go to word "text"
+    And I press "C-S-c C->"
+    And I type "sentence"
+    Then I should see "This sentence has the word sentence in it"
+
   Scenario: Skipping a mark
     Given I turn on delete-selection-mode
     When I insert "Here's text, text and text"
@@ -51,6 +59,14 @@ Feature: Marking multiple parts of the buffer
     When I insert "This text has the word text in it"
     And I select the last "text"
     And I press "C-<"
+    And I type "sentence"
+    Then I should see "This sentence has the word sentence in it"
+
+  Scenario: Marking prev like this, word
+    Given I turn on delete-selection-mode
+    When I insert "This text has the word text in it"
+    And I go to last word "text"
+    And I press "C-S-c C-<"
     And I type "sentence"
     Then I should see "This sentence has the word sentence in it"
 

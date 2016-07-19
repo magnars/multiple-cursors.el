@@ -57,6 +57,8 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
  - `mc/mark-next-word-like-this`: Like `mc/mark-next-like-this` but only for whole words.
  - `mc/mark-next-symbol-like-this`: Like `mc/mark-next-like-this` but only for whole symbols.
  - `mc/mark-previous-like-this`: Adds a cursor and region at the next part of the buffer backwards that matches the current region.
+ - `mc/mark-previous-like-this-word`: Adds a cursor and region at the next part of the buffer backwards that matches the current region, if  no region is selected it selects the word at the point.
+ - `mc/mark-previous-like-this-symbol`: Adds a cursor and region at the next part of the buffer backwards that matches the current region, if  no region is selected it selects the symbol at the point.
  - `mc/mark-previous-word-like-this`: Like `mc/mark-previous-like-this` but only for whole words.
  - `mc/mark-previous-symbol-like-this`: Like `mc/mark-previous-like-this` but only for whole symbols.
  - `mc/mark-more-like-this-extended`: Use arrow keys to quickly mark/skip next/previous occurances.

@@ -24,6 +24,8 @@
  (global-set-key (kbd "C-S-c C->") 'mc/mark-next-like-this-word)
  (global-set-key (kbd "C-S-c M->") 'mc/mark-next-like-this-symbol)
  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+ (global-set-key (kbd "C-S-c C-<") 'mc/mark-previous-like-this-word)
+ (global-set-key (kbd "C-S-c M-<") 'mc/mark-previous-like-this-symbol)
  (global-set-key (kbd "M-!") 'mc/mark-all-like-this)
  (global-set-key (kbd "M-$") 'mc/mark-all-like-this-dwim)
  (global-set-key (kbd "C-$") 'mc/mark-all-dwim)
