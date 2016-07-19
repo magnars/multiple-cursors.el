@@ -205,6 +205,7 @@ Run the tests with:
 * [Aleksey Fedotov](https://github.com/lexa) added `mc-hide-unmatched-lines-mode`
 * [Jules Tamagnan](https://github.com/jtamagnan) added `mc/mark-next-like-this-word` and `mc/mark-next-like-this-symbol`
 * [Ingo Lohmar](https://github.com/ilohmar) extended `mc/add-cursor-on-click` to toggle cursors.
+* [Andrea Orru](https://github.com/AndreaOrru) added `mc/mark-previous-like-this-word`/`-symbol`
 
 Thanks!
 
