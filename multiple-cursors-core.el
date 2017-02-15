@@ -660,6 +660,7 @@ for running commands with multiple cursors."
                                      hum/unhide-invisible-overlays
                                      save-buffer
                                      ido-exit-minibuffer
+                                     ivy-done
                                      exit-minibuffer
                                      minibuffer-complete-and-exit
                                      execute-extended-command
