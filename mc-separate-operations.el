@@ -47,10 +47,18 @@
 
 (defvar mc--insert-numbers-number 0)
 
+(defvar mc--insert-numbers-increase-function "(+ x 1)")
+
+(defun mc/insert-numbers-increase-function (fun)
+  (interactive
+   (list (read-from-minibuffer "Increase function: " mc--insert-numbers-increase-function)))
+  (setq mc--insert-numbers-increase-function fun))
+
 (defun mc--insert-number-and-increase ()
   (interactive)
   (insert (number-to-string mc--insert-numbers-number))
-  (setq mc--insert-numbers-number (1+ mc--insert-numbers-number)))
+  (let ((x mc--insert-numbers-number))
+    (setq mc--insert-numbers-number (eval (read mc--insert-numbers-increase-function)))))
 
 (defun mc--ordered-region-strings ()
   (let (strings)
