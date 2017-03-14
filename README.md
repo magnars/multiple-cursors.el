@@ -25,6 +25,12 @@ Start out with:
 Then you have to set up your keybindings - multiple-cursors doesn't presume to
 know how you'd like them laid out. Here are some examples:
 
+Note: Be careful about active region! If you want to all your region behave like
+normal emacs region, which is almost what you want, especially for beginners,
+please select the region from back to front! This will make all your cursors at
+same position (all at the beginning of the regions).If your don't know what I am
+saying, see the emacs rocks from 0:24 to 0:29.
+
 When you have an active region that spans multiple lines, the following will
 add a cursor to each line:
 
