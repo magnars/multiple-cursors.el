@@ -774,7 +774,7 @@ for running commands with multiple cursors."
                                         subword-downcase
                                         er/expand-region
                                         er/contract-region
-					sp-backward-delete-char
+                                        sp-backward-delete-char
                                         smart-forward
                                         smart-backward
                                         smart-up
