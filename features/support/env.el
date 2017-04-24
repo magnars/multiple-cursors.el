@@ -13,10 +13,12 @@
 (require 'espuds)
 (require 'ert)
 (require 'wrap-region)
+(require 'evil)
 
 (defun mc/save-lists ()) ;; redefine to do nothing when running tests
 
 (Before
+ (evil-mode 0)
  (cua-mode 0)
  (multiple-cursors-mode 0)
  (rectangular-region-mode 0)
