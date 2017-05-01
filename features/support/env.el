@@ -9,6 +9,8 @@
 (add-to-list 'load-path (expand-file-name "espuds" multiple-cursors-util-path))
 (add-to-list 'load-path (expand-file-name "vendor" multiple-cursors-util-path))
 
+(require 'mc-vars)
+(setq mc/list-file "")
 (require 'multiple-cursors)
 (require 'espuds)
 (require 'ert)
@@ -16,6 +18,12 @@
 (require 'evil)
 
 (defun mc/save-lists ()) ;; redefine to do nothing when running tests
+(defun mc/prompt-for-inclusion-in-whitelist-test-advice (orig-fun &optional original-command)
+  (if (mc/evil-p)
+      (error "Command '%s' not included in mc--default-cmds-to-run-for-all or mc--default-cmds-to-run-once" original-command))
+  (funcall orig-fun original-command))
+
+(advice-add 'mc/prompt-for-inclusion-in-whitelist :around #'mc/prompt-for-inclusion-in-whitelist-test-advice)
 
 (Before
  (evil-mode 0)

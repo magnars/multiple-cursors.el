@@ -27,6 +27,8 @@
 
 (require 'cl-lib)
 (require 'rect)
+(require 'mc-vars)
+(require 'mc-evil)
 
 (defvar mc--read-char)
 
@@ -574,12 +576,6 @@ from being executed if in multiple-cursors-mode."
              (kill-new interprogram-paste))
            (overlay-put cursor 'kill-ring kill-ring)
            (overlay-put cursor 'kill-ring-yank-pointer kill-ring-yank-pointer)))))))
-
-(defcustom mc/list-file (locate-user-emacs-file ".mc-lists.el")
-  "The position of the file that keeps track of your preferences
-for running commands with multiple cursors."
-  :type 'file
-  :group 'multiple-cursors)
 
 (defun mc/dump-list (list-symbol)
   "Insert (setq 'LIST-SYMBOL LIST-VALUE) to current buffer."
