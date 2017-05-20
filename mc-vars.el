@@ -31,5 +31,24 @@ for running commands with multiple cursors."
   :type 'file
   :group 'multiple-cursors)
 
+(defvar mc--evil-cursor-specific-vars '(evil-state
+                                        evil-previous-state
+                                        evil-previous-state-alist
+                                        evil-next-state
+                                        evil-normal-state-entry-hook)
+  "List of variables to keep track of on a per cursor basis when using evil")
+
+(defvar mc--evil-cmds-to-run-for-all
+  '(
+    ;; state toggles
+    evil-insert
+    evil-normal-state
+    evil-exit-visual-state
+    evil-visual-char ;; v in normal state
+    evil-visual-line ;; V in normal state
+    ;; evil-operators
+    evil-delete-char)
+  "List of functions to run for all cursors when using evil.")
+
 (provide 'mc-vars)
 ;;; mc-vars.el ends here

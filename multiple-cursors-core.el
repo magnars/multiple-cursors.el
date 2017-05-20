@@ -142,15 +142,18 @@ highlights the entire width of the window."
     (overlay-put overlay 'type 'additional-region)
     overlay))
 
-(defvar mc/cursor-specific-vars '(transient-mark-mode
-                                  kill-ring
-                                  kill-ring-yank-pointer
-                                  mark-ring
-                                  mark-active
-                                  yank-undo-function
-                                  autopair-action
-                                  autopair-wrap-action
-                                  er/history)
+(defvar mc/cursor-specific-vars
+  (append
+   '(transient-mark-mode
+     kill-ring
+     kill-ring-yank-pointer
+     mark-ring
+     mark-active
+     yank-undo-function
+     autopair-action
+     autopair-wrap-action
+     er/history)
+   (when (mc/evil-p) mc--evil-cursor-specific-vars))
   "A list of vars that need to be tracked on a per-cursor basis.")
 
 (defun mc/store-current-state-in-overlay (o)
@@ -161,12 +164,21 @@ highlights the entire width of the window."
     (when (boundp var) (overlay-put o var (symbol-value var))))
   o)
 
+(defun mc/restore-point-and-mark-from-overlay (o)
+  (goto-char (overlay-get o 'point))
+  (set-marker (mark-marker) (overlay-get o 'mark)))
+
 (defun mc/restore-state-from-overlay (o)
   "Restore point and mark from stored info in the given overlay."
-  (goto-char (overlay-get o 'point))
-  (set-marker (mark-marker) (overlay-get o 'mark))
-  (dolist (var mc/cursor-specific-vars)
-    (when (boundp var) (set var (overlay-get o var)))))
+  (cond
+   ((and (mc/evil-p)
+         (mc/fake-cursor-p o))
+    (mc/restore-point-and-mark-from-overlay o)
+    (mc/evil-restore-state-from-overlay o))
+   (t
+    (mc/restore-point-and-mark-from-overlay o)
+    (dolist (var mc/cursor-specific-vars)
+      (when (boundp var) (set var (overlay-get o var)))))))
 
 (defun mc/remove-fake-cursor (o)
   "Delete overlay with state, including dependent overlays and markers."
@@ -698,82 +710,85 @@ from being executed if in multiple-cursors-mode."
 (defvar mc--default-cmds-to-run-for-all nil
   "Default set of commands that should be mirrored by all cursors")
 
-(setq mc--default-cmds-to-run-for-all '(mc/keyboard-quit
-                                        self-insert-command
-                                        quoted-insert
-                                        previous-line
-                                        next-line
-                                        newline
-                                        newline-and-indent
-                                        open-line
-                                        delete-blank-lines
-                                        transpose-chars
-                                        transpose-lines
-                                        transpose-paragraphs
-                                        transpose-regions
-                                        join-line
-                                        right-char
-                                        right-word
-                                        forward-char
-                                        forward-word
-                                        left-char
-                                        left-word
-                                        backward-char
-                                        backward-word
-                                        forward-paragraph
-                                        backward-paragraph
-                                        upcase-word
-                                        downcase-word
-                                        capitalize-word
-                                        forward-list
-                                        backward-list
-                                        hippie-expand
-                                        hippie-expand-lines
-                                        yank
-                                        yank-pop
-                                        append-next-kill
-                                        kill-word
-                                        kill-line
-                                        kill-whole-line
-                                        backward-kill-word
-                                        backward-delete-char-untabify
-                                        delete-char delete-forward-char
-                                        delete-backward-char
-                                        py-electric-backspace
-                                        c-electric-backspace
-                                        org-delete-backward-char
-                                        cperl-electric-backspace
-                                        python-indent-dedent-line-backspace
-                                        paredit-backward-delete
-                                        autopair-backspace
-                                        just-one-space
-                                        zap-to-char
-                                        end-of-line
-                                        set-mark-command
-                                        exchange-point-and-mark
-                                        cua-set-mark
-                                        cua-replace-region
-                                        cua-delete-region
-                                        move-end-of-line
-                                        beginning-of-line
-                                        move-beginning-of-line
-                                        kill-ring-save
-                                        back-to-indentation
-                                        subword-forward
-                                        subword-backward
-                                        subword-mark
-                                        subword-kill
-                                        subword-backward-kill
-                                        subword-transpose
-                                        subword-capitalize
-                                        subword-upcase
-                                        subword-downcase
-                                        er/expand-region
-                                        er/contract-region
-                                        smart-forward
-                                        smart-backward
-                                        smart-up
-                                        smart-down))
+(setq mc--default-cmds-to-run-for-all
+      (append
+       '(mc/keyboard-quit
+         self-insert-command
+         quoted-insert
+         previous-line
+         next-line
+         newline
+         newline-and-indent
+         open-line
+         delete-blank-lines
+         transpose-chars
+         transpose-lines
+         transpose-paragraphs
+         transpose-regions
+         join-line
+         right-char
+         right-word
+         forward-char
+         forward-word
+         left-char
+         left-word
+         backward-char
+         backward-word
+         forward-paragraph
+         backward-paragraph
+         upcase-word
+         downcase-word
+         capitalize-word
+         forward-list
+         backward-list
+         hippie-expand
+         hippie-expand-lines
+         yank
+         yank-pop
+         append-next-kill
+         kill-word
+         kill-line
+         kill-whole-line
+         backward-kill-word
+         backward-delete-char-untabify
+         delete-char delete-forward-char
+         delete-backward-char
+         py-electric-backspace
+         c-electric-backspace
+         org-delete-backward-char
+         cperl-electric-backspace
+         python-indent-dedent-line-backspace
+         paredit-backward-delete
+         autopair-backspace
+         just-one-space
+         zap-to-char
+         end-of-line
+         set-mark-command
+         exchange-point-and-mark
+         cua-set-mark
+         cua-replace-region
+         cua-delete-region
+         move-end-of-line
+         beginning-of-line
+         move-beginning-of-line
+         kill-ring-save
+         back-to-indentation
+         subword-forward
+         subword-backward
+         subword-mark
+         subword-kill
+         subword-backward-kill
+         subword-transpose
+         subword-capitalize
+         subword-upcase
+         subword-downcase
+         er/expand-region
+         er/contract-region
+         smart-forward
+         smart-backward
+         smart-up
+         smart-down)
+       (when (mc/evil-p) mc--evil-cmds-to-run-for-all)))
 
 (defvar mc/cmds-to-run-for-all nil
   "Commands to run for all cursors in multiple-cursors-mode")

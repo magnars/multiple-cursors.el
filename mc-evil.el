@@ -32,6 +32,31 @@
 (defun mc/evil-p ()
   (and (featurep 'evil) evil-mode))
 
+(defun mc/overlay-change-evil-state-p (o)
+  (not (eq evil-state (overlay-get o 'evil-state))))
+
+(defun mc/restore-overlay-vars (o vars)
+  (dolist (var vars)
+    (when (boundp var) (set var (overlay-get o var)))))
+
+(defun mc/evil-restore-state-from-overlay (o)
+  (cond
+   ((mc/overlay-change-evil-state-p o)
+    (let ((overlay-evil-state (overlay-get o 'evil-state))
+          (cursor-specific-vars (cl-remove-if #'(lambda (var) (eq var 'evil-state)) mc/cursor-specific-vars)))
+      (mc/restore-overlay-vars o cursor-specific-vars)
+      (cond
+       ((and (eq evil-state 'insert)
+             (eq overlay-evil-state 'normal))
+        (let ((old-evil-move-cursor-back evil-move-cursor-back))
+          (setq evil-move-cursor-back nil)
+          (evil-change-state overlay-evil-state)
+          (setq evil-move-cursor-back old-evil-move-cursor-back)))
+       (t
+        (evil-change-state overlay-evil-state)))))
+   (t (mc/restore-overlay-vars o mc/cursor-specific-vars))))
+
+
 (provide 'mc-evil)
 
 ;; Local Variables:
