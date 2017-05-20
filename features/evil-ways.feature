@@ -170,3 +170,83 @@ Feature: Evil Ways
     First  coraline
     Second coraline
     """
+
+  @normal-state-motions @find-char-to
+  Scenario: Motion find char to 'e' from normal state
+    And I press "tex"
+    Then I should see exactly:
+    """
+    First  lie
+    Second lie
+    """
+
+  @normal-state-motions @end-of-word
+  Scenario: Motion move end of word from normal state
+    And I press "ean"
+    Then I should see exactly:
+    """
+    First  linen
+    Second linen
+    """
+
+  @normal-state-motions @change-word
+  Scenario: Motion change word from normal state
+    And I press "cwlinen"
+    Then I should see exactly:
+    """
+    First  linen
+    Second linen
+    """
+
+  @normal-state-motions @delete-end-of-word
+  Scenario: Motion delete end of word from normal state
+    And I press "de"
+    Then I should see exactly:
+    """
+    First  
+    Second 
+    """
+
+  @visual-state-motions @end-of-word
+  Scenario: Motion move end of word from visual state
+    And I press "v"
+    And I press "e"
+    And I press "An"
+    Then I should see exactly:
+    """
+    First  linen
+    Second linen
+    """
+
+  @visual-state-motions @change-word
+  Scenario: Motion change word from visual state
+    And I press "v"
+    And I press "e"
+    And I press "clinen"
+    Then I should see exactly:
+    """
+    First  linen
+    Second linen
+    """
+
+  @visual-state-motions @forward-char-motion
+  Scenario: Motion forward char then delete from visual state
+    And I press "v"
+    And I press "lll"
+    And I press "d"
+    Then I should see exactly:
+    """
+    First  
+    Second 
+    """
+
+  @visual-state-motions @forward-char-motion-with-count
+  Scenario: Motion forward char with prefix then delete from visual state
+    And I press "v"
+    And I press "3l"
+    And I press "d"
+    Then I should see exactly:
+    """
+    First  
+    Second 
+    """
