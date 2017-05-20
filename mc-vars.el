@@ -46,9 +46,31 @@ for running commands with multiple cursors."
     evil-exit-visual-state
     evil-visual-char ;; v in normal state
     evil-visual-line ;; V in normal state
+    evil-append
     ;; evil-operators
-    evil-delete-char)
+    evil-change
+    evil-delete
+    evil-delete-char
+    ;; evil-motions
+    evil-find-char-to
+    evil-forward-char
+    evil-forward-word-end)
   "List of functions to run for all cursors when using evil.")
+
+(defvar mc--this-command-keys-result nil
+  "Stores the last pressed keys that executed the main cursor's
+  command. This function returns the wrong results for fake
+  cursors.")
+
+(defvar mc--evil-motion-read-results nil
+  "Stored results from the last call to `evil-motion-read'. The
+  results are stored so that a motion doesn't need to be read by
+  each fake cursor.")
+
+(defvar mc--evil-key-read-results nil
+  "Stored results from the last call to `evil-key-read'. The
+  results are stored so that a key doesn't need to be read by
+  each fake cursor.")
 
 (provide 'mc-vars)
 ;;; mc-vars.el ends here

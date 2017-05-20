@@ -56,6 +56,30 @@
         (evil-change-state overlay-evil-state)))))
    (t (mc/restore-overlay-vars o mc/cursor-specific-vars))))
 
+(defun mc/evil-read-key-advice (orig-fun &optional prompt)
+  (if mc--executing-command-for-fake-cursor
+      mc--evil-key-read-results
+    (let ((res (funcall orig-fun prompt)))
+      (setq mc--evil-key-read-results res)
+      res)))
+
+(defun mc/this-command-keys-advice (orig-fun)
+  (if mc--executing-command-for-fake-cursor
+      mc--this-command-keys-result
+    (let ((res (funcall orig-fun)))
+      (setq mc--this-command-keys-result res)
+      res)))
+
+(defun mc/evil-read-motion-advice (orig-fun &optional motion count type modifier)
+  (if mc--executing-command-for-fake-cursor
+      mc--evil-motion-read-results
+    (let ((res (apply orig-fun motion count type modifier)))
+      (setq mc--evil-motion-read-results res)
+      res)))
+
+(advice-add 'evil-read-key :around #'mc/evil-read-key-advice)
+(advice-add 'this-command-keys :around #'mc/this-command-keys-advice)
+(advice-add 'evil-read-motion :around #'mc/evil-read-motion-advice)
 
 (provide 'mc-evil)
 
