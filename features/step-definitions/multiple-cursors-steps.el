@@ -188,6 +188,43 @@
             )
           (cl-assert (s-equals? expected visible-text) nil message expected visible-text))))
 
+(defun marker-assert (e a)
+  (if (marker-position a)
+      (= e a)
+    (eq e nil)))
+
+(Then "The cursors should have these properties:"
+      (lambda (cursor-props-table)
+        (-let (((header .  rows) cursor-props-table))
+          (-map (lambda (cursor-props)
+                  (-let* (((cursor-type cursor-id cursor-point cursor-mark cursor-evil-state) cursor-props)
+                          (type (intern cursor-type))
+                          (id (if (string-equal "nil" cursor-id) nil (string-to-number cursor-id)))
+                          (expected-point (string-to-number cursor-point))
+                          (expected-mark (if (string-equal "nil" cursor-mark)
+                                             nil
+                                           (string-to-number cursor-mark)))
+                          (expected-evil-state (intern cursor-evil-state)))
+                    (cond
+                     (id
+                      (let* ((fc (mc/cursor-with-id id))
+                             (actual-point (overlay-get fc 'point))
+                             (actual-mark (overlay-get fc 'mark))
+                             (actual-evil-state (overlay-get fc 'evil-state)))
+                        (cl-assert (= expected-point actual-point) nil "Expected fake cursor with id '%s' to be at point '%s', but is actually at point '%s'" id expected-point actual-point)
+                        (cl-assert (marker-assert expected-mark actual-mark) nil "Expected fake cursor with id '%s' to be at mark '%s', but is actually at mark '%s'" id expected-mark actual-mark)
+                        (cl-assert (eq expected-evil-state actual-evil-state) nil "Expected fake cursor with id '%s' to have evil state '%s', but is actually at evil state '%s'" id expected-evil-state actual-evil-state)))
+                     (t
+                      (cl-assert (= expected-point (point)) nil "Expected main cursor to be at point '%s', but is actually at point '%s'" expected-point (point))
+                      (cl-assert (eq expected-mark (mark)) nil "Expected main cursor to be at mark '%s', but is actually at mark '%s'" expected-mark (mark))
+                      (cl-assert (eq expected-evil-state evil-state) nil "Expected main cursor to have evil state '%s', but is actually at evil state '%s'" expected-evil-state evil-state)))))
+                rows))))
+
+(Given "^I turn on evil-mode$"
+       (lambda ()
+         (evil-mode 1)
+         (when (mark) (set-mark nil))))
+
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not cl-functions)

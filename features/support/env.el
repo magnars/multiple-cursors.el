@@ -9,8 +9,13 @@
 (add-to-list 'load-path (expand-file-name "espuds" multiple-cursors-util-path))
 (add-to-list 'load-path (expand-file-name "vendor" multiple-cursors-util-path))
 
+(require 'evil)
 (require 'mc-vars)
 (setq mc/list-file "")
+;; force the evil specific vars to be added to the cmds to run for all / once
+;; will set evil mode to zero in the before hook
+;; This is how the loading would work for a user using evil and multiple-cursors together
+(evil-mode 1)
 (require 'multiple-cursors)
 (require 'espuds)
 (require 'ert)
@@ -29,6 +34,8 @@
  (evil-mode 0)
  (cua-mode 0)
  (multiple-cursors-mode 0)
+ (mc/remove-fake-cursors)
+ (setq mc--current-cursor-id 0)
  (rectangular-region-mode 0)
  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
  (global-set-key (kbd "C-S-c C->") 'mc/mark-next-like-this-word)
