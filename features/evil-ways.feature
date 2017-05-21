@@ -250,3 +250,15 @@ Feature: Evil Ways
     First  
     Second 
     """
+
+  @repeat
+  Scenario: Multiple cursors can repeat the last command
+    And I press "lcla"
+    And I press "<escape>"
+    And I press "l."
+    And I press "l."
+    Then I should see exactly:
+    """
+    First  laaa
+    Second laaa
+    """
