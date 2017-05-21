@@ -225,6 +225,17 @@
          (evil-mode 1)
          (when (mark) (set-mark nil))))
 
+(When "^I select \"\\(.+\\)\"$"
+      "Selects TEXT if found. Otherwise signal an error."
+      (lambda (text)
+        (goto-char (point-min))
+        (let ((search (re-search-forward text nil t)))
+          (cl-assert search nil "The text '%s' was not found in the current buffer." text))
+        (set-mark (point))
+        (re-search-backward text)
+        (when (mc/evil-p)
+          (evil-visual-state))))
+
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not cl-functions)
