@@ -52,6 +52,12 @@
           (setq evil-move-cursor-back nil)
           (evil-change-state overlay-evil-state)
           (setq evil-move-cursor-back old-evil-move-cursor-back)))
+       ((and (eq overlay-evil-state 'visual)
+             (overlay-get o 'evil-visual-contracted))
+        (let ((p (point))
+              (m (mark)))
+          (evil-change-state overlay-evil-state)
+          (evil-visual-refresh p m)))
        (t
         (evil-change-state overlay-evil-state)))))
    (t (mc/restore-overlay-vars o mc/cursor-specific-vars))))

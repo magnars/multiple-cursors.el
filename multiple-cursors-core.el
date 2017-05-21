@@ -156,12 +156,37 @@ highlights the entire width of the window."
    (when (mc/evil-p) mc--evil-cursor-specific-vars))
   "A list of vars that need to be tracked on a per-cursor basis.")
 
+(defun mc/store-point-and-mark-in-overlay (o)
+  (overlay-put o 'point (set-marker (make-marker) (point)))
+  (overlay-put o 'mark (set-marker (make-marker) (mark))))
+
+(defun mc/store-cursor-vars-in-overlay (o)
+  (dolist (var mc/cursor-specific-vars)
+    (when (boundp var) (overlay-put o var (symbol-value var)))))
+
 (defun mc/store-current-state-in-overlay (o)
   "Store relevant info about point and mark in the given overlay."
-  (overlay-put o 'point (set-marker (make-marker) (point)))
-  (overlay-put o 'mark (set-marker (make-marker) (mark)))
-  (dolist (var mc/cursor-specific-vars)
-    (when (boundp var) (overlay-put o var (symbol-value var))))
+  (cond
+   ((and (mc/evil-p)
+         (mc/fake-cursor-p o)
+         (evil-visual-state-p)
+         evil-visual-region-expanded)
+    (evil-visual-contract-region)
+    (mc/store-point-and-mark-in-overlay o)
+    (mc/store-cursor-vars-in-overlay o)
+    (overlay-put o 'evil-visual-contracted t)
+    ;; this is set to nil in `evil-visual-contract-region' and needs to be reset to its truthy value
+    (setq evil-visual-region-expanded t)
+    (cond
+     ((< (point) (mark))
+      (goto-char evil-visual-beginning)
+      (set-mark evil-visual-end))
+     (t
+      (goto-char evil-visual-end)
+      (set-mark evil-visual-beginning))))
+   (t
+    (mc/store-point-and-mark-in-overlay o)
+    (mc/store-cursor-vars-in-overlay o)))
   o)
 
 (defun mc/restore-point-and-mark-from-overlay (o)
@@ -452,9 +477,15 @@ you should disable multiple-cursors-mode."
 (defun mc/keyboard-quit ()
   "Deactivate mark if there are any active, otherwise exit multiple-cursors-mode."
   (interactive)
-  (if (not (use-region-p))
-      (multiple-cursors-mode 0)
-    (deactivate-mark)))
+  (cond
+   ((not (use-region-p))
+    (multiple-cursors-mode 0))
+   ((and (mc/evil-p) (evil-visual-state-p))
+    (evil-exit-visual-state))
+   ((mc/evil-p)
+    (evil-normal-state))
+   (t
+    (deactivate-mark))))
 
 (defvar mc/keymap nil
   "Keymap while multiple cursors are active.
