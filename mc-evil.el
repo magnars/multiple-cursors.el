@@ -77,9 +77,14 @@
       (setq mc--evil-motion-read-results res)
       res)))
 
+(defun mc/evil-repeat-pre-hook-advice (orig-fun)
+  (unless mc--executing-command-for-fake-cursor
+    (funcall orig-fun)))
+
 (advice-add 'evil-read-key :around #'mc/evil-read-key-advice)
 (advice-add 'this-command-keys :around #'mc/this-command-keys-advice)
 (advice-add 'evil-read-motion :around #'mc/evil-read-motion-advice)
+(advice-add 'evil-repeat-pre-hook :around #'mc/evil-repeat-pre-hook-advice)
 
 (provide 'mc-evil)
 

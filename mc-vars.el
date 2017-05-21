@@ -35,7 +35,8 @@ for running commands with multiple cursors."
                                         evil-previous-state
                                         evil-previous-state-alist
                                         evil-next-state
-                                        evil-normal-state-entry-hook)
+                                        evil-normal-state-entry-hook
+                                        evil-repeat-ring)
   "List of variables to keep track of on a per cursor basis when using evil")
 
 (defvar mc--evil-cmds-to-run-for-all
@@ -47,6 +48,8 @@ for running commands with multiple cursors."
     evil-visual-char ;; v in normal state
     evil-visual-line ;; V in normal state
     evil-append
+    ;; evil-commands
+    evil-repeat
     ;; evil-operators
     evil-change
     evil-delete
