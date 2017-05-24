@@ -236,6 +236,16 @@
         (when (mc/evil-p)
           (evil-visual-state))))
 
+(When "^I replace the buffer text with\\(?: \"\\(.+\\)\"\\|:\\)$"
+      "Replace the current buffer text with CONTENTS.
+Also enter normal state and go to the beginning of buffer."
+      (lambda (contents)
+        (erase-buffer)
+        (when (mc/evil-p) (evil-normal-state))
+        (insert contents)
+        (message "stuff inserted")
+        (goto-char (point-min))
+        (set-mark nil)))
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not cl-functions)
