@@ -238,9 +238,13 @@
 
 (When "^I replace the buffer text with\\(?: \"\\(.+\\)\"\\|:\\)$"
       "Replace the current buffer text with CONTENTS.
-Also enter normal state and go to the beginning of buffer."
+If testing with evil, enter normal state.
+Disable multiple cursors before new insertion to get rid of any active cursors, then re-enable.
+Go to the beginning of buffer and disable mark."
       (lambda (contents)
+        (multiple-cursors-mode 0)
         (erase-buffer)
+        (multiple-cursors-mode 1)
         (when (mc/evil-p) (evil-normal-state))
         (insert contents)
         (message "stuff inserted")

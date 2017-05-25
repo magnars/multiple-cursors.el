@@ -1,4 +1,4 @@
-@evil-ways
+@evil-ways @visual-state-mark-next
 Feature: mark-next-like-this stores state correctly when using evil
   Background:
     Given I turn on evil-mode
@@ -15,7 +15,7 @@ Feature: mark-next-like-this stores state correctly when using evil
       | main-cursor | nil |     8 |   11 | visual     |
       | fake-cursor | 1   |    20 |   23 | visual     |
       
-  @visual-state-mark-next @change-word
+  @change-word
   Scenario: Change word
     And I press "cfine"
     Then I should see exactly:
@@ -24,7 +24,7 @@ Feature: mark-next-like-this stores state correctly when using evil
     Second fine
     """
 
-  @visual-state-mark-next @delete-word
+  @delete-word
   Scenario: Delete word
     And I press "d"
     Then I should see exactly:
@@ -33,7 +33,7 @@ Feature: mark-next-like-this stores state correctly when using evil
     Second 
     """
 
-  @visual-state-mark-next @end-of-word
+  @end-of-word
   Scenario: Move end of word
     And I press "e"
     And I press "An"
@@ -43,7 +43,7 @@ Feature: mark-next-like-this stores state correctly when using evil
     Second linen
     """
 
-  @visual-state-mark-next @forward-char
+  @forward-char
   Scenario: Forward char
     And I press "lll"
     And I press "xat"
@@ -53,7 +53,7 @@ Feature: mark-next-like-this stores state correctly when using evil
     Second lint
     """
 
-  @visual-state-mark-next @forward-char-with-count
+  @forward-char-with-count
   Scenario: Forward char with count prefix
     And I press "3l"
     And I press "xat"
@@ -63,7 +63,7 @@ Feature: mark-next-like-this stores state correctly when using evil
     Second lint
     """
 
-  @visual-state-mark-next @cursors-to-normal-state
+  @cursors-to-normal-state
   Scenario: Switch all cursors to normal state on keyboard-quit
     And I press "C-g"
     Then I should have 2 cursors
@@ -76,4 +76,26 @@ Feature: mark-next-like-this stores state correctly when using evil
     """
     First  
     Second 
+    """
+
+  @look-thrice-mark-single-letter
+  Scenario: mark a single letter 3 times
+    When I replace the buffer text with:
+    """
+    First  l
+    Second l
+    Third  l
+    """
+    And I select "l"
+    And I press "C->"
+    And I press "C->"
+    And I press "C-g"
+    And I press "ife"
+    And I press "<escape>"
+    And I press "Aine"
+    Then I should see exactly:
+    """
+    First  feline
+    Second feline
+    Third  feline
     """
