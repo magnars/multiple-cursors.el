@@ -28,13 +28,20 @@
 ;;; Code:
 
 (require 'multiple-cursors-core)
+(require 'mc-evil)
 (require 'thingatpt)
 
 (defun mc/cursor-end (cursor)
-  (if (overlay-get cursor 'mark-active)
-      (max (overlay-get cursor 'point)
-           (overlay-get cursor 'mark))
-    (overlay-get cursor 'point)))
+  (let ((point (overlay-get cursor 'point)))
+    (cond
+     ((and (mc/evil-p) (evil-visual-state-p)
+           (overlay-get cursor 'evil-visual-contracted))
+      (let* ((mark (overlay-get cursor 'mark))
+             (range (evil-expand point mark evil-this-type)))
+        (evil-range-end range)))
+     ((overlay-get cursor 'mark-active)
+      (max point (overlay-get cursor 'mark)))
+     (t point))))
 
 (defun mc/cursor-beg (cursor)
   (if (overlay-get cursor 'mark-active)

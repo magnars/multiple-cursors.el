@@ -57,7 +57,9 @@ for running commands with multiple cursors."
     ;; evil-motions
     evil-find-char-to
     evil-forward-char
-    evil-forward-word-end)
+    evil-forward-word-end
+    ;; evil functions
+    evil-append-line)
   "List of functions to run for all cursors when using evil.")
 
 (defvar mc--this-command-keys-result nil
