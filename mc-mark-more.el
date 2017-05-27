@@ -369,6 +369,9 @@ With zero ARG, skip the last one and mark next."
     (when bound
       (set-mark (car bound))
       (goto-char (cdr bound))
+      (when (mc/evil-p)
+        (evil-visual-state)
+        (evil-visual-expand-region))
       bound)))
 
 (defun mc--select-thing-at-point-or-bark (thing)
@@ -642,7 +645,10 @@ If the region is inactive or on a single line, it will behave like
   (when (not (use-region-p))
     (let ((b (bounds-of-thing-at-point 'symbol)))
       (goto-char (car b))
-      (set-mark (cdr b)))))
+      (set-mark (cdr b))
+      (when (mc/evil-p)
+        (evil-visual-state)
+        (evil-visual-expand-region)))))
 
 (defun mc--get-nice-sgml-context ()
   (car
