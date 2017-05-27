@@ -55,6 +55,8 @@ for running commands with multiple cursors."
     evil-delete
     evil-delete-char
     ;; evil-motions
+    evil-backward-char
+    evil-backward-word-begin
     evil-find-char-to
     evil-forward-char
     evil-forward-word-end
