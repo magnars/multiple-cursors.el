@@ -86,3 +86,22 @@ Feature: mark-all-like-this stores state correctly when using evil
     Second 
     Third  
     """
+
+  @look-thrice-mark-single-letter @failn
+  Scenario: mark a single letter 3 times
+    When I replace the buffer text with:
+    """
+    First  a line
+    Second a line
+    Third  a line
+    """
+    And I select "a"
+    And I press "M-!"
+    And I press "C-g"
+    And I press "wife"
+    Then I should see exactly:
+    """
+    First  a feline
+    Second a feline
+    Third  a feline
+    """
