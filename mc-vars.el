@@ -59,6 +59,7 @@ for running commands with multiple cursors."
     evil-backward-word-begin
     evil-find-char-to
     evil-forward-char
+    evil-forward-word-begin
     evil-forward-word-end
     ;; evil functions
     evil-append-line)
