@@ -57,6 +57,7 @@ for running commands with multiple cursors."
     ;; evil-operators
     evil-change
     evil-change-line
+    evil-change-whole-line
     evil-delete
     evil-delete-char
     evil-delete-line
@@ -79,6 +80,8 @@ for running commands with multiple cursors."
     evil-open-above
     evil-open-below
     evil-replace-backspace
+    ;; evil text objects
+    evil-inner-word
     ;; misc for tests
     electric-newline-and-maybe-indent)
   "List of functions to run for all cursors when using evil.")
