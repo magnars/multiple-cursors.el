@@ -49,9 +49,11 @@ for running commands with multiple cursors."
     evil-visual-line ;; V in normal state
     evil-append
     ;; evil-commands
+    evil-force-normal-state
     evil-repeat
     ;; evil-operators
     evil-change
+    evil-change-line
     evil-delete
     evil-delete-char
     ;; evil-motions
@@ -62,7 +64,12 @@ for running commands with multiple cursors."
     evil-forward-word-begin
     evil-forward-word-end
     ;; evil functions
-    evil-append-line)
+    evil-append-line
+    evil-insert-line
+    evil-open-above
+    evil-open-below
+    ;; misc for tests
+    electric-newline-and-maybe-indent)
   "List of functions to run for all cursors when using evil.")
 
 (defvar mc--this-command-keys-result nil

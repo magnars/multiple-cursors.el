@@ -11,7 +11,7 @@ Feature: Insert and change text commands from normal and visual state should be 
     And I type "cfirst text "
     Then I should see exactly:
     """
-    first text first text first text
+    first text first text first text 
     """
 
   @change-text-normal-state
@@ -22,7 +22,7 @@ Feature: Insert and change text commands from normal and visual state should be 
     And I type "clfirst text "
     Then I should see exactly:
     """
-    first text first text first text
+    first text first text first text 
     """
 
   @enter-new-lines-visual
@@ -36,6 +36,7 @@ Feature: Insert and change text commands from normal and visual state should be 
     word
     word
     word
+
     """
 
   @enter-new-lines-normal
@@ -50,6 +51,7 @@ Feature: Insert and change text commands from normal and visual state should be 
     word
     word
     word
+
     """
 
   Scenario: Open line below from cursors in normal state
