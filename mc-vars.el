@@ -53,6 +53,7 @@ for running commands with multiple cursors."
     evil-delete-backward-char-and-join
     evil-force-normal-state
     evil-repeat
+    evil-paste-after
     ;; evil-operators
     evil-change
     evil-change-line
@@ -60,6 +61,7 @@ for running commands with multiple cursors."
     evil-delete-char
     evil-delete-line
     evil-replace
+    evil-yank
     ;; evil-motions
     evil-backward-char
     evil-backward-word-begin
