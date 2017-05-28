@@ -16,7 +16,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     When I replace the buffer text with "xyz xyz xyz"
     And I press "grm"
     And I press "C-g"
-    And I type "bcwabc"
+    And I type "cwabc"
     Then I should see "abc abc abc"
 
   @evil-change-word-backwards-mark-all-dwim @failing @failing-infinite-loop
@@ -37,7 +37,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     """
     And I press "grm"
     And I press "C-g"
-    And I type "bcwabc"
+    And I type "cwabc"
     Then I should see exactly:
     """
     abc is a line
@@ -55,7 +55,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     """
     And I type "grm"
     And I press "C-g"
-    And I type "cbx"
+    And I type "ecbx"
     Then I should see exactly:
     """
     xs is a line of text with words
@@ -73,7 +73,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     """
     And I type "grm"
     And I press "C-g"
-    And I type "b3cwk"
+    And I type "3cwk"
     Then I should see exactly:
     """
     k line of text with words
@@ -104,7 +104,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     When I replace the buffer text with "xyz xyz xyz"
     And I press "grm"
     And I press "C-g"
-    And I type "bceabc"
+    And I type "ceabc"
     Then I should see "abc abc abc"
 
   @evil-change-to-end-of-word-with-count-mark-all-dwim @failing @failing-infinite-loop
@@ -115,7 +115,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     """
     And I press "grm"
     And I press "C-g"
-    And I type "b2ceabc"
+    And I type "2ceabc"
     Then I should see "abc yyz abc yyz abc yyz abc yyz"
 
   Scenario: Change up to a letter (f)
