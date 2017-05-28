@@ -58,6 +58,7 @@ for running commands with multiple cursors."
     evil-change-line
     evil-delete
     evil-delete-char
+    evil-delete-line
     evil-replace
     ;; evil-motions
     evil-backward-char
