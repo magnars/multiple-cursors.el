@@ -44,11 +44,13 @@ for running commands with multiple cursors."
     ;; state toggles
     evil-insert
     evil-normal-state
+    evil-replace-state
     evil-exit-visual-state
     evil-visual-char ;; v in normal state
     evil-visual-line ;; V in normal state
     evil-append
     ;; evil-commands
+    evil-delete-backward-char-and-join
     evil-force-normal-state
     evil-repeat
     ;; evil-operators
@@ -56,6 +58,7 @@ for running commands with multiple cursors."
     evil-change-line
     evil-delete
     evil-delete-char
+    evil-replace
     ;; evil-motions
     evil-backward-char
     evil-backward-word-begin
@@ -68,6 +71,7 @@ for running commands with multiple cursors."
     evil-insert-line
     evil-open-above
     evil-open-below
+    evil-replace-backspace
     ;; misc for tests
     electric-newline-and-maybe-indent)
   "List of functions to run for all cursors when using evil.")
