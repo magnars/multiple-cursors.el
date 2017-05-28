@@ -31,7 +31,7 @@ Feature: Evil repeat functionality
     """
     And I type "grm"
     And I press "C-g"
-    And I type "bcwabc"
+    And I type "cwabc"
     And I press "<escape>"
     And I type "w..."
     And I type "ww."
@@ -72,7 +72,7 @@ Feature: Evil repeat functionality
     Space
     This is a line of text with words
     """
-    And I press "C-n"
+    And I press "C->"
     And I type "ccLine changed"
     And I press "<escape>"
     And I type "jjj."
