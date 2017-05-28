@@ -68,6 +68,7 @@ for running commands with multiple cursors."
     evil-forward-char
     evil-forward-word-begin
     evil-forward-word-end
+    evil-next-line
     evil-repeat-find-char
     evil-repeat-find-char-reverse
     ;; evil functions
