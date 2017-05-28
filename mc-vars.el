@@ -54,6 +54,7 @@ for running commands with multiple cursors."
     evil-force-normal-state
     evil-repeat
     evil-paste-after
+    evil-paste-before
     ;; evil-operators
     evil-change
     evil-change-line
@@ -66,6 +67,7 @@ for running commands with multiple cursors."
     ;; evil-motions
     evil-backward-char
     evil-backward-word-begin
+    evil-end-of-line
     evil-find-char
     evil-find-char-to
     evil-forward-char
