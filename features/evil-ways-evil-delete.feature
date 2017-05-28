@@ -22,7 +22,7 @@ Feature: Deleted text should be reflected in the buffer
     When I replace the buffer text with "words words and more words"
     And I press "grm"
     And I press "C-g"
-    And I type "b2x"
+    And I type "2x"
     Then I should see "rds rds and more rds"
     
   Scenario: Delete a word with count
