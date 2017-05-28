@@ -62,10 +62,13 @@ for running commands with multiple cursors."
     ;; evil-motions
     evil-backward-char
     evil-backward-word-begin
+    evil-find-char
     evil-find-char-to
     evil-forward-char
     evil-forward-word-begin
     evil-forward-word-end
+    evil-repeat-find-char
+    evil-repeat-find-char-reverse
     ;; evil functions
     evil-append-line
     evil-insert-line
