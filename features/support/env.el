@@ -10,6 +10,7 @@
 (add-to-list 'load-path (expand-file-name "vendor" multiple-cursors-util-path))
 
 (require 'evil)
+(require 'evil-surround)
 (require 'mc-vars)
 (setq mc/list-file "")
 ;; force the evil specific vars to be added to the cmds to run for all / once
@@ -27,6 +28,7 @@
             (apply #'error string (append sargs args))
           (signal 'cl-assertion-failed `(,form ,@sargs)))))
 
+(add-to-list 'mc--evil-cmds-to-run-for-all 'evil-surround-region)
 (require 'multiple-cursors)
 (require 'espuds)
 (require 'ert)
@@ -43,6 +45,7 @@
 
 (Before
  (evil-mode 0)
+ (evil-surround-mode 1)
  (cua-mode 0)
  (multiple-cursors-mode 0)
  (mc/remove-fake-cursors)
