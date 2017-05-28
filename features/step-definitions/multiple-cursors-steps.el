@@ -251,6 +251,20 @@ Go to the beginning of buffer and disable mark."
         (goto-char (point-min))
         (set-mark nil)))
 
+(And "^I bind evil keys for multiple-cursors mode$"
+     (lambda ()
+       (define-key evil-normal-state-map "gr" nil)
+       (define-key evil-normal-state-map "grm" 'mc/mark-all-like-this-dwim)
+       (define-key evil-visual-state-map "gr" nil)
+       (define-key evil-visual-state-map "grm" 'mc/mark-all-like-this)))
+
+(And "^I press \"\\([^\"]+\\)\" followed by enter$"
+     "Press ARG followed by a new line."
+     (lambda (arg)
+       (execute-kbd-macro
+        (vconcat (edmacro-parse-keys arg)
+                 (edmacro-parse-keys "C-j")))))
+
 ;; Local Variables:
 ;; byte-compile-warnings: (not cl-functions)
 ;; End:
