@@ -65,6 +65,11 @@
         ;; most likely do not want this set
         ;; nothing I have has this set in ANY state
         (setq evil-maybe-remove-spaces nil))
+       ((and (eq evil-state 'replace)
+             (eq overlay-evil-state 'normal))
+        (setq evil-move-cursor-back nil)
+        (evil-change-state overlay-evil-state)
+        (setq evil-move-cursor-back t))
        (t
         (evil-change-state overlay-evil-state)))))
    (t (mc/restore-overlay-vars o mc/cursor-specific-vars))))
