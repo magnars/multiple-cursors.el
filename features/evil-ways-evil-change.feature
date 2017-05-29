@@ -185,8 +185,8 @@ Feature: Changing text should be reflected for all cursors in the buffer
     This line has changed.
     """
 
-  # TODO cc doesn't work, but C and c$ work
-  @evil-change-line-mark-all-dwim
+  # TODO cc doesn't work, but C
+  @evil-change-line-mark-all-dwim @todo-outstanding
   Scenario: Change a whole line
     When I replace the buffer text with:
     """
@@ -198,7 +198,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     """
     And I press "grm"
     And I press "C-g"
-    And I type "c$"
+    And I type "C"
     And I type "The line has changed."
     Then I should see exactly:
     """
@@ -223,7 +223,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     And I press "grm"
     Then I should have 5 cursors
     And I press "C-g"
-    And I type "c$"
+    And I type "C"
     And I type "The line has changed."
     Then I should see exactly:
     """
