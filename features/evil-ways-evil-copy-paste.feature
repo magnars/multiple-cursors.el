@@ -32,6 +32,7 @@ Feature: Copy paste
     Here is a list of wsome ords, some are ssome mall, some bsome ig and some huge.
     """
 
+  @copy-paste-word-with-count
   Scenario: Copy paste a word with count
     When I replace the buffer text with:
     """
@@ -40,12 +41,13 @@ Feature: Copy paste
     And I press "fg"
     And I press "grm"
     And I press "C-g"
-    And I press "3ywP"
+    And I press "b3ywP"
     Then I should see exactly:
     """
     blue and big and and big and purple and big and and big and pink and big and and big and small
     """
 
+  @copy-paste-up-to-letter
   Scenario: Copy paste up to a letter
     When I replace the buffer text with:
     """
@@ -55,7 +57,7 @@ Feature: Copy paste
     """
     And I press "grm"
     And I press "C-g"
-    And I press "ytmP"
+    And I press "eytmbP"
     Then I should see exactly:
     """
     e are soHere are some words.
@@ -63,6 +65,7 @@ Feature: Copy paste
     e are soHere are some words.
     """
 
+  @copy-paste-till-before-letter
   Scenario: Copy paste till before a letter
     When I replace the buffer text with:
     """
@@ -72,7 +75,7 @@ Feature: Copy paste
     """
     And I press "grm"
     And I press "C-g"
-    And I press "yfmP"
+    And I press "eyfmbP"
     Then I should see exactly:
     """
     e are somHere are some words.
@@ -97,6 +100,7 @@ Feature: Copy paste
     Here are some words.some words.
     """
 
+  @copy-paste-a-line @failing
   Scenario: Copy paste a line
     When I replace the buffer text with:
     """
@@ -118,6 +122,7 @@ Feature: Copy paste
     There are some words.
     """
 
+  @copy-paste-a-line-with-count @failing
   Scenario: Copy paste a line with count
     When I replace the buffer text with:
     """
@@ -142,6 +147,7 @@ Feature: Copy paste
     There are some words.
     """
 
+  @copy-paste-with-registers @failing
   Scenario: Copy paste with registers
     When I replace the buffer text with:
     """
