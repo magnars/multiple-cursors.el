@@ -157,7 +157,7 @@ Feature: Insert and change text commands from normal and visual state should be 
     """
 
   # TODO: make these work with evil-append and evil-append-line as well
-  @evil-insert-on-empty-lines-mark-all-like-this @failing
+  @evil-insert-on-empty-lines-mark-all-like-this
   Scenario: Insert with cursors on multiple empty lines
     When I replace the buffer text with:
     """
@@ -198,7 +198,7 @@ Feature: Insert and change text commands from normal and visual state should be 
           abc 
     """
 
-  @evil-insert-on-empty-lines-mark-all-dwim @failing
+  @evil-insert-on-empty-lines-mark-all-dwim
   Scenario: Insert with cursors on multiple empty lines
     When I replace the buffer text with:
     """
