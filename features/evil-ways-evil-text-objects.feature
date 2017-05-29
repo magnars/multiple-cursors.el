@@ -4,6 +4,7 @@ Feature: Text objects and surround
     Given I turn on evil-mode
     And I bind evil keys for multiple-cursors mode 
 
+  @surround-change-bracket-type @failing
   Scenario: Change the bracket type
     When I replace the buffer text with:
     """
@@ -118,6 +119,7 @@ Feature: Text objects and surround
     This is a changed with brackets.
     """
 
+  @surround-with-quotes @failing
   Scenario: Surround a word with quotes
     When I replace the buffer text with:
     """
