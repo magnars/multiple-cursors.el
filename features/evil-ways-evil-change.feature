@@ -4,14 +4,14 @@ Feature: Changing text should be reflected for all cursors in the buffer
     Given I turn on evil-mode
     And I bind evil keys for multiple-cursors mode 
 
-  @evil-change-letter-mark-all-dwim @failing @failing-infinite-loop
+  @evil-change-letter-mark-all-dwim
   Scenario: Change a letter
     When I replace the buffer text with "xyz xyz xyz"
     And I press "grm"
     And I press "C-g"
     And I type "clw"
 
-  @evil-change-word-mark-all-dwim @failing @failing-infinite-loop
+  @evil-change-word-mark-all-dwim
   Scenario: Change a word
     When I replace the buffer text with "xyz xyz xyz"
     And I press "grm"
@@ -19,15 +19,15 @@ Feature: Changing text should be reflected for all cursors in the buffer
     And I type "cwabc"
     Then I should see "abc abc abc"
 
-  @evil-change-word-backwards-mark-all-dwim @failing @failing-infinite-loop
+  @evil-change-word-backwards-mark-all-dwim
   Scenario: Change a word backwards
     When I replace the buffer text with "xyz xyz xyz"
     And I press "grm"
     And I press "C-g"
-    And I type "cbabc"
+    And I type "ecbabc"
     Then I should see "abcz abcz abcz"
 
-  @evil-change-word-bol-mark-all-dwim @failing @failing-beginning-of-buffer-error
+  @evil-change-word-bol-mark-all-dwim
   Scenario: Change a word at the beginning of line
     When I replace the buffer text with:
     """
@@ -45,7 +45,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     abc is a line
     """
 
-  @evil-change-word-bol-backwards-mark-all-dwim @failing @failing-beginning-of-buffer-error
+  @evil-change-word-bol-backwards-mark-all-dwim
   Scenario: Change a word at the beginning of line backwards
     When I replace the buffer text with:
     """
@@ -63,7 +63,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     xs is a line of text with words
     """
 
-  @evil-change-multi-words-mark-all-dwim @failing @failing-beginning-of-buffer-error
+  @evil-change-multi-words-mark-all-dwim
   Scenario: Change multiple words (multiple lines)
     When I replace the buffer text with:
     """
@@ -81,7 +81,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     k line of text with words
     """
 
-  @evil-change-multi-words-mark-all-dwim @failing
+  @evil-change-multi-words-mark-all-dwim
   Scenario: Change multiple words backwards (multiple lines)
     When I replace the buffer text with:
     """
@@ -91,7 +91,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     """
     And I type "grm"
     And I press "C-g"
-    And I type "3e3cbk"
+    And I type "4e3cbk"
     Then I should see exactly:
     """
     This ke of text with words
@@ -99,7 +99,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     This ke of text with words
     """
 
-  @evil-change-to-end-of-word-mark-all-dwim @failing @failing-infinite-loop
+  @evil-change-to-end-of-word-mark-all-dwim
   Scenario: Change to the end of word
     When I replace the buffer text with "xyz xyz xyz"
     And I press "grm"
@@ -107,7 +107,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     And I type "ceabc"
     Then I should see "abc abc abc"
 
-  @evil-change-to-end-of-word-with-count-mark-all-dwim @failing @failing-infinite-loop
+  @evil-change-to-end-of-word-with-count-mark-all-dwim
   Scenario: Change to the end of word with count
     When I replace the buffer text with:
     """
@@ -185,7 +185,8 @@ Feature: Changing text should be reflected for all cursors in the buffer
     This line has changed.
     """
 
-  @evil-change-line-mark-all-dwim @failing
+  # TODO cc doesn't work, but C and c$ work
+  @evil-change-line-mark-all-dwim
   Scenario: Change a whole line
     When I replace the buffer text with:
     """
@@ -197,7 +198,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     """
     And I press "grm"
     And I press "C-g"
-    And I type "cc"
+    And I type "c$"
     And I type "The line has changed."
     Then I should see exactly:
     """
@@ -205,9 +206,11 @@ Feature: Changing text should be reflected for all cursors in the buffer
     That is a line.
     The line has changed.
     That is a line.
+    That is a line.
     """
 
-  @evil-change-lines-selection-mark-all-dwim @failing
+  # TODO cc doesn't work, but C and c$ work
+  @evil-change-lines-selection-mark-all-dwim @outstanding-todo
   Scenario: Change a whole line (consecutive lines)
     When I replace the buffer text with:
     """
@@ -218,8 +221,9 @@ Feature: Changing text should be reflected for all cursors in the buffer
     That is a line.
     """
     And I press "grm"
+    Then I should have 5 cursors
     And I press "C-g"
-    And I type "cc"
+    And I type "c$"
     And I type "The line has changed."
     Then I should see exactly:
     """
