@@ -68,9 +68,7 @@ Feature: Deleted text should be reflected in the buffer
     And I press "j"
     And I press "grm"
     And I press "C-g"
-    And I press "d$"
-    Then I should see exactly:
-    And I press "d$"
+    And I press "D"
     Then I should see:
     """
     This is a line.
@@ -148,7 +146,7 @@ Feature: Deleted text should be reflected in the buffer
     duper long line.
     """
   
-  @delete-up-to-a-letter @failing-infinite-loop  
+  @delete-up-to-a-letter
   Scenario: Delete up to a letter
     When I replace the buffer text with:
     """
@@ -168,7 +166,7 @@ Feature: Deleted text should be reflected in the buffer
     The road  patches of green.
     """
     
-  @delete-till-a-letter @failing-infinite-loop  
+  @delete-till-a-letter
   Scenario: Delete till before a letter
     When I replace the buffer text with:
     """
@@ -188,7 +186,7 @@ Feature: Deleted text should be reflected in the buffer
     The road h patches of green.
     """
     
-  @delete-till-a-letter-with-count @failing-infinite-loop  
+  @delete-till-a-letter-with-count
   Scenario: Delete till before a letter with count
     When I replace the buffer text with:
     """
