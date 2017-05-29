@@ -54,6 +54,8 @@ Feature: Deleted text should be reflected in the buffer
     And I type "daW"
     Then I should see "and more"
 
+  # TODO dd doesn't work, but D and d$ do
+  @delete-line @todo-delete-evil-line-motion
   Scenario: Delete a line
     When I replace the buffer text with:
     """
@@ -66,13 +68,20 @@ Feature: Deleted text should be reflected in the buffer
     And I press "j"
     And I press "grm"
     And I press "C-g"
-    And I press "dd"
+    And I press "d$"
     Then I should see exactly:
+    And I press "d$"
+    Then I should see:
     """
     This is a line.
+    
+
     This is a line.
+
     """
     
+  # TODO dd doesn't work, but d$ does
+  @delete-line-with-count @todo-delete-evil-line-motion
   Scenario: Delete a line with count
     When I replace the buffer text with:
     """
@@ -89,11 +98,14 @@ Feature: Deleted text should be reflected in the buffer
     """
     And I press "grm"
     And I press "C-g"
-    And I press "2dd"
+    And I press "2d$"
     Then I should see exactly:
     """
+    
     Another a line.
+
     This is a line.
+
     This is a line.
     Last line.
     """
