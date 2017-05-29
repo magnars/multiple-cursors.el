@@ -183,20 +183,19 @@ Feature: Insert and change text commands from normal and visual state should be 
       | fake-cursor |   5 |     4 |    4 | insert     |
     And I type "       "
     And I press "<escape>"
-    Then I should have 4 cursors
     Then The cursors should have these properties:
       | type        |  id | point | mark | evil-state |
       | main-cursor | nil |     7 |    1 | normal     |
-      | fake-cursor |   3 |     9 |    9 | normal     |
-      | fake-cursor |   4 |    10 |   10 | normal     |
-      | fake-cursor |   5 |    11 |   11 | normal     |
+      | fake-cursor |   3 |    15 |    9 | normal     |
+      | fake-cursor |   4 |    23 |   17 | normal     |
+      | fake-cursor |   5 |    31 |   25 | normal     |
     And I type "iabc"
     Then I should see exactly:
     """
-          abc
-          abc
-          abc
-          abc
+          abc 
+          abc 
+          abc 
+          abc 
     """
 
   @evil-insert-on-empty-lines-mark-all-dwim @failing
@@ -211,37 +210,43 @@ Feature: Insert and change text commands from normal and visual state should be 
     And I type "grm"
     Then The cursors should have these properties:
       | type        |  id | point | mark | evil-state |
-      | main-cursor | nil |     1 |    2 | visual     |
-      | fake-cursor |   5 |     6 |    7 | visual     |
-      | fake-cursor |   6 |    11 |   12 | visual     |
-      | fake-cursor |   7 |    16 |   17 | visual     |
+      | main-cursor | nil |     1 |    4 | visual     |
+      | fake-cursor |   5 |     6 |    9 | visual     |
+      | fake-cursor |   6 |    11 |   14 | visual     |
+      | fake-cursor |   7 |    16 |   19 | visual     |
     And I press "C-g"
     Then The cursors should have these properties:
       | type        |  id | point | mark | evil-state |
-      | main-cursor | nil |     1 |    2 | normal     |
-      | fake-cursor |   5 |     7 |    6 | normal     |
-      | fake-cursor |   6 |    12 |   11 | normal     |
-      | fake-cursor |   7 |    17 |   16 | normal     |
+      | main-cursor | nil |     1 |    4 | normal     |
+      | fake-cursor |   5 |     6 |    9 | normal     |
+      | fake-cursor |   6 |    11 |   14 | normal     |
+      | fake-cursor |   7 |    16 |   19 | normal     |
     And I type "C"
     Then The cursors should have these properties:
       | type        |  id | point | mark | evil-state |
       | main-cursor | nil |     1 |    1 | insert     |
-      | fake-cursor |   5 |     3 |    2 | insert     |
-      | fake-cursor |   6 |     5 |    4 | insert     |
-      | fake-cursor |   7 |     7 |    6 | insert     |
+      | fake-cursor |   5 |     2 |    2 | insert     |
+      | fake-cursor |   6 |     3 |    3 | insert     |
+      | fake-cursor |   7 |     4 |    4 | insert     |
     And I type "       "
+    Then The cursors should have these properties:
+      | type        |  id | point | mark | evil-state |
+      | main-cursor | nil |     8 |    1 | insert |
+      | fake-cursor |   5 |    16 |    9 | insert |
+      | fake-cursor |   6 |    24 |   17 | insert |
+      | fake-cursor |   7 |    32 |   25  | insert |
     And I press "<escape>"
     Then The cursors should have these properties:
       | type        |  id | point | mark | evil-state |
       | main-cursor | nil |     7 |    1 | normal     |
-      | fake-cursor |   5 |    16 |    9 | normal     |
-      | fake-cursor |   6 |    25 |   18 | normal     |
-      | fake-cursor |   7 |    34 |   27 | normal     |
+      | fake-cursor |   5 |    15 |    9 | normal     |
+      | fake-cursor |   6 |    23 |   17 | normal     |
+      | fake-cursor |   7 |    31 |   25 | normal     |
     And I type "iabc"
     Then I should see exactly:
     """
-          abc
-          abc
-          abc
-          abc
+          abc 
+          abc 
+          abc 
+          abc 
     """

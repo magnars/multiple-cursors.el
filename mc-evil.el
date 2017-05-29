@@ -58,6 +58,13 @@
               (m (mark)))
           (evil-change-state overlay-evil-state)
           (evil-visual-refresh p m)))
+       ((and (eq evil-state 'normal)
+             (eq overlay-evil-state 'insert))
+        (evil-change-state overlay-evil-state)
+        ;; this is set when transitioning to insert state
+        ;; most likely do not want this set
+        ;; nothing I have has this set in ANY state
+        (setq evil-maybe-remove-spaces nil))
        (t
         (evil-change-state overlay-evil-state)))))
    (t (mc/restore-overlay-vars o mc/cursor-specific-vars))))
