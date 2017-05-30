@@ -191,8 +191,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     This line has changed.
     """
 
-  # TODO cc doesn't work, but C
-  @evil-change-line-mark-all-dwim @todo-outstanding
+  @evil-change-line-mark-all-dwim
   Scenario: Change a whole line
     When I replace the buffer text with:
     """
@@ -204,7 +203,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     """
     And I press "grm"
     And I press "C-g"
-    And I type "C"
+    And I type "cc"
     And I type "The line has changed."
     Then I should see exactly:
     """
@@ -216,7 +215,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     """
 
   # TODO cc doesn't work, but C and c$ work
-  @evil-change-lines-selection-mark-all-dwim @outstanding-todo
+  @evil-change-lines-selection-mark-all-dwim @todo-outstanding
   Scenario: Change a whole line (consecutive lines)
     When I replace the buffer text with:
     """
@@ -229,7 +228,19 @@ Feature: Changing text should be reflected for all cursors in the buffer
     And I press "grm"
     Then I should have 5 cursors
     And I press "C-g"
+    Then The cursors should have these properties:
+      | type        |  id | point | mark | evil-state |
+      | main-cursor | nil |     1 |    4 | normal     |
+      | fake-cursor |   5 |    17 |   20 | normal     |
+      | fake-cursor |   6 |    33 |   36 | normal     |
+      | fake-cursor |   7 |    49 |   52 | normal     |
     And I type "C"
+    # Then The cursors should have these properties:
+    #   | type        |  id | point | mark | evil-state |
+    #   | main-cursor | nil |     1 |    1 | insert     |
+    #   | fake-cursor |   5 |     1 |    5 | insert     |
+    #   | fake-cursor |   6 |    18 |   18 | insert     |
+    #   | fake-cursor |   7 |    18 |   22 | insert     |
     And I type "The line has changed."
     Then I should see exactly:
     """
@@ -277,7 +288,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     That is a line.
     """
 
-  @evil-change-whole-line-with-count-mark-all-dwim @failing
+  @evil-change-whole-line-with-count-mark-all-dwim
   Scenario: Change a whole line with count
     When I replace the buffer text with:
     """
