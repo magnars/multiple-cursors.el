@@ -55,6 +55,7 @@ for running commands with multiple cursors."
     evil-repeat
     evil-paste-after
     evil-paste-before
+    evil-use-register
     ;; evil-operators
     evil-change
     evil-change-line

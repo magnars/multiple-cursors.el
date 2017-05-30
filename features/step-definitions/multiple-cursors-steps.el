@@ -265,6 +265,12 @@ Go to the beginning of buffer and disable mark."
         (vconcat (edmacro-parse-keys arg)
                  (edmacro-parse-keys "C-j")))))
 
+(And "^I set the register to \"\\([^\"]+\\)\" then type \"\\([^\"]+\\)\"$"
+     (lambda (register input)
+       (execute-kbd-macro (vconcat [34]
+                                   (string-to-vector register)
+                                   (string-to-vector input)))))
+
 ;; Local Variables:
 ;; byte-compile-warnings: (not cl-functions)
 ;; End:
