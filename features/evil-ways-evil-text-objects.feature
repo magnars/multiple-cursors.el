@@ -119,7 +119,7 @@ Feature: Text objects and surround
     This is a changed with brackets.
     """
 
-  @surround-with-quotes @failing
+  @surround-with-quotes
   Scenario: Surround a word with quotes
     When I replace the buffer text with:
     """
