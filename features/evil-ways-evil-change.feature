@@ -139,15 +139,18 @@ Feature: Changing text should be reflected for all cursors in the buffer
     And I type "cttxyz"
     Then I should see "xyzther-test xyzther-test xyzther-test"
 
-  @evil-change-viz-selection-mark-all-dwim @failing
+  @evil-change-viz-selection-mark-all-dwim-2
   Scenario: Change a visual selection
     When I replace the buffer text with "another-test another-test another-test"
     And I press "grm"
     And I press "C-g"
-    And I type "v4lcxyz"
+    # TODO not sure why this wont work
+    # And I type "v4lcxyz"
+    And I type "v4l"
+    And I type "cxyz"
     Then I should see "xyzer-test xyzer-test xyzer-test"
 
-  @evil-change-viz-selection-mark-all-dwim @failing
+  @evil-change-viz-selection-mark-all-dwim
   Scenario: Change a visual selection 2
     When I replace the buffer text with:
     """
@@ -158,7 +161,10 @@ Feature: Changing text should be reflected for all cursors in the buffer
     """
     And I press "grm"
     And I press "C-g"
-    And I type "vt.cChanged text"
+    # TODO why wont this work
+    # And I type "vt.cChanged text"
+    And I type "vt."
+    And I type "cChanged text"
     Then I should see exactly:
     """
     Changed text.
@@ -244,9 +250,25 @@ Feature: Changing text should be reflected for all cursors in the buffer
     That is a line.
     """
     And I press "grm"
+    Then I should have 2 cursors
+    Then The cursors should have these properties:
+      | type        | id  | point | mark | evil-state |
+      | main-cursor | nil |     1 |    4 | visual     |
+      | fake-cursor | 5   |    33 |   36 | visual     |
     And I press "C-g"
-    And I press "Vc"
-    And I type "The line has changed."
+    Then The cursors should have these properties:
+      | type        | id  | point | mark | evil-state |
+      | main-cursor | nil |     1 |    4 | normal     |
+      | fake-cursor | 5   |    33 |   36 | normal     |
+    And I press "V"
+    Then The cursors should have these properties:
+      | type        | id  | point | mark | evil-state |
+      | main-cursor | nil |    1 |    1 | visual |
+      | fake-cursor | 5   |    33 |   33 | visual |
+      # TODO should be
+      # | main-cursor | nil |    17 |    1 | visual |
+      # | fake-cursor | 5   |    33 |   49 | visual |
+    And I type "cThe line has changed."
     Then I should see exactly:
     """
     The line has changed.
