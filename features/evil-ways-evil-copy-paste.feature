@@ -100,7 +100,7 @@ Feature: Copy paste
     Here are some words.some words.
     """
 
-  @copy-paste-a-line @failing
+  @copy-paste-a-line
   Scenario: Copy paste a line
     When I replace the buffer text with:
     """
@@ -122,7 +122,7 @@ Feature: Copy paste
     There are some words.
     """
 
-  @copy-paste-a-line-with-count @failing
+  @copy-paste-a-line-with-count
   Scenario: Copy paste a line with count
     When I replace the buffer text with:
     """
