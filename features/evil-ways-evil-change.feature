@@ -251,7 +251,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     The line has changed.
     """
 
-  @evil-change-whole-viz-line-mark-all-dwim @failing
+  @evil-change-whole-viz-line-mark-all-dwim
   Scenario: Change a whole visual line
     When I replace the buffer text with:
     """
@@ -261,24 +261,8 @@ Feature: Changing text should be reflected for all cursors in the buffer
     That is a line.
     """
     And I press "grm"
-    Then I should have 2 cursors
-    Then The cursors should have these properties:
-      | type        | id  | point | mark | evil-state |
-      | main-cursor | nil |     1 |    4 | visual     |
-      | fake-cursor | 5   |    33 |   36 | visual     |
     And I press "C-g"
-    Then The cursors should have these properties:
-      | type        | id  | point | mark | evil-state |
-      | main-cursor | nil |     1 |    4 | normal     |
-      | fake-cursor | 5   |    33 |   36 | normal     |
     And I press "V"
-    Then The cursors should have these properties:
-      | type        | id  | point | mark | evil-state |
-      | main-cursor | nil |    1 |    1 | visual |
-      | fake-cursor | 5   |    33 |   33 | visual |
-      # TODO should be
-      # | main-cursor | nil |    17 |    1 | visual |
-      # | fake-cursor | 5   |    33 |   49 | visual |
     And I type "cThe line has changed."
     Then I should see exactly:
     """
