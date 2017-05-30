@@ -75,6 +75,7 @@
                  (make-overlay (point) (point) nil nil t))))
        (overlay-put ,cs 'type 'original-cursor)
        (save-excursion ,@forms)
+       (mc/evil-maybe-visual-refresh)
        (mc/pop-state-from-overlay ,cs))))
 
 (defun mc--compare-by-overlay-start (o1 o2)
@@ -399,7 +400,8 @@ not be recognized through the command-remapping lookup."
     (let ((cmd (or (command-remapping this-original-command)
                    this-original-command)))
       (setq mc--this-command (and (not (eq cmd 'god-mode-self-insert))
-                                  cmd)))))
+                                  cmd))
+      (mc/evil-maybe-visual-refresh))))
 
 (defun mc/execute-this-command-for-all-cursors ()
   "Wrap around `mc/execute-this-command-for-all-cursors-1' to protect hook."

@@ -32,6 +32,19 @@
 (defun mc/evil-p ()
   (and (featurep 'evil) evil-mode))
 
+(defun mc/evil-maybe-visual-refresh ()
+  "Call `evil-visual-refresh' if
+- evil mode is being used
+- in evil visual state
+- the command is a motion
+- the command is a text-object motion that operates on an active region (evil interactive code `<v>'
+- point and mark don't line up with the current `evil-visual-*' variables"
+  (when (and (mc/evil-p) (evil-visual-state-p)
+             (eq 'motion (evil-get-command-property this-command :repeat))
+             (evil-get-command-property this-command :extend-selection)
+             (not (= evil-visual-beginning (min (point) (mark)))))
+    (evil-visual-refresh (point) (mark))))
+
 (defun mc/overlay-change-evil-state-p (o)
   (not (eq evil-state (overlay-get o 'evil-state))))
 
@@ -72,7 +85,9 @@
         (setq evil-move-cursor-back t))
        (t
         (evil-change-state overlay-evil-state)))))
-   (t (mc/restore-overlay-vars o mc/cursor-specific-vars))))
+   (t
+    (mc/restore-overlay-vars o mc/cursor-specific-vars)
+    (mc/evil-maybe-visual-refresh))))
 
 (defun mc/evil-read-key-advice (orig-fun &optional prompt)
   (if mc--executing-command-for-fake-cursor
