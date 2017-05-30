@@ -87,7 +87,7 @@ Feature: mark-all-like-this stores state correctly when using evil
     Third  
     """
 
-  @look-thrice-mark-single-letter @failn
+  @look-thrice-mark-single-letter
   Scenario: mark a single letter 3 times
     When I replace the buffer text with:
     """
