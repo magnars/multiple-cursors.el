@@ -36,7 +36,9 @@ for running commands with multiple cursors."
                                         evil-previous-state-alist
                                         evil-next-state
                                         evil-normal-state-entry-hook
-                                        evil-repeat-ring)
+                                        evil-repeat-ring
+                                        evil-this-register
+                                        register-alist)
   "List of variables to keep track of on a per cursor basis when using evil")
 
 (defvar mc--evil-cmds-to-run-for-all
