@@ -107,15 +107,28 @@
   (if mc--executing-command-for-fake-cursor
       mc--this-command-keys-result
     (let ((res (funcall orig-fun)))
-      (setq mc--this-command-keys-result res)
+      (when (not (eq "" res))
+        (setq mc--this-command-keys-result res))
       res)))
 
 (defun mc/evil-read-motion-advice (orig-fun &optional motion count type modifier)
   (if mc--executing-command-for-fake-cursor
-      mc--evil-motion-read-results
+      (if mc--this-kbd-macro-to-execute
+          (apply orig-fun motion count type modifier)
+        mc--evil-motion-read-results)
     (let ((res (apply orig-fun motion count type modifier)))
       (setq mc--evil-motion-read-results res)
       res)))
+
+(defun mc/call-interactively-advice (orig-fun f &optional record-flag keys)
+  (let ((res (funcall orig-fun f record-flag keys)))
+    (when (and (memq f mc--evil-cmds-to-record-macro)
+               (mc/evil-p)
+               (not mc--executing-command-for-fake-cursor))
+      (let ((kbd-macro (vconcat mc--this-command-keys-result
+                                (this-command-keys-vector))))
+        (setq mc--this-kbd-macro-to-execute kbd-macro)))
+    res))
 
 (defun mc/evil-repeat-pre-hook-advice (orig-fun)
   (unless mc--executing-command-for-fake-cursor
@@ -123,6 +136,7 @@
 
 (advice-add 'evil-read-key :around #'mc/evil-read-key-advice)
 (advice-add 'this-command-keys :around #'mc/this-command-keys-advice)
+(advice-add 'call-interactively :around #'mc/call-interactively-advice)
 (advice-add 'evil-read-motion :around #'mc/evil-read-motion-advice)
 (advice-add 'evil-repeat-pre-hook :around #'mc/evil-repeat-pre-hook-advice)
 

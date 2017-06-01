@@ -4,7 +4,7 @@ Feature: Text objects and surround
     Given I turn on evil-mode
     And I bind evil keys for multiple-cursors mode 
 
-  @surround-change-bracket-type @failing
+  @surround-change-bracket-type
   Scenario: Change the bracket type
     When I replace the buffer text with:
     """

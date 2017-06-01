@@ -75,6 +75,9 @@
                  (make-overlay (point) (point) nil nil t))))
        (overlay-put ,cs 'type 'original-cursor)
        (save-excursion ,@forms)
+       ;; command is over by this point, if there was a kbd macro executed
+       ;; then we can reset it
+       (setq mc--this-kbd-macro-to-execute nil)
        (mc/pop-state-from-overlay ,cs))))
 
 (defun mc--compare-by-overlay-start (o1 o2)
@@ -275,8 +278,13 @@ Saves the current state in the overlay to be restored later."
   "Run command, simulating the parts of the command loop that makes sense for fake cursors."
   (setq this-command cmd)
   (run-hooks 'pre-command-hook)
-  (unless (eq this-command 'ignore)
-    (call-interactively cmd))
+  (cond
+   ((and (mc/evil-p)
+         mc--executing-command-for-fake-cursor
+         mc--this-kbd-macro-to-execute)
+    (execute-kbd-macro mc--this-kbd-macro-to-execute))
+   ((not (eq this-command 'ignore))
+    (call-interactively cmd)))
   (run-hooks 'post-command-hook)
   (when deactivate-mark (deactivate-mark)))
 
@@ -411,11 +419,18 @@ not be recognized through the command-remapping lookup."
      (message "[mc] problem in `mc/execute-this-command-for-all-cursors': %s"
               (error-message-string error)))))
 
-;; execute-kbd-macro should never be run for fake cursors. The real cursor will
-;; execute the keyboard macro, resulting in new commands in the command loop,
-;; and the fake cursors can pick up on those instead.
 (defadvice execute-kbd-macro (around skip-fake-cursors activate)
-  (unless mc--executing-command-for-fake-cursor
+  "A kbd macro should only be run for
+- the main cursor
+  + (will execute the macro, putting new commands onto the command loop that the fake cursors can pick up)
+- for a fake cursor, only when
+  + there is a kbd macro to execute, AND we are using evil
+  + (this is for the cases when motions called interactively call other commands interactively that have an 
+    interactive code of `c' which is read on the main cursor but not available to the fake cursors.)"
+  (if mc--executing-command-for-fake-cursor
+      (if (and mc--this-kbd-macro-to-execute
+               (mc/evil-p))
+          ad-do-it)
     ad-do-it))
 
 (defun mc/execute-this-command-for-all-cursors-1 ()

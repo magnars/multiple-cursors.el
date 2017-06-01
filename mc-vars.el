@@ -96,6 +96,19 @@ for running commands with multiple cursors."
   command. This function returns the wrong results for fake
   cursors.")
 
+(defvar mc--this-kbd-macro-to-execute nil
+  "Stores the pressed keys that executed the main cursor's
+  command, for the purposes of using them as a kbd macro for the
+  rest of the fake cursors. This is only used when using
+  evil-mode.")
+
+(defvar mc--evil-cmds-to-record-macro '(evil-surround-edit)
+  "A list of commands that when called with `call-interactively'
+  has an interactive call that we can not wrap around with an
+  advice function. The command keys vector can be stored after
+  one of these commands executes and we can execute that vector
+  as a kbd macro.")
+
 (defvar mc--evil-motion-read-results nil
   "Stored results from the last call to `evil-motion-read'. The
   results are stored so that a motion doesn't need to be read by
