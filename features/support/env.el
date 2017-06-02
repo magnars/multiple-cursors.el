@@ -16,6 +16,17 @@
 ;; will set evil mode to zero in the before hook
 ;; This is how the loading would work for a user using evil and multiple-cursors together
 (evil-mode 1)
+
+(require 'cl-preloaded)
+(setf (symbol-function 'cl--assertion-failed)
+      (lambda (form &optional string sargs args)
+        "Fake version"
+        ;; (if debug-on-error
+        ;;     (apply debugger `(cl-assertion-failed ,form ,string ,@sargs))
+        (if string
+            (apply #'error string (append sargs args))
+          (signal 'cl-assertion-failed `(,form ,@sargs)))))
+
 (require 'multiple-cursors)
 (require 'espuds)
 (require 'ert)
