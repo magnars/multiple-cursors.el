@@ -25,7 +25,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     And I press "grm"
     And I press "C-g"
     And I type "ecbabc"
-    Then I should see "abcz abcz abcz"
+    Then I should see exactly "abcz abcz abcz"
 
   @evil-change-word-bol-mark-all-dwim
   Scenario: Change a word at the beginning of line
@@ -105,7 +105,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     And I press "grm"
     And I press "C-g"
     And I type "ceabc"
-    Then I should see "abc abc abc"
+    Then I should see exactly "abc abc abc"
 
   @evil-change-to-end-of-word-with-count-mark-all-dwim
   Scenario: Change to the end of word with count
@@ -116,28 +116,28 @@ Feature: Changing text should be reflected for all cursors in the buffer
     And I press "grm"
     And I press "C-g"
     And I type "2ceabc"
-    Then I should see "abc yyz abc yyz abc yyz abc yyz"
+    Then I should see exactly "abc yyz abc yyz abc yyz abc yyz"
 
   Scenario: Change up to a letter (f)
     When I replace the buffer text with "another-test another-test another-test"
     And I press "grm"
     And I press "C-g"
     And I type "cftxyz"
-    Then I should see "xyzher-test xyzher-test xyzher-test"
+    Then I should see exactly "xyzher-test xyzher-test xyzher-test"
 
   Scenario: Change up to a letter (f) with count
     When I replace the buffer text with "another-test another-test another-test"
     And I press "grm"
     And I press "C-g"
     And I type "2cftxyz"
-    Then I should see "xyzest xyzest xyzest"
+    Then I should see exactly "xyzest xyzest xyzest"
 
   Scenario: Change up till before a letter (t)
     When I replace the buffer text with "another-test another-test another-test"
     And I press "grm"
     And I press "C-g"
     And I type "cttxyz"
-    Then I should see "xyzther-test xyzther-test xyzther-test"
+    Then I should see exactly "xyzther-test xyzther-test xyzther-test"
 
   @evil-change-viz-selection-mark-all-dwim-2
   Scenario: Change a visual selection
@@ -148,7 +148,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     # And I type "v4lcxyz"
     And I type "v4l"
     And I type "cxyz"
-    Then I should see "xyzer-test xyzer-test xyzer-test"
+    Then I should see exactly "xyzer-test xyzer-test xyzer-test"
 
   @evil-change-viz-selection-mark-all-dwim
   Scenario: Change a visual selection 2
@@ -281,7 +281,6 @@ Feature: Changing text should be reflected for all cursors in the buffer
     The last line.
     This is a line.
     The next line.
-    The last line.
     The last line.
     """
     And I press "grm"
