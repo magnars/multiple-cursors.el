@@ -75,7 +75,6 @@
                  (make-overlay (point) (point) nil nil t))))
        (overlay-put ,cs 'type 'original-cursor)
        (save-excursion ,@forms)
-       (mc/evil-maybe-visual-refresh)
        (mc/pop-state-from-overlay ,cs))))
 
 (defun mc--compare-by-overlay-start (o1 o2)
@@ -204,7 +203,8 @@ highlights the entire width of the window."
    (t
     (mc/restore-point-and-mark-from-overlay o)
     (dolist (var mc/cursor-specific-vars)
-      (when (boundp var) (set var (overlay-get o var)))))))
+      (when (boundp var) (set var (overlay-get o var))))
+    (mc/evil-maybe-visual-refresh))))
 
 (defun mc/remove-fake-cursor (o)
   "Delete overlay with state, including dependent overlays and markers."
