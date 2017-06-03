@@ -74,8 +74,7 @@ Feature: Evil repeat functionality
     This xy a xyne xy xxxy with words
     """
 
-  # TODO cc doesn't work
-  @repeat-replace-line @todo-outstanding
+  @repeat-replace-line
   Scenario: Replace a whole line
     When I replace the buffer text with:
     """
@@ -89,10 +88,8 @@ Feature: Evil repeat functionality
     And I press "ve"
     And I press "C->"
     And I press "C-g"
-    # TODO cc doesn't work
-    # And I type "ccLine changed"
     And I type "b"
-    And I type "CLine changed"
+    And I type "ccLine changed"
     And I press "<escape>"
     And I type "jjj4b"
     Then The cursors should have these properties:
