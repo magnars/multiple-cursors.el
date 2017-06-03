@@ -83,6 +83,13 @@
         (setq evil-move-cursor-back nil)
         (evil-change-state overlay-evil-state)
         (setq evil-move-cursor-back t))
+       ((and (eq evil-state 'insert)
+             (eq overlay-evil-state 'visual)
+             (eq evil-visual-selection 'line))
+        (evil-change-state overlay-evil-state)
+        ;; the selection is `line' but the changing of states sets it to `char'
+        ;; setting it back and refreshing
+        (evil-visual-refresh (mark) (point) 'line))
        (t
         (evil-change-state overlay-evil-state)))))
    (t
