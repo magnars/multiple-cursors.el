@@ -17,7 +17,7 @@ Feature: Changing text should be reflected for all cursors in the buffer
     And I press "grm"
     And I press "C-g"
     And I type "cwabc"
-    Then I should see "abc abc abc"
+    Then I should see exactly "abc abc abc"
 
   @evil-change-word-backwards-mark-all-dwim
   Scenario: Change a word backwards

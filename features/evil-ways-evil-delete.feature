@@ -9,21 +9,21 @@ Feature: Deleted text should be reflected in the buffer
     And I press "grm"
     And I press "C-g"
     And I type "dw"
-    Then I should see "and more "
+    Then I should see exactly "and more "
 
   Scenario: Delete a letter
     When I replace the buffer text with "words words and more words"
     And I press "grm"
     And I press "C-g"
     And I type "x"
-    Then I should see "ords ords and more ords"
+    Then I should see exactly "ords ords and more ords"
 
   Scenario: Delete a letter with count
     When I replace the buffer text with "words words and more words"
     And I press "grm"
     And I press "C-g"
     And I type "2x"
-    Then I should see "rds rds and more rds"
+    Then I should see exactly "rds rds and more rds"
     
   Scenario: Delete a word with count
     When I replace the buffer text with:
@@ -52,7 +52,7 @@ Feature: Deleted text should be reflected in the buffer
     And I press "grm"
     And I press "C-g"
     And I type "daW"
-    Then I should see "and more"
+    Then I should see exactly "and more"
 
   @delete-line
   Scenario: Delete a line
@@ -68,7 +68,7 @@ Feature: Deleted text should be reflected in the buffer
     And I press "grm"
     And I press "C-g"
     And I press "dd"
-    Then I should see:
+    Then I should see exactly:
     """
     This is a line.
     This is a line.

@@ -86,7 +86,7 @@ Feature: Insert and change text commands from normal and visual state should be 
     And I press "vgrm"
     And I press "C-g"
     And I press "i-y-"
-    Then I should see "-y-a -y-a -y-a"
+    Then I should see exactly "-y-a -y-a -y-a"
 
   @insert-after-cursor
   Scenario: Insert after cursor
@@ -104,7 +104,7 @@ Feature: Insert and change text commands from normal and visual state should be 
       | fake-cursor |   3 |     3 |    3 | normal     |
       | fake-cursor |   4 |     5 |    5 | normal     |
     And I press "a-x-"
-    Then I should see "a-x- a-x- a-x-"
+    Then I should see exactly "a-x- a-x- a-x-"
 
   Scenario: Insert at the beginning of line
     When I replace the buffer text with:
