@@ -130,7 +130,6 @@ Feature: Copy paste
     There are some words.
     Here are some words.
     There are some words.
-    Here are some words.
     """
     And I press "grm"
     And I press "C-g"
