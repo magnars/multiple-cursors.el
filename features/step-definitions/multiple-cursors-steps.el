@@ -178,7 +178,7 @@
       (lambda (expected)
         (let ((p (point-min))
               (visible-text "")
-              (message "Expected '%s' to be part of '%s', but was not found in current buffer.")
+              (message "Expected buffer to be: \n%s\n but was actually:\n%s\n")
               )
           (while (not (= p (point-max)))
             (if (not (invisible-p p))
