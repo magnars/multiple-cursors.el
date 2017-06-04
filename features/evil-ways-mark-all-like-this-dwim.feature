@@ -94,3 +94,16 @@ Feature: mark-all-like-this-dwim stores state correctly when using evil
     Second a 
     Third  a 
     """
+
+  @look-thrice-mark-single-letter
+  Scenario: mark a single letter 3 times
+    And I go to the front of the word "a"
+    And I press "M-$"
+    And I press "C-g"
+    And I press "wife"
+    Then I should see exactly:
+    """
+    First  a feline
+    Second a feline
+    Third  a feline
+    """

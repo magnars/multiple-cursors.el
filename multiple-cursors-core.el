@@ -187,26 +187,30 @@ the overlay.
     true (like the main cursor is until the marking command is
     done) The last thing to do in case there is still marking to
     be done is re-position point and mark based on contracted
-    evil visual variables, dependent on the order of point and
-    mark in the buffer.."
+    evil visual variables and original point and mark
+    direction (`evil' visual variables are updated on contraction
+    to be point last regardless of how the point and mark are
+    stored before)."
   (cond
    ((and (mc/evil-p)
          (mc/fake-cursor-p o)
          (evil-visual-state-p)
          evil-visual-region-expanded)
-    (evil-visual-contract-region)
-    (mc/store-point-and-mark-in-overlay o)
-    (mc/store-cursor-vars-in-overlay o)
-    (overlay-put o 'evil-visual-contracted t)
-    ;; this is set to nil in `evil-visual-contract-region' and needs to be reset to its truthy value
-    (setq evil-visual-region-expanded t)
-    (cond
-     ((< (point) (mark))
-      (goto-char evil-visual-beginning)
-      (set-mark evil-visual-end))
-     (t
-      (goto-char evil-visual-end)
-      (set-mark evil-visual-beginning))))
+    (let ((p (point))
+          (m (mark)))
+      (evil-visual-contract-region)
+      (mc/store-point-and-mark-in-overlay o)
+      (mc/store-cursor-vars-in-overlay o)
+      (overlay-put o 'evil-visual-contracted t)
+      ;; this is set to nil in `evil-visual-contract-region' and needs to be reset to its truthy value
+      (setq evil-visual-region-expanded t)
+      (cond
+       ((< p m)
+        (goto-char evil-visual-beginning)
+        (set-mark evil-visual-end))
+       (t
+        (goto-char evil-visual-end)
+        (set-mark evil-visual-beginning)))))
    (t
     (mc/store-point-and-mark-in-overlay o)
     (mc/store-cursor-vars-in-overlay o)))
