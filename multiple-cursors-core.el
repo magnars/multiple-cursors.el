@@ -69,7 +69,9 @@
          (mc/all-fake-cursors)))
 
 (defmacro mc/save-excursion (&rest forms)
-  "Saves and restores all the state that multiple-cursors cares about."
+  "Saves and restores all the state that multiple-cursors cares
+about, setting `mc--this-kbd-macro-to-execute' to `nil' to keep
+it correct for the next round of commands."
   (let ((cs (make-symbol "current-state")))
     `(let ((,cs (mc/store-current-state-in-overlay
                  (make-overlay (point) (point) nil nil t))))
@@ -168,7 +170,25 @@ highlights the entire width of the window."
     (when (boundp var) (overlay-put o var (symbol-value var)))))
 
 (defun mc/store-current-state-in-overlay (o)
-  "Store relevant info about point and mark in the given overlay."
+  "Store relevant info about point and mark in the given overlay.
+
+If using `evil', in `visual' state, and executing for a fake
+cursor, contract evil visual region before storing state in the
+overlay, placing an additional `evil-visual-contracted' flag on
+the overlay.
+
+  - This path is called when marking stuff with multiple cursors.
+    The trick when coupled with `evil' is that the main cursor is
+    in `visual' state with `evil-visual-region-expanded' until
+    the marking function is done completing. The main cursor will
+    then contract the visual region, so the found marks need
+    their state stored in a contracted way. There might be other
+    things to mark, so reset `evil-visual-region-expanded' to be
+    true (like the main cursor is until the marking command is
+    done) The last thing to do in case there is still marking to
+    be done is re-position point and mark based on contracted
+    evil visual variables, dependent on the order of point and
+    mark in the buffer.."
   (cond
    ((and (mc/evil-p)
          (mc/fake-cursor-p o)
@@ -197,7 +217,11 @@ highlights the entire width of the window."
   (set-marker (mark-marker) (overlay-get o 'mark)))
 
 (defun mc/restore-state-from-overlay (o)
-  "Restore point and mark from stored info in the given overlay."
+  "Restore point and mark from stored info in the given overlay.
+If using `evil' and executing for a fake cursor, perform special
+`evil' state restoration, otherwise restore point, mark, and
+variables from `mc/cursor-specific-vars' refreshing evil visual
+variables if necessary."
   (cond
    ((and (mc/evil-p)
          (mc/fake-cursor-p o))
@@ -275,7 +299,9 @@ Saves the current state in the overlay to be restored later."
     overlay))
 
 (defun mc/execute-command (cmd)
-  "Run command, simulating the parts of the command loop that makes sense for fake cursors."
+  "Run command, simulating the parts of the command loop that
+makes sense for fake cursors. Execute stored kbd macro if using
+evil, macro is stored, and a fake cursor is executing."
   (setq this-command cmd)
   (run-hooks 'pre-command-hook)
   (cond
@@ -403,7 +429,9 @@ Since that cannot be reliably determined in the post-command-hook.
 Specifically, this-original-command isn't always right, because it could have
 been remapped. And certain modes (cua comes to mind) will change their
 remapping based on state. So a command that changes the state will afterwards
-not be recognized through the command-remapping lookup."
+not be recognized through the command-remapping lookup.
+
+Refreshes evil visual variables, if necessary."
   (unless mc--executing-command-for-fake-cursor
     (let ((cmd (or (command-remapping this-original-command)
                    this-original-command)))
@@ -492,7 +520,11 @@ you should disable multiple-cursors-mode."
   (setq mc--max-cursors-original nil))
 
 (defun mc/keyboard-quit ()
-  "Deactivate mark if there are any active, otherwise exit multiple-cursors-mode."
+  "Deactivate mark if there are any active, otherwise exit
+multiple-cursors-mode. If using `evil' transition to `normal'
+state, exiting `visual' state if currently in `visual'
+state (This has a different behavior than simply transitioning to
+`normal' state."
   (interactive)
   (cond
    ((not (use-region-p))

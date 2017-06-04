@@ -30,6 +30,7 @@
 (require 'mc-vars)
 
 (defun mc/evil-p ()
+  "t if we are using evil, nil otherwise."
   (and (featurep 'evil) evil-mode))
 
 (defun mc/evil-maybe-visual-refresh ()
@@ -46,54 +47,76 @@
     (evil-visual-refresh (point) (mark))))
 
 (defun mc/overlay-change-evil-state-p (o)
+  "Is the current evil-state variable equal to the state stored
+in the fake cursor `O'."
   (not (eq evil-state (overlay-get o 'evil-state))))
 
 (defun mc/restore-overlay-vars (o vars)
+  "Restore fake cursor `O' state variables in list `VARS'"
   (dolist (var vars)
     (when (boundp var) (set var (overlay-get o var)))))
 
+(defun mc/evil-fake-cursor-state-transition (o)
+  "Transition from current `evil-state' to the fake cursor `O'
+`evil-state'. `evil-state' does not need to be restored as part
+of `mc/cursor-specific-vars'.  There are a few special cases to handle for the following state transitions
+- `insert' -> `normal'
+- `replace' -> `normal'
+- -> `visual' and fake cursor `O' has property `evil-visual-contracted'
+- `normal' -> `insert'
+- `insert' -> `visual' and `evil-visual-selection' is `line'.
+Otherwise, just transition to fake cursors `evil-state'"
+  (let ((overlay-evil-state (overlay-get o 'evil-state))
+        (cursor-specific-vars (cl-remove-if #'(lambda (var) (eq var 'evil-state)) mc/cursor-specific-vars)))
+    (mc/restore-overlay-vars o cursor-specific-vars)
+    (cond
+     ((or (and (eq evil-state 'insert)
+               (eq overlay-evil-state 'normal))
+          (and (eq evil-state 'replace)
+               (eq overlay-evil-state 'normal)))
+      (let ((old-evil-move-cursor-back evil-move-cursor-back))
+        (setq evil-move-cursor-back nil)
+        (evil-change-state overlay-evil-state)
+        (setq evil-move-cursor-back old-evil-move-cursor-back)))
+     ((and (eq overlay-evil-state 'visual)
+           (overlay-get o 'evil-visual-contracted))
+      (let ((p (point))
+            (m (mark)))
+        (evil-change-state overlay-evil-state)
+        (evil-visual-refresh p m)))
+     ((and (eq evil-state 'normal)
+           (eq overlay-evil-state 'insert))
+      (evil-change-state overlay-evil-state)
+      ;; this is set when transitioning to insert state
+      ;; most likely do not want this set
+      ;; nothing I have has this set in ANY state
+      (setq evil-maybe-remove-spaces nil))
+     ((and (eq evil-state 'insert)
+           (eq overlay-evil-state 'visual)
+           (eq evil-visual-selection 'line))
+      (evil-change-state overlay-evil-state)
+      ;; the selection is `line' but the changing of states sets it to `char'
+      ;; setting it back and refreshing
+      (evil-visual-refresh (mark) (point) 'line))
+     (t
+      (evil-change-state overlay-evil-state)))))
+
 (defun mc/evil-restore-state-from-overlay (o)
+  "Restore state for fake cursor `O'. If no evil state change is
+required, just restore the state in `mc/cursor-specific-vars' and
+maybe refresh evil visual variables, otherwise perform state
+transition and restore variables."
   (cond
    ((mc/overlay-change-evil-state-p o)
-    (let ((overlay-evil-state (overlay-get o 'evil-state))
-          (cursor-specific-vars (cl-remove-if #'(lambda (var) (eq var 'evil-state)) mc/cursor-specific-vars)))
-      (mc/restore-overlay-vars o cursor-specific-vars)
-      (cond
-       ((or (and (eq evil-state 'insert)
-                 (eq overlay-evil-state 'normal))
-            (and (eq evil-state 'replace)
-                 (eq overlay-evil-state 'normal)))
-        (let ((old-evil-move-cursor-back evil-move-cursor-back))
-          (setq evil-move-cursor-back nil)
-          (evil-change-state overlay-evil-state)
-          (setq evil-move-cursor-back old-evil-move-cursor-back)))
-       ((and (eq overlay-evil-state 'visual)
-             (overlay-get o 'evil-visual-contracted))
-        (let ((p (point))
-              (m (mark)))
-          (evil-change-state overlay-evil-state)
-          (evil-visual-refresh p m)))
-       ((and (eq evil-state 'normal)
-             (eq overlay-evil-state 'insert))
-        (evil-change-state overlay-evil-state)
-        ;; this is set when transitioning to insert state
-        ;; most likely do not want this set
-        ;; nothing I have has this set in ANY state
-        (setq evil-maybe-remove-spaces nil))
-       ((and (eq evil-state 'insert)
-             (eq overlay-evil-state 'visual)
-             (eq evil-visual-selection 'line))
-        (evil-change-state overlay-evil-state)
-        ;; the selection is `line' but the changing of states sets it to `char'
-        ;; setting it back and refreshing
-        (evil-visual-refresh (mark) (point) 'line))
-       (t
-        (evil-change-state overlay-evil-state)))))
+    (mc/evil-fake-cursor-state-transition o))
    (t
     (mc/restore-overlay-vars o mc/cursor-specific-vars)
     (mc/evil-maybe-visual-refresh))))
 
 (defun mc/evil-read-key-advice (orig-fun &optional prompt)
+  "Advice around `evil-read-key'. Cache the results when the main
+cursor calls it, reuse that stored value when the fake cursor
+calls the function."
   (if mc--executing-command-for-fake-cursor
       mc--evil-key-read-results
     (let ((res (funcall orig-fun prompt)))
@@ -101,6 +124,10 @@
       res)))
 
 (defun mc/this-command-keys-advice (orig-fun)
+  "Advice around `this-command-keys'. Cache the result of the
+function when executing for the main cursor, no overwriting the
+stored value if the function returns an empty string. Use stored
+variable if called from a fake cursor."
   (if mc--executing-command-for-fake-cursor
       mc--this-command-keys-result
     (let ((res (funcall orig-fun)))
@@ -109,6 +136,11 @@
       res)))
 
 (defun mc/evil-read-motion-advice (orig-fun &optional motion count type modifier)
+  "Advice around `mc/evil-read-motion'. Cache the result of the
+function if executing for the main cursor. Read the cached value
+if executing for a fake cursor. If executing for a fake cursor
+and we are going to execute a kbd macro for the fake cursor, call
+the function and don't cache the results."
   (if mc--executing-command-for-fake-cursor
       (if mc--this-kbd-macro-to-execute
           (apply orig-fun motion count type modifier)
@@ -118,6 +150,18 @@
       res)))
 
 (defun mc/call-interactively-advice (orig-fun f &optional record-flag keys)
+  "Advice around `call-interactively'. Always call the function
+and return it's results. If the function `f' is an evil motion in
+the variable `mc--evil-cmds-to-record-macro` and we are using
+`evil' and the main cursor is executing, cache the kbd macro from
+the current command keys vector and the cached value of
+`mc--this-command-keys-result'. This is used when the function
+`f' being called has itself, or something from its call chain, an
+interactive call to a function with property `interactive' of
+value `c'. No advice can wrap around the `read-char` call when
+invoked in this way, so a macro can be recorded and executed to
+properly get that interactive character read for the fake
+cursor."
   (let ((res (funcall orig-fun f record-flag keys)))
     (when (and (memq f mc--evil-cmds-to-record-macro)
                (mc/evil-p)
@@ -128,6 +172,8 @@
     res))
 
 (defun mc/evil-repeat-pre-hook-advice (orig-fun)
+  "Advice around `evil-repeat-pre-hook'. Only call the function
+if executing for the main cursor."
   (unless mc--executing-command-for-fake-cursor
     (funcall orig-fun)))
 

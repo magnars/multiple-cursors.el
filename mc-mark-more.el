@@ -32,6 +32,10 @@
 (require 'thingatpt)
 
 (defun mc/cursor-end (cursor)
+  "If using `evil', in `visual' state, and
+`evil-visual-contracted' is set on the cursor, expand the visual
+range and return the end of it, if the mark is active take the
+max of point and mark, otherwise return point."
   (let ((point (overlay-get cursor 'point)))
     (cond
      ((and (mc/evil-p) (evil-visual-state-p)
@@ -343,7 +347,13 @@ With zero ARG, skip the last one and mark next."
 
 ;;;###autoload
 (defun mc/mark-all-like-this ()
-  "Find and mark all the parts of the buffer matching the currently active region"
+  "Find and mark all the parts of the buffer matching the
+currently active region. If no fake cursors were created, and we
+are using `evil', in `visual' mode, and the last command was
+`mc/mark-all-like-this-dwim' need to exit `visual' state and move
+either point or mark to the last value of `evil-visual-end' so
+the command `mc/mark-all-like-this-dwim' can continue to operate
+properly."
   (interactive)
   (unless (region-active-p)
     (error "Mark a region to match first."))
@@ -366,7 +376,6 @@ With zero ARG, skip the last one and mark next."
                (mc/evil-p)
                (evil-visual-state-p))
       (let ((end evil-visual-end)
-            (beg evil-visual-beginning)
             (dir (evil-visual-direction)))
         (evil-exit-visual-state)
         (if (< dir 0)
@@ -375,6 +384,8 @@ With zero ARG, skip the last one and mark next."
     (multiple-cursors-mode 0)))
 
 (defun mc--select-thing-at-point (thing)
+  "Select `THING' at point, but if we are using `evil' go into
+`visual' state and expand the visual selection variables."
   (let ((bound (bounds-of-thing-at-point thing)))
     (when bound
       (set-mark (car bound))
@@ -564,6 +575,13 @@ The bindings for these commands can be changed. See `mc/mark-more-like-this-exte
 (defun mc/mark-all-like-this-dwim (arg)
   "Tries to guess what you want to mark all of.
 Can be pressed multiple times to increase selection.
+
+If there were no cursors created trying to mark symbols, and we
+are using `evil' and not in `visual' state, we remark the symbol
+at point before trying the default `mc/mark-all-like-this'.
+
+We couldn't be in `visual' state, because of the exiting in
+`mc/mark-all-like-this' if there were no cursors created.
 
 With prefix, it behaves the same as original `mc/mark-all-like-this'"
   (interactive "P")

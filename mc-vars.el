@@ -92,15 +92,12 @@ for running commands with multiple cursors."
   "List of functions to run for all cursors when using evil.")
 
 (defvar mc--this-command-keys-result nil
-  "Stores the last pressed keys that executed the main cursor's
+  "The last pressed keys that executed the main cursor's
   command. This function returns the wrong results for fake
   cursors.")
 
 (defvar mc--this-kbd-macro-to-execute nil
-  "Stores the pressed keys that executed the main cursor's
-  command, for the purposes of using them as a kbd macro for the
-  rest of the fake cursors. This is only used when using
-  evil-mode.")
+  "The kbd macro stored to execute for fake cursors.")
 
 (defvar mc--evil-cmds-to-record-macro '(evil-surround-edit)
   "A list of commands that when called with `call-interactively'
