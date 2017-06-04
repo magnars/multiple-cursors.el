@@ -146,7 +146,7 @@ Feature: Copy paste
     There are some words.
     """
 
-  @copy-paste-with-registers @failing
+  @copy-paste-with-registers
   Scenario: Copy paste with registers
     When I replace the buffer text with:
     """
