@@ -59,8 +59,10 @@
           (cursor-specific-vars (cl-remove-if #'(lambda (var) (eq var 'evil-state)) mc/cursor-specific-vars)))
       (mc/restore-overlay-vars o cursor-specific-vars)
       (cond
-       ((and (eq evil-state 'insert)
-             (eq overlay-evil-state 'normal))
+       ((or (and (eq evil-state 'insert)
+                 (eq overlay-evil-state 'normal))
+            (and (eq evil-state 'replace)
+                 (eq overlay-evil-state 'normal)))
         (let ((old-evil-move-cursor-back evil-move-cursor-back))
           (setq evil-move-cursor-back nil)
           (evil-change-state overlay-evil-state)
@@ -78,11 +80,6 @@
         ;; most likely do not want this set
         ;; nothing I have has this set in ANY state
         (setq evil-maybe-remove-spaces nil))
-       ((and (eq evil-state 'replace)
-             (eq overlay-evil-state 'normal))
-        (setq evil-move-cursor-back nil)
-        (evil-change-state overlay-evil-state)
-        (setq evil-move-cursor-back t))
        ((and (eq evil-state 'insert)
              (eq overlay-evil-state 'visual)
              (eq evil-visual-selection 'line))
