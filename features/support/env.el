@@ -44,6 +44,7 @@
 (advice-add 'mc/prompt-for-inclusion-in-whitelist :around #'mc/prompt-for-inclusion-in-whitelist-test-advice)
 
 (Before
+ (visual-line-mode -1)
  (evil-mode 0)
  (evil-surround-mode 1)
  (cua-mode 0)
