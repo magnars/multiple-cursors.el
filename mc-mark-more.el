@@ -673,7 +673,8 @@ If the region is inactive or on a single line, it will behave like
     (mc/mark-all-symbols-like-this)))
 
 (defun mc--mark-symbol-at-point ()
-  "Select the symbol under cursor"
+  "Select the symbol under cursor, if using `evil' go into
+`visual' state and expand the visual selection."
   (interactive)
   (when (not (use-region-p))
     (let ((b (bounds-of-thing-at-point 'symbol)))

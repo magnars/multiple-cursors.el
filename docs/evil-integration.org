@@ -1,0 +1,150 @@
+* multiple cursors basic workings (simplistic)
+** user issues command ~cmd~
+*** main cursor ~mc~ executes ~cmd~
+    At this point, going through the post-command-hook, calls execute-command-for-all-cursors, which calls ~mc/save-excursion~ which basically does:
+**** save ~mc~ state as an overlay
+**** execute ~cmd~ for each fake cursor ~fc~
+***** restore ~fc~ state
+***** remove ~fc~ overlay (to be saved again after command completion)
+***** execute ~cmd~ for ~fc~
+***** store ~fc~ state in new overlay with the same ~mc-id~
+**** restore ~mc~ state
+
+* becoming evil
+** ~evil~ commands
+  Something like ~cwabc<escape>~ is really 6 separate commands.
+  
+*** ~c~ => ~evil-change~
+*** ~w~ => ~evil-forward-word-begin~
+*** ~a~ => ~selt-insert-command~
+*** ~b~ => ~selt-insert-command~
+*** ~c~ => ~selt-insert-command~
+*** ~<escape>~ => ~evil-normal-state~
+
+  Assuming there are ~2~ fake cursors, the command ~cwabc<escape>~ will run
+  through the simplistic loop noted above 6 times, one for each command.
+
+  Each command will put the main cursor in a (potentially new) ~evil-state~, and
+  *after* all the fake cursors have executed that same command, will the cursors
+  be in the same ~evil-state~. That is to say, the global ~evil-state~ of ~mc~
+  will be equal to the stored ~evil-state~ in each overlay of the fake cursor.
+
+  When a command issued puts ~mc~ in a different ~evil-state~, the ~evil-state~ in
+  the fake cursors will be different than that of ~mc~. When this happens we need
+  to transition the fake cursor **back** to it's own ~evil-state~ so that the
+  command will transition it to the same ~evil-state~ the ~mc~ is already in.
+** ~evil~ state transitions
+  State transitions happen only when restoring the fake cursor state, in
+  ~mc/restore-state-from-overlay~ and in ~mc/evil-restore-state-from-overlay~.
+  
+  Normally, a state transition can be accomplished with ~evil-change-state~ but
+  there are a few special transitions when the 'global' ~evil-state~ and fake
+  cursor ~evil-state~ are particular values. These are noted here by global
+  state -> fake cursor state (the state we want to transition to).
+
+*** ~insert~ -> ~normal~
+*** ~replace~ -> ~normal~
+*** ~normal~ -> ~insert~
+*** ~insert~ -> ~visual~
+    **only** when the ~evil-visual-selection~ is ~line~
+
+ A special case is then the global state doesn't match the fake cursor state,
+ and the fake cursor has ~evil-state~ ~visual~ and property
+ ~evil-visual-contracted~ on its overlay, This for special handling when marking
+ stuff and will be detailed below.
+ 
+ All of these special cases use ~evil-state-change~ but do something before or
+ after the state change to ensure the correct evil variables, point and mark etc.
+ are set.
+
+** advising functions
+   We are in need of ~5~ advising function, all wrapping around the function.
+
+*** ~evil-repeat-pre-hook~
+    This hook should only be called by the main cursor, as it is the one doing
+    the recording to repeat. Allowing the fake cursors to overwrite the main
+    cursor doesn't make much sense.
+*** ~evil-read-motion~
+    Call the motion and cache the results for the main cursor, fake cursors read
+    cached motion. A fake cursor wouldn't have the ability to read a motion key.
+    The only exception for a fake cursor is when there is a kbd macro to execute
+    for all fake cursors, then we need to call the motion and not need to cache
+    the commands.
+*** ~evil-read-key~
+    Call function and cache results for the main cursor, fake cursors read the
+    cached results.
+*** ~this-command-keys~
+    Call function and cache the results for the main cursor, but only if the
+    function returns a non-empty string. In testing and debugging, I encountered
+    the empty command string being cached -- this messes up commands like ~c~
+    and ~d~ for evil setup as it creates shortcuts to ~dd~, ~cc~ etc. from the
+    return value of ~this-command-keys~ and an empty string messes that up if we
+    cache that value and the fake cursor re-uses that.
+*** ~call-interactively~
+    Always call the function, without ever caching the results. The only purpose
+    of this advice is to be able to hook into special functions that execute
+    themselves (or in their call chain) a command that is interactive and reads
+    a character (or a number I suppose as well). This read cannot be advised, so
+    execution for fake cursors will always be broken if this happens. Storing a
+    macro to execute allows the fake cursors to execute properly. In particular,
+    this was encountered testing with ~evil-surround-change~.
+** Refreshing ~evil~ visual variables, maybe
+   Some motions operate on a visual region (perusing the source code, it looks
+   like this is only for an ~evil-text-object~).
+
+   The issue with this is that the different state changes into and out of
+   ~visual~ state, *also* alter the evil visual variables and don't necessarily
+   restore them to the point and mark the cursor state is restored to.
+
+   We fix this issue for:
+*** fake cursors
+    maybe refreshing if no state transitions need to occur -- in
+    ~mc/evil-restore-state-from-overlay~.
+*** main cursor
+    every time main cursor is restored, in ~mc/restore-state-from-overlay~.
+    Before a command is run for the main cursor, in ~mc/make-a-note-of-the-command-being-run~
+** Marking functions and storing state
+   Marking functions put all cursors, fake and real, into the ~visual~ state,
+   and ~C-g~ will put them all into ~normal~ state.
+
+   Marking functions can stay the same utilizing a little trick about the evil
+   ~visual~ state.
+
+   When marking and the main cursor has selected what it wants fake cursors for,
+   it is in ~visual~ state, and its visual region is *expanded*. This *expanded*
+   region happens to match up with vanilla emacs' point and mark when searching
+   like it does in ~mc-mark-more.el~.
+
+   In evil, a post hook for ~visual~ state *contracts* the region, while the pre
+   hook *expands* it. Since marking occurs before the main cursor gets
+   contracted, we can store the point and mark after contracting the region.
+
+   This will put the fake cursors in the same state as the main cursor will
+   eventually get to. We also tag the fake cursor with ~evil-visual-contracted~
+   on its overlay so we can know to expand the region when restoring state
+   (again, like the main cursor will be in when issuing for another command).
+
+   In case there are more things to mark, we need to set the region back to
+   expanded, and move the point and mark back to a place that wont trigger an
+   infinite loop in the search. The reason for this is that ~evil~ **always**
+   puts point and mark with point coming after mark, no matter what the initial
+   point and mark direction.
+*** marking with dwim
+    Any function that marks an object using the ~dwim~ functions needs to enter
+    ~visual~ state.
+
+    This is what would happen if the main cursor marked the text itself.
+
+    Everything appears (???) to go back to ~mark-all-like-this~, so
+    ~mark-all-like-this-dwim~ can remain basically unchanged except for if there
+    were no matches by the end of the function, we need to go back and mark what
+    was at point at the beginning of the call before calling out to
+    ~mc/mark-all-like-this~ to have a valid region.
+
+   In ~mc/mark-all-like-this~ if the last command was ~dwim~ and no matches were
+   found, we need to exit ~visual~ state and re set ~mark~ or ~point~ based on
+   the value of ~evil-visual-direction~. Need to exit this because the call to
+   ~mc--maybe-set-killed-rectangle~ needs there to be only one cursor (I can't
+   remember what exactly happened anymore, but it was blowing the tests up,
+   something with ~mc/for-each-cursor-ordered~ which is called by the kill
+   rectangle function).
