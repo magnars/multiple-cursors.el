@@ -615,7 +615,7 @@ They are temporarily disabled when multiple-cursors are active.")
   (if multiple-cursors-mode
       (progn
         (mc/temporarily-disable-unsupported-minor-modes)
-        (add-hook 'pre-command-hook 'mc/make-a-note-of-the-command-being-run nil t)
+        (add-hook 'pre-command-hook 'mc/make-a-note-of-the-command-being-run t t)
         (add-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t t)
         (run-hooks 'multiple-cursors-mode-enabled-hook))
     (remove-hook 'post-command-hook 'mc/execute-this-command-for-all-cursors t)

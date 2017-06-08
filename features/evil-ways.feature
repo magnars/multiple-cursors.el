@@ -2,6 +2,7 @@
 Feature: Evil Ways
   Background:
     Given I turn on evil-mode
+    And I turn on evil-escape-mode
     And I insert:
     """
     First  line
@@ -249,6 +250,24 @@ Feature: Evil Ways
     """
     First  
     Second 
+    """
+
+  @evil-escape
+  Scenario: Multiple cursors can repeat the last command
+    And I press "ifj"
+    Then I should see exactly:
+    """
+    First  line
+    Second line
+    """
+
+  @evil-escape
+  Scenario: Multiple cursors can repeat the last command
+    And I press "vefj"
+    Then I should see exactly:
+    """
+    First  line
+    Second line
     """
 
   @repeat

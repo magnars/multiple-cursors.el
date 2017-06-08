@@ -11,12 +11,16 @@
 
 (require 'evil)
 (require 'evil-surround)
+(require 'evil-escape)
 (require 'mc-vars)
 (setq mc/list-file "")
 ;; force the evil specific vars to be added to the cmds to run for all / once
 ;; will set evil mode to zero in the before hook
 ;; This is how the loading would work for a user using evil and multiple-cursors together
 (evil-mode 1)
+;; same for evil escape, to ensure the advice is triggered, would load up this way for a user as well.
+;; all evil stuff loads before multiple-cursors is loaded
+(evil-escape-mode 1)
 
 (require 'cl-preloaded)
 (setf (symbol-function 'cl--assertion-failed)
@@ -47,6 +51,8 @@
  (visual-line-mode -1)
  (evil-mode 0)
  (evil-surround-mode 1)
+ (evil-escape-mode 0)
+ (setq evil-escape-key-sequence (kbd "fj"))
  (cua-mode 0)
  (multiple-cursors-mode 0)
  (mc/remove-fake-cursors)

@@ -177,11 +177,30 @@ if executing for the main cursor."
   (unless mc--executing-command-for-fake-cursor
     (funcall orig-fun)))
 
+(defun mc/evil-escape-pre-hook-advice (orig-fun)
+  "Advice around `evil-escape-pre-command-hook'. Only call the
+function if executing for the main cursor, setting
+`this-original-command' if `this-command' is
+`self-insert-command' and after this hooks execution, it is
+something different."
+  (unless mc--executing-command-for-fake-cursor
+    (let ((cmd this-command))
+      (funcall orig-fun)
+      ;; `evil-escape' sets `this-command' not `this-original-command'
+      ;; if the original value of `this-command' isn't the same as what it is set to,
+      ;; we can safely reset `this-original-command'
+      ;; to the new value of `this-command' that `evil-escape' has set.
+      (if (not (eq cmd this-command))
+          (setq this-original-command this-command)))))
+
 (advice-add 'evil-read-key :around #'mc/evil-read-key-advice)
 (advice-add 'this-command-keys :around #'mc/this-command-keys-advice)
 (advice-add 'call-interactively :around #'mc/call-interactively-advice)
 (advice-add 'evil-read-motion :around #'mc/evil-read-motion-advice)
 (advice-add 'evil-repeat-pre-hook :around #'mc/evil-repeat-pre-hook-advice)
+(when (and (featurep 'evil-escape)
+           evil-escape-mode)
+  (advice-add 'evil-escape-pre-command-hook :around #'mc/evil-escape-pre-hook-advice))
 
 (provide 'mc-evil)
 
