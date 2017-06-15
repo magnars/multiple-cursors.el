@@ -782,7 +782,9 @@ for running commands with multiple cursors."
 (defvar mc/cmds-to-run-for-all nil
   "Commands to run for all cursors in multiple-cursors-mode")
 
-(load mc/list-file t) ;; load, but no errors if it does not exist yet please
+;; load, but no errors if it does not exist yet please, and no message
+;; while loading
+(load mc/list-file 'noerror 'nomessage)
 
 (provide 'multiple-cursors-core)
 
