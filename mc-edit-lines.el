@@ -28,6 +28,7 @@
 ;;; Code:
 
 (require 'multiple-cursors-core)
+(require 'mc-evil)
 
 (defcustom mc/edit-lines-empty-lines nil
   "What should be done by `mc/edit-lines' when a line is not long enough."
@@ -66,8 +67,18 @@ other non-nil value will cause short lines to be padded."
                   'ignore)
                  (arg 'pad)
                  (t mc/edit-lines-empty-lines))))
-    (deactivate-mark)
-    (when (and (eq direction :up) (bolp))
+    (cond
+     ((and (mc/evil-p)
+           (evil-visual-state-p))
+      (evil-exit-visual-state)
+      (setq col (current-column))
+      (when (eq 'line evil-visual-selection)
+        (setq point-line (line-number-at-pos))
+        (goto-line mark-line)
+        (move-to-column col)))
+     (t
+      (deactivate-mark)))
+    (when (and (not (mc/evil-p)) (eq direction :up) (bolp))
       (previous-logical-line 1 nil)
       (move-to-column col))
     ;; Add the cursors
