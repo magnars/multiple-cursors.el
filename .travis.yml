@@ -16,6 +16,6 @@ before_install:
   - export PATH="/home/travis/.cask/bin:$PATH"
   - cask
 env:
-  - EMACS=emacs24 TAGS=""
+  - EMACS=emacs-snapshot TAGS=""
 script:
   ./run-travis-ci.sh
