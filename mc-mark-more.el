@@ -434,6 +434,83 @@ With zero ARG, skip the last one and mark next."
             (multiple-cursors-mode 1)
           (multiple-cursors-mode 0))))))
 
+(defun mc/split-region (string beg end include-match)
+  "Split the region at each occurrence of a given string.
+
+A prefix argument will cause the matching text from the search
+string to be included in the selected subregions.  A negative
+prefix argument will cause it to be included in the suqsequent
+region the default behavior excludes the match.
+
+When called from lisp, INCLUDE-MATCH should be one of nil,
+'after, or 'before.
+
+For example, for the selected region \"one,two,three,four,five\",
+splitting on the comma will create the following five active
+regions in multiple-cursors mode (using [] to denote regions):
+
+ [one],[two],[three],[four],[five] -- No prefix arg, or 0
+ [one,][two,][three,][four,][five] -- Single prefix arg, or arg>1
+ [one][,two][,three][,four][,five] -- Negative prefix arg"
+  (interactive (list
+    (read-string "Split region on string: ")
+    (region-beginning)
+    (region-end)
+    (let ((arg (prefix-numeric-value current-prefix-arg)))
+      (cond ((< 1 arg) 'after) ((> 0 arg) 'before) (t nil)))))
+  (mc/split-region-regexp (regexp-quote string) beg end include-match))
+
+(defun mc/split-region-regexp (regexp beg end &optional include-match)
+  "Split the region at each occurrence of a given regexp.
+
+A prefix argument will cause the matching text from the search
+string to be included in the selected subregions.  A negative
+prefix argument will cause it to be included in the suqsequent
+region the default behavior excludes the match.
+
+When called from lisp, INCLUDE-MATCH should be one of nil,
+'after, or 'before.
+
+For example, for the selected region \"one,two,three,four,five\",
+splitting on the comma will create the following five active
+regions in multiple-cursors mode (using [] to denote regions):
+
+ [one],[two],[three],[four],[five] -- No prefix arg, or 0
+ [one,][two,][three,][four,][five] -- Single prefix arg, or arg>1
+ [one][,two][,three][,four][,five] -- Negative prefix arg"
+  (interactive (list
+    (read-regexp "Split region on regexp: ")
+    (region-beginning)
+    (region-end)
+    (let ((arg (prefix-numeric-value current-prefix-arg)))
+      (cond ((< 1 arg) 'after) ((> 0 arg) 'before) (t nil)))))
+  (if (string= regexp "")
+      (message "Mark aborted")
+    (let ((lastmatch beg)
+          (case-fold-search nil))
+      (mc/remove-fake-cursors)
+      (goto-char beg)
+      (while (and (< (point) end) ; can happen because of (forward-char)
+                  (search-forward-regexp regexp end t))
+        (if (eq include-match 'after)
+            (goto-char (match-end 0))
+          (goto-char (match-beginning 0)))
+        (push-mark lastmatch t nil)
+        (mc/create-fake-cursor-at-point)
+        (if (eq include-match 'before)
+            (goto-char (match-beginning 0))
+          (goto-char (match-end 0)))
+        (setq lastmatch (point))
+        (goto-char (match-end 0))
+        (when (= (point) (match-beginning 0))
+          (forward-char)))
+      (if (not lastmatch)
+          (multiple-cursors-mode 0)
+        (goto-char end)
+        (push-mark lastmatch t nil)
+        (multiple-cursors-mode 1)))))
+
+
 (when (not (fboundp 'set-temporary-overlay-map))
   ;; Backport this function from newer emacs versions
   (defun set-temporary-overlay-map (map &optional keep-pred)
