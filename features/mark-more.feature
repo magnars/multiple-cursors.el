@@ -121,7 +121,11 @@ Feature: Marking multiple parts of the buffer
     And I go to the front of the word "aaa"
     And I press "C->"
     And I press "C->"
+    And I press "C-SPC"
+    And I press "C-e"
+    And I press "C-w"
     And I type "_"
+    And I press "C-y"
     Then I should have 3 cursors
     And I should see:
     """
