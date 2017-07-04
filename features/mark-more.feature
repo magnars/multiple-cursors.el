@@ -111,6 +111,29 @@ Feature: Marking multiple parts of the buffer
     Then I should have 2 cursors
     And I should see "Here's more, more and text"
 
+  Scenario: Separate kills
+    When I insert:
+    """
+    aaa
+    bbb
+    ccc
+    """
+    And I go to the front of the word "aaa"
+    And I press "C->"
+    And I press "C->"
+    And I press "C-SPC"
+    And I press "C-e"
+    And I press "C-w"
+    And I type "_"
+    And I press "C-y"
+    Then I should have 3 cursors
+    And I should see:
+    """
+    _aaa
+    _bbb
+    _ccc
+    """
+
   Scenario: Splitting region on string
     When I insert "one,two,three,four,five"
     And I select "one,two,three,four,five"
