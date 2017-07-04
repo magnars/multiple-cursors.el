@@ -118,13 +118,14 @@ Feature: Marking multiple parts of the buffer
     bbb
     ccc
     """
-    And I go to the front of the word "bbb"
+    And I go to the front of the word "aaa"
+    And I press "C->"
     And I press "C->"
     And I type "_"
-    Then I should have 2 cursors
+    Then I should have 3 cursors
     And I should see:
     """
-    aaa
+    _aaa
     _bbb
     _ccc
     """
