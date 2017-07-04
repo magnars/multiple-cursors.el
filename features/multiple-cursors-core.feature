@@ -16,7 +16,9 @@ Feature: Multiple cursors core
   Scenario: Separate kill-rings
     Given I have cursors at "text" in "This text contains the word text twice"
     When I press "M-f"
-    And I press "M-d"
+    And I press "C-SPC"
+    And I press "M-f"
+    And I press "C-w"
     And I press "M-b"
     And I press "C-y"
     Then I should see "This  containstext the word  twicetext"
@@ -25,7 +27,9 @@ Feature: Multiple cursors core
     Given I have cursors at "text" in "This text contains the word text twice"
     When I press "M-d"
     And I press "C-f"
-    And I press "M-d"
+    And I press "C-SPC"
+    And I press "M-f"
+    And I press "C-w"
     And I press "C-y M-y"
     Then I should see "This  text the word  text"
 
