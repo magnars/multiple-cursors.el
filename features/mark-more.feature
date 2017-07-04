@@ -126,8 +126,7 @@ Feature: Marking multiple parts of the buffer
     And I press "C-w"
     And I type "_"
     And I press "C-y"
-    Then I should have 3 cursors
-    And I should see:
+    Then I should see:
     """
     _aaa
     _bbb
