@@ -34,6 +34,8 @@
  (global-set-key (kbd "H-3") 'mc/insert-letters)
  (global-set-key (kbd "H-1") 'mc/reverse-regions)
  (global-set-key (kbd "H-2") 'mc/sort-regions)
+ (global-set-key (kbd "H-4") 'mc/split-region)
+ (global-set-key (kbd "H-$") 'mc/split-region-regexp)
  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
  (global-set-key (kbd "H-SPC") 'set-rectangular-region-anchor)
  (switch-to-buffer

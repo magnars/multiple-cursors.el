@@ -111,6 +111,28 @@ Feature: Marking multiple parts of the buffer
     Then I should have 2 cursors
     And I should see "Here's more, more and text"
 
+  Scenario: Splitting region on string
+    When I insert "one,two,three,four,five"
+    And I select "one,two,three,four,five"
+    And I press "H-4 , <return>"
+    And I press "C-w"
+    And I type "x"
+    And I press "C-y"
+    and I type "y"
+    Then I should have 5 cursors
+    And I should see "xoney,xtwoy,xthreey,xfoury,xfivey"
+
+  Scenario: Splitting region on regexp
+    When I insert "one-W-two-X-three-Y-four-Z-five"
+    And I select "one-W-two-X-three-Y-four-Z-five"
+    And I press "H-$ -[A-Z]- <return>"
+    And I press "C-w"
+    And I type "x"
+    And I press "C-y"
+    and I type "y"
+    Then I should have 5 cursors
+    And I should see "xoney-W-xtwoy-X-xthreey-Y-xfoury-Z-xfivey"
+
   Scenario: Marking without an active region
     When I insert:
     """
