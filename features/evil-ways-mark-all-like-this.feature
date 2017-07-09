@@ -105,3 +105,35 @@ Feature: mark-all-like-this stores state correctly when using evil
     Second a feline
     Third  a feline
     """
+
+  Scenario: p < m quit a visual selection via evil-exit-visual-state
+    When I replace the buffer text with:
+    """
+    test
+    test
+    """
+    And I select "test"
+    And I press "M-!"
+    And I press "<escape>"
+    And I press "x"
+    Then I should see exactly:
+    """
+    est
+    est
+    """
+
+  Scenario: p > m quit a visual selection via evil-exit-visual-state
+    When I replace the buffer text with:
+    """
+    test
+    test
+    """
+    And I press "ve"
+    And I press "M-!"
+    And I press "<escape>"
+    And I press "bx"
+    Then I should see exactly:
+    """
+    est
+    est
+    """

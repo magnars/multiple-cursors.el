@@ -99,3 +99,11 @@ Feature: mark-next-like-this stores state correctly when using evil
     Second feline
     Third  feline
     """
+
+  Scenario: Delete from visual state
+    And I press "vld"
+    Then I should see exactly:
+    """
+    First  ne
+    Second ne
+    """
