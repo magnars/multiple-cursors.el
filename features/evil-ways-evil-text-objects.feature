@@ -138,3 +138,23 @@ Feature: Text objects and surround
     That is a simple line.
     This is a 'simple' line.
     """
+
+  @surround-with-quotes
+  Scenario: Surround a word with quotes
+    When I replace the buffer text with:
+    """
+    This is a simple line.
+    This is a simple line.
+    That is a simple line.
+    This is a simple line.
+    """
+    And I press "grm"
+    And I press "C-g"
+    And I type "fmbveS'"
+    Then I should see exactly:
+    """
+    This is a 'simple' line.
+    This is a 'simple' line.
+    That is a simple line.
+    This is a 'simple' line.
+    """

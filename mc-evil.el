@@ -41,10 +41,14 @@
 - the command is a text-object motion that operates on an active region (evil interactive code `<v>'
 - point and mark don't line up with the current `evil-visual-*' variables"
   (when (and (mc/evil-p) (evil-visual-state-p)
-             (eq 'motion (evil-get-command-property this-command :repeat))
-             (evil-get-command-property this-command :extend-selection)
              (not (= evil-visual-beginning (min (point) (mark)))))
-    (evil-visual-refresh (point) (mark))))
+    (cond
+     ((and mc--executing-command-for-fake-cursor
+           (eq 'motion (evil-get-command-property this-command :repeat))
+           (evil-get-command-property this-command :extend-selection))
+      (evil-visual-refresh (mark) (point)))
+     (t
+      (evil-visual-refresh (mark) (point))))))
 
 (defun mc/overlay-change-evil-state-p (o)
   "Is the current evil-state variable equal to the state stored
@@ -83,7 +87,7 @@ Otherwise, just transition to fake cursors `evil-state'"
       (let ((p (point))
             (m (mark)))
         (evil-change-state overlay-evil-state)
-        (evil-visual-refresh p m)))
+        (evil-visual-refresh m p)))
      ((and (eq evil-state 'normal)
            (eq overlay-evil-state 'insert))
       (evil-change-state overlay-evil-state)

@@ -101,6 +101,7 @@ Feature: mark-next-like-this stores state correctly when using evil
     """
 
   Scenario: Delete from visual state
+    And I press "<escape>"
     And I press "vld"
     Then I should see exactly:
     """
