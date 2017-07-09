@@ -38,6 +38,7 @@ for running commands with multiple cursors."
                                         evil-normal-state-entry-hook
                                         evil-repeat-ring
                                         evil-this-register
+                                        evil-exchange--position
                                         register-alist)
   "List of variables to keep track of on a per cursor basis when using evil")
 
