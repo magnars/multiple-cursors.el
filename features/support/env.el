@@ -11,6 +11,7 @@
 
 (require 'evil)
 (require 'evil-surround)
+(require 'evil-exchange)
 (require 'evil-escape)
 (require 'mc-vars)
 (setq mc/list-file "")
@@ -33,6 +34,7 @@
           (signal 'cl-assertion-failed `(,form ,@sargs)))))
 
 (add-to-list 'mc--evil-cmds-to-run-for-all 'evil-surround-region)
+(add-to-list 'mc--evil-cmds-to-run-for-all 'evil-exchange)
 (require 'multiple-cursors)
 (require 'espuds)
 (require 'ert)
@@ -51,6 +53,7 @@
  (visual-line-mode -1)
  (evil-mode 0)
  (evil-surround-mode 1)
+ (evil-exchange-install)
  (evil-escape-mode 0)
  (setq evil-escape-key-sequence (kbd "fj"))
  (cua-mode 0)

@@ -9,4 +9,5 @@
  (depends-on "wrap-region")
  (depends-on "evil")
  (depends-on "evil-escape")
- (depends-on "evil-surround"))
+ (depends-on "evil-surround")
+ (depends-on "evil-exchange"))

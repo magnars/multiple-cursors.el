@@ -1,5 +1,5 @@
 @evil-ways @evil-text-objects
-Feature: Text objects and surround
+Feature: Text objects -- surround and exchange
   Background:
     Given I turn on evil-mode
     And I bind evil keys for multiple-cursors mode 
@@ -157,4 +157,21 @@ Feature: Text objects and surround
     This is a 'simple' line.
     That is a simple line.
     This is a 'simple' line.
+    """
+
+  @evil-exchange
+  Scenario: exchange two words
+    When I replace the buffer text with:
+    """
+    test string
+    test string
+    """
+    And I press "C->"
+    And I press "gxe"
+    And I press "w"
+    And I press "gxe"
+    Then I should see exactly:
+    """
+    string test
+    string test
     """
