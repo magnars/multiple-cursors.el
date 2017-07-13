@@ -475,8 +475,12 @@ it will prompt for the proper action and then save that preference.
 Some commands are so unsupported that they are even prevented for
 the original cursor, to inform about the lack of support."
   (unless mc--executing-command-for-fake-cursor
-
-    (if (eq 1 (mc/num-cursors)) ;; no fake cursors? disable mc-mode
+    ;; no fake cursor and not performing an undo? -- disable mc-mode
+    ;; if undoing, and still no cursors could just have 2 cursors and the activation pops state (removing cursor temporatily)
+    ;; sending it to one, but we still actually have two -- don't want to disable mc-mode then
+    ;; the deactivate for undo will bring the cursor potentially missing cursor back on the second undo after this one.
+    (if (and (eq 1 (mc/num-cursors))
+             (not mc--stored-state-for-undo))
         (multiple-cursors-mode 0)
       (when this-original-command
         (let ((original-command (or mc--this-command
