@@ -423,16 +423,13 @@ With zero ARG, skip the last one and mark next."
             (setq lastmatch (point))
             (when (= (point) (match-beginning 0))
               (forward-char)))
-          (when lastmatch (goto-char lastmatch)))
-        (when (> (mc/num-cursors) 0)
-          (goto-char (match-end 0)))
-        (let ((first (mc/furthest-cursor-before-point)))
-          (if (not first)
-              (error "Search failed for %S" search)
-            (mc/pop-state-from-overlay first)))
-        (if (> (mc/num-cursors) 1)
-            (multiple-cursors-mode 1)
-          (multiple-cursors-mode 0))))))
+          (unless lastmatch
+            (error "Search failed for %S" search)))
+          (goto-char (match-end 0))
+        (if (< (mc/num-cursors) 3)
+            (multiple-cursors-mode 0)
+          (mc/pop-state-from-overlay (mc/furthest-cursor-before-point))
+          (multiple-cursors-mode 1))))))
 
 (when (not (fboundp 'set-temporary-overlay-map))
   ;; Backport this function from newer emacs versions
