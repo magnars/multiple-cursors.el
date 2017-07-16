@@ -40,15 +40,10 @@
 - the command is a motion
 - the command is a text-object motion that operates on an active region (evil interactive code `<v>'
 - point and mark don't line up with the current `evil-visual-*' variables"
-  (when (and (mc/evil-p) (evil-visual-state-p)
-             (not (= evil-visual-beginning (min (point) (mark)))))
-    (cond
-     ((and mc--executing-command-for-fake-cursor
-           (eq 'motion (evil-get-command-property this-command :repeat))
-           (evil-get-command-property this-command :extend-selection))
-      (evil-visual-refresh (mark) (point)))
-     (t
-      (evil-visual-refresh (mark) (point))))))
+  (when (and (mc/evil-p)
+             (eq 'motion (evil-get-command-property this-command :repeat))
+             (evil-get-command-property this-command :keep-visual))
+    (evil-visual-refresh (mark) (point))))
 
 (defun mc/overlay-change-evil-state-p (o)
   "Is the current evil-state variable equal to the state stored
@@ -83,7 +78,8 @@ Otherwise, just transition to fake cursors `evil-state'"
         (evil-change-state overlay-evil-state)
         (setq evil-move-cursor-back old-evil-move-cursor-back)))
      ((and (eq overlay-evil-state 'visual)
-           (overlay-get o 'evil-visual-contracted))
+           (or (overlay-get o 'evil-visual-contracted)
+               (eq evil-state 'normal)))
       (let ((p (point))
             (m (mark)))
         (evil-change-state overlay-evil-state)
@@ -114,8 +110,8 @@ transition and restore variables."
    ((mc/overlay-change-evil-state-p o)
     (mc/evil-fake-cursor-state-transition o))
    (t
-    (mc/restore-overlay-vars o mc/cursor-specific-vars)
-    (mc/evil-maybe-visual-refresh))))
+    (mc/restore-overlay-vars o mc/cursor-specific-vars)))
+  (mc/evil-maybe-visual-refresh))
 
 (defun mc/evil-read-key-advice (orig-fun &optional prompt)
   "Advice around `evil-read-key'. Cache the results when the main

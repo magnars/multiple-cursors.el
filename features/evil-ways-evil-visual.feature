@@ -71,3 +71,35 @@ Feature: Visual region
     This is a This 
     This is a This 
     """
+
+ Scenario: Delete backwards from visual state
+    When I replace the buffer text with:
+    """
+    test
+    test
+    """
+    And I press "C->"
+    And I press "ev2hx"
+    Then I should see exactly:
+    """
+    t
+    t
+    """
+
+ @pr-bugs @failing @evil-visual-restore
+ Scenario: evil-visual-restore
+    #I don't know, is it possible to use evil-visual-restore with multiple-cursors
+    When I replace the buffer text with:
+    """
+    test
+    test
+    """
+    And I press "C->"
+    And I press "v2l"
+    And I press "<escape>"
+    And I press "gvx"
+    Then I should see exactly:
+    """
+    t
+    t
+    """

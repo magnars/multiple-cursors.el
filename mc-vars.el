@@ -80,6 +80,7 @@ for running commands with multiple cursors."
     evil-next-line
     evil-repeat-find-char
     evil-repeat-find-char-reverse
+    evil-visual-restore
     ;; evil functions
     evil-append-line
     evil-insert-line
