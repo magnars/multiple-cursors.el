@@ -101,6 +101,9 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
   first disable multiple regions before disabling multiple cursors. If you want to
   insert a newline in multiple-cursors-mode, use `C-j`.
 
+- `(define-key mc/keymap (kbd "<return>") nil)` will make `<return>` insert a
+  newline; multiple-cursors-mode can still be disabled with `C-g`.
+
 - Sometimes you end up with cursors outside of your view. You can
   scroll the screen to center on each cursor with `C-v` and `M-v` or you can
   press `C-'` to hide all lines without a cursor, press `C-'` again to unhide.
