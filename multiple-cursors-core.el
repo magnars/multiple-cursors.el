@@ -330,6 +330,14 @@ cursor with updated info."
   :type '(boolean)
   :group 'multiple-cursors)
 
+(defvar mc--interactive-repeating-quit "C-g")
+(defcustom mc/interactive-repeating-commands nil
+  "Repeats last interactive command for every fake cursor after this functions
+   are called. Command is taken from `command-history' and caller runs once.
+   Suggested values are `execute-extended-command', `eval-expression' and `helm-M-x'."
+  :type '(list)
+  :group 'multiple-cursors)
+
 (defun mc/prompt-for-inclusion-in-whitelist (original-command)
   "Asks the user, then adds the command either to the once-list or the all-list."
   (let ((all-p (y-or-n-p (format "Do %S for all cursors?" original-command))))
@@ -416,6 +424,21 @@ the original cursor, to inform about the lack of support."
                   (message "%S is not supported with multiple cursors%s"
                            original-command
                            (get original-command 'mc--unsupported))
+
+                (when (and original-command
+                           (memq original-command mc/interactive-repeating-commands))
+                  (let ((ch (car command-history))
+                        (qk (single-key-description (car (last (append (recent-keys) nil))))))
+                    (when (and (not (equal qk mc--interactive-repeating-quit))
+                               ;; (not (eq this-command 'abort-recursive-edit))
+                               (y-or-n-p (format "[mc] repeat complex command: %s? " (car ch))))
+                      (mc/execute-command-for-all-fake-cursors
+                       (lambda () (interactive)
+                         (apply #'funcall-interactively
+                                (car ch)
+                                (mapcar (lambda (e) (eval e t)) (cdr ch)))))))
+                  (setq original-command nil))
+
                 (when (and original-command
                            (not (memq original-command mc--default-cmds-to-run-once))
                            (not (memq original-command mc/cmds-to-run-once))
