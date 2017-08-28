@@ -427,17 +427,14 @@ the original cursor, to inform about the lack of support."
 
                 (when (and original-command
                            (memq original-command mc/interactive-repeating-commands))
-                  (setq original-command nil)
-                  (let ((ch (caar command-history))
+                  (let ((ch (car command-history))
                         (rk (car (last (append (recent-keys) nil)))))
                     (when (and (not (eq rk mc--interactive-repeating-quit))
                                ;; (not (eq this-command 'abort-recursive-edit))
-                               (y-or-n-p (format "[mc] repeat complex command: %s? " ch)))
+                               (y-or-n-p (format "[mc] repeat complex command: %s? " (car ch))))
                       (mc/execute-command-for-all-fake-cursors
-                       (lambda () (interactive)
-                         (cl-letf (((symbol-function 'read-from-minibuffer)
-                                    (lambda (p &optional i k r h d m) (read i))))
-                           (repeat-complex-command 0)))))))
+                       (lambda () (interactive) (eval ch)))))
+                  (setq original-command nil))
 
                 (when (and original-command
                            (not (memq original-command mc--default-cmds-to-run-once))
