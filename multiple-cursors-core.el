@@ -330,7 +330,7 @@ cursor with updated info."
   :type '(boolean)
   :group 'multiple-cursors)
 
-(defvar mc--interactive-repeating-quit "C-g")
+(defvar mc--interactive-repeating-quit ?\C-g)
 (defcustom mc/interactive-repeating-commands nil
   "Repeats last interactive command for every fake cursor after this functions
    are called. Command is taken from `command-history' and caller runs once.
@@ -427,17 +427,17 @@ the original cursor, to inform about the lack of support."
 
                 (when (and original-command
                            (memq original-command mc/interactive-repeating-commands))
-                  (let ((ch (car command-history))
-                        (qk (single-key-description (car (last (append (recent-keys) nil))))))
-                    (when (and (not (equal qk mc--interactive-repeating-quit))
+                  (setq original-command nil)
+                  (let ((ch (caar command-history))
+                        (rk (car (last (append (recent-keys) nil)))))
+                    (when (and (not (eq rk mc--interactive-repeating-quit))
                                ;; (not (eq this-command 'abort-recursive-edit))
-                               (y-or-n-p (format "[mc] repeat complex command: %s? " (car ch))))
+                               (y-or-n-p (format "[mc] repeat complex command: %s? " ch)))
                       (mc/execute-command-for-all-fake-cursors
                        (lambda () (interactive)
-                         (apply #'funcall-interactively
-                                (car ch)
-                                (mapcar (lambda (e) (eval e t)) (cdr ch)))))))
-                  (setq original-command nil))
+                         (cl-letf (((symbol-function 'read-from-minibuffer)
+                                    (lambda (p &optional i k r h d m) (read i))))
+                           (repeat-complex-command 0)))))))
 
                 (when (and original-command
                            (not (memq original-command mc--default-cmds-to-run-once))
