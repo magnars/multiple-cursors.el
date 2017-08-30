@@ -45,7 +45,7 @@ insert a newline in multiple-cursors-mode, use `C-j`.
 
 ## Important note
 
-Multiple cursors does not well when you invoke its commands with `M-x`. It needs to be bound to keys to work properly. Pull request to fix this is welcome.
+Multiple cursors does not do well when you invoke its commands with `M-x`. It needs to be bound to keys to work properly. Pull request to fix this is welcome.
 
 ## Video
 
