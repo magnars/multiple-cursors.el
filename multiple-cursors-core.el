@@ -416,7 +416,6 @@ the original cursor, to inform about the lack of support."
                   (message "%S is not supported with multiple cursors%s"
                            original-command
                            (get original-command 'mc--unsupported))
-
                 (when (and original-command
                            (not (memq original-command mc--default-cmds-to-run-once))
                            (not (memq original-command mc/cmds-to-run-once))
@@ -461,7 +460,7 @@ multiple cursors editing.")
   (setq mc/keymap (make-sparse-keymap))
   (define-key mc/keymap (kbd "C-g") 'mc/keyboard-quit)
   (define-key mc/keymap (kbd "<return>") 'multiple-cursors-mode)
-  (define-key mc/keymap (kbd "C-x :") 'mc/repeat-command)
+  (define-key mc/keymap (kbd "C-:") 'mc/repeat-command)
   (when (fboundp 'phi-search)
     (define-key mc/keymap (kbd "C-s") 'phi-search))
   (when (fboundp 'phi-search-backward)
@@ -668,6 +667,7 @@ for running commands with multiple cursors."
                                      mc/skip-to-previous-like-this
                                      rrm/switch-to-multiple-cursors
                                      mc-hide-unmatched-lines-mode
+                                     mc/repeat-command
                                      hum/keyboard-quit
                                      hum/unhide-invisible-overlays
                                      save-buffer
