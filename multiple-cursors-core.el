@@ -551,7 +551,8 @@ from being executed if in multiple-cursors-mode."
 (unsupported-cmd isearch-backward ". Feel free to add a compatible version.")
 
 ;; Make sure pastes from other programs are added to all kill-rings when yanking
-(defadvice current-kill (before interprogram-paste-for-all-cursors activate)
+(defadvice current-kill (before interprogram-paste-for-all-cursors
+				(n &optional do-not-move) activate)
   (let ((interprogram-paste (and (= n 0)
                                  interprogram-paste-function
                                  (funcall interprogram-paste-function))))
