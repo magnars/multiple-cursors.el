@@ -443,6 +443,16 @@ you should disable multiple-cursors-mode."
       (multiple-cursors-mode 0)
     (deactivate-mark)))
 
+(defun mc/repeat-command ()
+  "Run last command from `command-history' for every fake cursor."
+  (interactive)
+  (when (y-or-n-p (format "[mc] repeat complex command: %s? " (caar command-history)))
+    (mc/execute-command-for-all-fake-cursors
+     (lambda () (interactive)
+       (cl-letf (((symbol-function 'read-from-minibuffer)
+                  (lambda (p &optional i k r h d m) (read i))))
+         (repeat-complex-command 0))))))
+
 (defvar mc/keymap nil
   "Keymap while multiple cursors are active.
 Main goal of the keymap is to rebind C-g and <return> to conclude
@@ -451,6 +461,7 @@ multiple cursors editing.")
   (setq mc/keymap (make-sparse-keymap))
   (define-key mc/keymap (kbd "C-g") 'mc/keyboard-quit)
   (define-key mc/keymap (kbd "<return>") 'multiple-cursors-mode)
+  (define-key mc/keymap (kbd "C-x :") 'mc/repeat-command)
   (when (fboundp 'phi-search)
     (define-key mc/keymap (kbd "C-s") 'phi-search))
   (when (fboundp 'phi-search-backward)
@@ -665,6 +676,7 @@ for running commands with multiple cursors."
                                      exit-minibuffer
                                      minibuffer-complete-and-exit
                                      execute-extended-command
+                                     eval-expression
                                      undo
                                      redo
                                      undo-tree-undo
