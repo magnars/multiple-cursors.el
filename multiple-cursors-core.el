@@ -330,6 +330,11 @@ cursor with updated info."
   :type '(boolean)
   :group 'multiple-cursors)
 
+(defcustom mc/always-repeat-command nil
+  "Disables confirmation for `mc/repeat-command' command."
+  :type '(boolean)
+  :group 'multiple-cursors)
+
 (defun mc/prompt-for-inclusion-in-whitelist (original-command)
   "Asks the user, then adds the command either to the once-list or the all-list."
   (let ((all-p (y-or-n-p (format "Do %S for all cursors?" original-command))))
@@ -445,7 +450,8 @@ you should disable multiple-cursors-mode."
 (defun mc/repeat-command ()
   "Run last command from `command-history' for every fake cursor."
   (interactive)
-  (when (y-or-n-p (format "[mc] repeat complex command: %s? " (caar command-history)))
+  (when (or mc/always-repeat-command
+            (y-or-n-p (format "[mc] repeat complex command: %s? " (caar command-history))))
     (mc/execute-command-for-all-fake-cursors
      (lambda () (interactive)
        (cl-letf (((symbol-function 'read-from-minibuffer)
