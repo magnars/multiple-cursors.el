@@ -710,7 +710,8 @@ for running commands with multiple cursors."
                                      windmove-left
                                      windmove-right
                                      windmove-up
-                                     windmove-down))
+                                     windmove-down
+                                     repeat-complex-command))
 
 (defvar mc--default-cmds-to-run-for-all nil
   "Default set of commands that should be mirrored by all cursors")
