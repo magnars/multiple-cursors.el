@@ -330,6 +330,11 @@ cursor with updated info."
   :type '(boolean)
   :group 'multiple-cursors)
 
+(defcustom mc/always-repeat-command nil
+  "Disables confirmation for `mc/repeat-command' command."
+  :type '(boolean)
+  :group 'multiple-cursors)
+
 (defun mc/prompt-for-inclusion-in-whitelist (original-command)
   "Asks the user, then adds the command either to the once-list or the all-list."
   (let ((all-p (y-or-n-p (format "Do %S for all cursors?" original-command))))
@@ -442,6 +447,17 @@ you should disable multiple-cursors-mode."
       (multiple-cursors-mode 0)
     (deactivate-mark)))
 
+(defun mc/repeat-command ()
+  "Run last command from `command-history' for every fake cursor."
+  (interactive)
+  (when (or mc/always-repeat-command
+            (y-or-n-p (format "[mc] repeat complex command: %s? " (caar command-history))))
+    (mc/execute-command-for-all-fake-cursors
+     (lambda () (interactive)
+       (cl-letf (((symbol-function 'read-from-minibuffer)
+                  (lambda (p &optional i k r h d m) (read i))))
+         (repeat-complex-command 0))))))
+
 (defvar mc/keymap nil
   "Keymap while multiple cursors are active.
 Main goal of the keymap is to rebind C-g and <return> to conclude
@@ -450,6 +466,7 @@ multiple cursors editing.")
   (setq mc/keymap (make-sparse-keymap))
   (define-key mc/keymap (kbd "C-g") 'mc/keyboard-quit)
   (define-key mc/keymap (kbd "<return>") 'multiple-cursors-mode)
+  (define-key mc/keymap (kbd "C-:") 'mc/repeat-command)
   (when (fboundp 'phi-search)
     (define-key mc/keymap (kbd "C-s") 'phi-search))
   (when (fboundp 'phi-search-backward)
@@ -657,6 +674,7 @@ for running commands with multiple cursors."
                                      mc/skip-to-previous-like-this
                                      rrm/switch-to-multiple-cursors
                                      mc-hide-unmatched-lines-mode
+                                     mc/repeat-command
                                      hum/keyboard-quit
                                      hum/unhide-invisible-overlays
                                      save-buffer
@@ -665,6 +683,7 @@ for running commands with multiple cursors."
                                      exit-minibuffer
                                      minibuffer-complete-and-exit
                                      execute-extended-command
+                                     eval-expression
                                      undo
                                      redo
                                      undo-tree-undo
@@ -698,7 +717,8 @@ for running commands with multiple cursors."
                                      windmove-left
                                      windmove-right
                                      windmove-up
-                                     windmove-down))
+                                     windmove-down
+                                     repeat-complex-command))
 
 (defvar mc--default-cmds-to-run-for-all nil
   "Default set of commands that should be mirrored by all cursors")
