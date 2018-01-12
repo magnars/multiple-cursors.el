@@ -29,6 +29,10 @@
 
 (require 'multiple-cursors-core)
 
+(defvar mc/insert-numbers-default)
+(defvar mc--insert-numbers-number)
+(defvar mc--insert-letters-number)
+
 ;;;###autoload
 (defun mc/insert-numbers (arg)
   "Insert increasing numbers for each cursor, starting at
