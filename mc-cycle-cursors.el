@@ -30,6 +30,7 @@
 
 (declare-function mc/cursor-beg "mc-mark-more")
 (declare-function mc/cursor-end "mc-mark-more")
+(defvar mc/cycle)
 
 (defun mc/next-fake-cursor-after-point ()
   (let ((pos (point))
