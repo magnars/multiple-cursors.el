@@ -148,6 +148,7 @@ highlights the entire width of the window."
                                   yank-undo-function
                                   autopair-action
                                   autopair-wrap-action
+                                  temporary-goal-column
                                   er/history)
   "A list of vars that need to be tracked on a per-cursor basis.")
 
