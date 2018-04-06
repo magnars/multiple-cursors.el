@@ -186,6 +186,10 @@
 
 ;;; Code:
 
+(defgroup multiple-cursors nil
+  "Multiple cursors for emacs."
+  :group 'editing)
+
 (require 'mc-edit-lines)
 (require 'mc-cycle-cursors)
 (require 'mc-mark-more)
