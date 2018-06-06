@@ -131,7 +131,7 @@ Use like case-fold-search, don't recommend setting it globally.")
              (when point-out-of-order
                (exchange-point-and-mark))
              (mc/create-fake-cursor-at-point))
-         (error "no more matches found."))))))
+         (user-error "no more matches found."))))))
 
 ;;;###autoload
 (defun mc/mark-next-like-this (arg)
