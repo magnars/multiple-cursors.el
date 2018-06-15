@@ -30,6 +30,9 @@
 (require 'multiple-cursors-core)
 (require 'thingatpt)
 
+(declare-function sgml-get-context "sgml-mode")
+(declare-function sgml-skip-tag-forward "sgml-mode")
+
 (defun mc/cursor-end (cursor)
   (if (overlay-get cursor 'mark-active)
       (max (overlay-get cursor 'point)
@@ -431,43 +434,97 @@ With zero ARG, skip the last one and mark next."
           (mc/pop-state-from-overlay (mc/furthest-cursor-before-point))
           (multiple-cursors-mode 1))))))
 
-(when (not (fboundp 'set-temporary-overlay-map))
+(when (not (fboundp 'set-transient-map))
   ;; Backport this function from newer emacs versions
-  (defun set-temporary-overlay-map (map &optional keep-pred)
-    "Set a new keymap that will only exist for a short period of time.
-The new keymap to use must be given in the MAP variable. When to
-remove the keymap depends on user input and KEEP-PRED:
+  (defun set-transient-map (map &optional keep-pred on-exit)
+    "Set MAP as a temporary keymap taking precedence over other keymaps.
+Normally, MAP is used only once, to look up the very next key.
+However, if the optional argument KEEP-PRED is t, MAP stays
+active if a key from MAP is used.  KEEP-PRED can also be a
+function of no arguments: it is called from `pre-command-hook' and
+if it returns non-nil, then MAP stays active.
 
-- if KEEP-PRED is nil (the default), the keymap disappears as
-  soon as any key is pressed, whether or not the key is in MAP;
+Optional arg ON-EXIT, if non-nil, specifies a function that is
+called, with no arguments, after MAP is deactivated.
 
-- if KEEP-PRED is t, the keymap disappears as soon as a key *not*
-  in MAP is pressed;
+This uses `overriding-terminal-local-map' which takes precedence over all other
+keymaps.  As usual, if no match for a key is found in MAP, the normal key
+lookup sequence then continues.
 
-- otherwise, KEEP-PRED must be a 0-arguments predicate that will
-  decide if the keymap should be removed (if predicate returns
-  nil) or kept (otherwise). The predicate will be called after
-  each key sequence."
+This returns an \"exit function\", which can be called with no argument
+to deactivate this transient map, regardless of KEEP-PRED."
+    (let* ((clearfun (make-symbol "clear-transient-map"))
+           (exitfun
+            (lambda ()
+              (internal-pop-keymap map 'overriding-terminal-local-map)
+              (remove-hook 'pre-command-hook clearfun)
+              (when on-exit (funcall on-exit)))))
+      ;; Don't use letrec, because equal (in add/remove-hook) would get trapped
+      ;; in a cycle.
+      (fset clearfun
+            (lambda ()
+              (with-demoted-errors "set-transient-map PCH: %S"
+                (unless (cond
+                         ((null keep-pred) nil)
+                         ((not (eq map (cadr overriding-terminal-local-map)))
+                          ;; There's presumably some other transient-map in
+                          ;; effect.  Wait for that one to terminate before we
+                          ;; remove ourselves.
+                          ;; For example, if isearch and C-u both use transient
+                          ;; maps, then the lifetime of the C-u should be nested
+                          ;; within isearch's, so the pre-command-hook of
+                          ;; isearch should be suspended during the C-u one so
+                          ;; we don't exit isearch just because we hit 1 after
+                          ;; C-u and that 1 exits isearch whereas it doesn't
+                          ;; exit C-u.
+                          t)
+                         ((eq t keep-pred)
+                          (let ((mc (lookup-key map (this-command-keys-vector))))
+                            ;; If the key is unbound `this-command` is
+                            ;; nil and so is `mc`.
+                            (and mc (eq this-command mc))))
+                         (t (funcall keep-pred)))
+                  (funcall exitfun)))))
+      (add-hook 'pre-command-hook clearfun)
+      (internal-push-keymap map 'overriding-terminal-local-map)
+      exitfun))
 
-    (let* ((clearfunsym (make-symbol "clear-temporary-overlay-map"))
-           (overlaysym (make-symbol "t"))
-           (alist (list (cons overlaysym map)))
-           (clearfun
-            `(lambda ()
-               (unless ,(cond ((null keep-pred) nil)
-                              ((eq t keep-pred)
-                               `(eq this-command
-                                    (lookup-key ',map
-                                                (this-command-keys-vector))))
-                              (t `(funcall ',keep-pred)))
-                 (remove-hook 'pre-command-hook ',clearfunsym)
-                 (setq emulation-mode-map-alists
-                       (delq ',alist emulation-mode-map-alists))))))
-      (set overlaysym overlaysym)
-      (fset clearfunsym clearfun)
-      (add-hook 'pre-command-hook clearfunsym)
+;;;; Progress reporters.
 
-      (push alist emulation-mode-map-alists))))
+  ;; Progress reporter has the following structure:
+  ;;
+  ;;	(NEXT-UPDATE-VALUE . [NEXT-UPDATE-TIME
+  ;;			      MIN-VALUE
+  ;;			      MAX-VALUE
+  ;;			      MESSAGE
+  ;;			      MIN-CHANGE
+  ;;			      MIN-TIME])
+  ;;
+  ;; This weirdness is for optimization reasons: we want
+  ;; `progress-reporter-update' to be as fast as possible, so
+  ;; `(car reporter)' is better than `(aref reporter 0)'.
+  ;;
+  ;; NEXT-UPDATE-TIME is a float.  While `float-time' loses a couple
+  ;; digits of precision, it doesn't really matter here.  On the other
+  ;; hand, it greatly simplifies the code.
+
+  (defsubst progress-reporter-update (reporter &optional value)
+    "Report progress of an operation in the echo area.
+REPORTER should be the result of a call to `make-progress-reporter'.
+
+If REPORTER is a numerical progress reporter---i.e. if it was
+ made using non-nil MIN-VALUE and MAX-VALUE arguments to
+ `make-progress-reporter'---then VALUE should be a number between
+ MIN-VALUE and MAX-VALUE.
+
+If REPORTER is a non-numerical reporter, VALUE should be nil.
+
+This function is relatively inexpensive.  If the change since
+last update is too small or insufficient time has passed, it does
+nothing."
+    (when (or (not (numberp value))      ; For pulsing reporter
+              (>= value (car reporter))) ; For numerical reporter
+      (progress-reporter-do-update reporter value))))
 
 ;;;###autoload
 (defun mc/mark-more-like-this-extended ()
@@ -490,7 +547,7 @@ If direction is 'down:
 The bindings for these commands can be changed. See `mc/mark-more-like-this-extended-keymap'."
   (interactive)
   (mc/mmlte--down)
-  (set-temporary-overlay-map mc/mark-more-like-this-extended-keymap t))
+  (set-transient-map mc/mark-more-like-this-extended-keymap t))
 
 (defvar mc/mark-more-like-this-extended-direction nil
   "When using mc/mark-more-like-this-extended are we working on the next or previous cursors?")
@@ -639,7 +696,7 @@ If the region is inactive or on a single line, it will behave like
    (last
     (progn
       (when (looking-at "<") (forward-char 1))
-      (when (looking-back ">") (forward-char -1))
+      (when (looking-back ">" nil) (forward-char -1))
       (sgml-get-context)))))
 
 (defun mc--on-tag-name-p ()

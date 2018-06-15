@@ -28,6 +28,10 @@
 
 (require 'multiple-cursors-core)
 
+(declare-function mc/cursor-beg "mc-mark-more")
+(declare-function mc/cursor-end "mc-mark-more")
+(defvar mc/cycle)
+
 (defun mc/next-fake-cursor-after-point ()
   (let ((pos (point))
         (next-pos (1+ (point-max)))
@@ -88,7 +92,7 @@
 (cl-defun mc/cycle (next-cursor fallback-cursor loop-message)
   (when (null next-cursor)
     (when (eql 'stop (mc/handle-loop-condition loop-message))
-      (return-from mc/cycle nil))
+      (cl-return-from mc/cycle nil))
     (setf next-cursor fallback-cursor))
   (mc/create-fake-cursor-at-point)
   (mc/pop-state-from-overlay next-cursor)

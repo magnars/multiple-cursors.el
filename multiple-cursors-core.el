@@ -527,6 +527,7 @@ They are temporarily disabled when multiple-cursors are active.")
   `(" mc:" (:eval (format ,(propertize "%d" 'face 'font-lock-warning-face)
                           (mc/num-cursors))))
   "What to display in the mode line while multiple-cursors-mode is active."
+  :type 'symbol
   :group 'multiple-cursors)
 (put 'mc/mode-line 'risky-local-variable t)
 
