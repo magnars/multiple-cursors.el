@@ -119,6 +119,10 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
   `mc/mark-next-like-this-symbol` with no region selected. It will
   mark the word or symbol and add a cursor at the next occurance
 
+- Setting `mc/more-like-this-no-match-behavior` to `'continue` will
+  allow looping to the beginning of the document to continue matching
+  instead of raising a "No more matches found" error.
+
 - Try pressing `mc/mark-all-like-this-dwim` on a tagname in html-mode.
 
 - Notice that the number of cursors active can be seen in the modeline.

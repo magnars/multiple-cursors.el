@@ -40,23 +40,21 @@
 
 (defun mc/handle-more-like-this-no-match-condition (error-message)
   (cl-ecase mc/more-like-this-no-match-behavior
-    (error (error error-message))
+    (error (user-error error-message))
     (warn  (message error-message))
     (continue 'continue)))
 
 (defun mc/cursor-end (cursor)
-  (when cursor
-    (if (overlay-get cursor 'mark-active)
-        (max (overlay-get cursor 'point)
-             (overlay-get cursor 'mark))
-      (overlay-get cursor 'point))))
+  (if (overlay-get cursor 'mark-active)
+      (max (overlay-get cursor 'point)
+           (overlay-get cursor 'mark))
+    (overlay-get cursor 'point)))
 
 (defun mc/cursor-beg (cursor)
-  (when cursor
-    (if (overlay-get cursor 'mark-active)
-        (min (overlay-get cursor 'point)
-             (overlay-get cursor 'mark))
-      (overlay-get cursor 'point))))
+  (if (overlay-get cursor 'mark-active)
+      (min (overlay-get cursor 'point)
+           (overlay-get cursor 'mark))
+    (overlay-get cursor 'point)))
 
 (defun mc/furthest-region-end ()
   (let ((end (max (mark) (point))))
@@ -153,8 +151,8 @@ Use like case-fold-search, don't recommend setting it globally.")
                       (forwards  (mc/furthest-region-end))
                       (backwards (mc/first-region-start))))
         (end-char (cl-ecase direction
-                    (forwards  (or (mc/cursor-end (mc/nearest-cursor-before-point)) (point-min)))
-                    (backwards (or (mc/cursor-beg (mc/nearest-cursor-after-point)) (point-max)))))
+                    (forwards  (if-let* ((cursor (mc/nearest-cursor-before-point))) (mc/cursor-end cursor) (point-min)))
+                    (backwards (if-let* ((cursor (mc/nearest-cursor-after-point))) (mc/cursor-beg cursor) (point-max)))))
         (search-function (cl-ecase direction
                            (forwards  'search-forward-regexp)
                            (backwards 'search-backward-regexp)))
