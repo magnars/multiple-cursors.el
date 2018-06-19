@@ -30,17 +30,33 @@
 (require 'multiple-cursors-core)
 (require 'thingatpt)
 
+(defcustom mc/more-like-this-no-match-behavior 'error
+  "What to do if asked to match beyond the last cursor or before the first cursor."
+  :type '(radio (const :tag "Loop around to beginning/end of document." continue)
+                (const :tag "Warn and then loop around." warn)
+                (const :tag "Signal an error." error))
+  :group 'multiple-cursors)
+(setq mc/more-like-this-no-match-behavior 'continue)
+
+(defun mc/handle-more-like-this-no-match-condition (error-message)
+  (cl-ecase mc/more-like-this-no-match-behavior
+    (error (error error-message))
+    (warn  (message error-message))
+    (continue 'continue)))
+
 (defun mc/cursor-end (cursor)
-  (if (overlay-get cursor 'mark-active)
-      (max (overlay-get cursor 'point)
-           (overlay-get cursor 'mark))
-    (overlay-get cursor 'point)))
+  (when cursor
+    (if (overlay-get cursor 'mark-active)
+	(max (overlay-get cursor 'point)
+             (overlay-get cursor 'mark))
+      (overlay-get cursor 'point))))
 
 (defun mc/cursor-beg (cursor)
-  (if (overlay-get cursor 'mark-active)
-      (min (overlay-get cursor 'point)
-           (overlay-get cursor 'mark))
-    (overlay-get cursor 'point)))
+  (when cursor
+    (if (overlay-get cursor 'mark-active)
+	(min (overlay-get cursor 'point)
+             (overlay-get cursor 'mark))
+      (overlay-get cursor 'point))))
 
 (defun mc/furthest-region-end ()
   (let ((end (max (mark) (point))))
@@ -71,6 +87,26 @@
        (setq end (mc/cursor-end cursor))
        (setq furthest cursor)))
     furthest))
+
+(defun mc/nearest-cursor-before-point ()
+  (let ((beg (if mark-active (min (mark) (point)) (point)))
+	(end (point-min))
+	nearest)
+    (mc/for-each-fake-cursor
+     (when (and (< (mc/cursor-beg cursor) beg) (> (mc/cursor-end cursor) end))
+       (setq end (mc/cursor-beg cursor))
+       (setq nearest cursor)))
+    nearest))
+
+(defun mc/nearest-cursor-after-point ()
+  (let ((beg (point-max))
+	(end (if mark-active (max (mark) (point)) (point)))
+	nearest)
+    (mc/for-each-fake-cursor
+     (when (and (> (mc/cursor-end cursor) end) (< (mc/cursor-beg cursor) beg))
+       (setq beg (mc/cursor-end cursor))
+       (setq nearest cursor)))
+    nearest))
 
 (defun mc/fake-cursor-at-point (&optional point)
   "Return the fake cursor with its point right at POINT (defaults
@@ -104,6 +140,7 @@ Use like case-fold-search, don't recommend setting it globally.")
 (defun mc/mark-more-like-this (skip-last direction)
   (let ((case-fold-search nil)
         (re (regexp-opt (mc/region-strings) mc/enclose-search-term))
+	(right-bound (max (mark) (point)))
         (point-out-of-order (cl-ecase direction
                               (forwards       (< (point) (mark)))
                               (backwards (not (< (point) (mark))))))
@@ -113,6 +150,9 @@ Use like case-fold-search, don't recommend setting it globally.")
         (start-char (cl-ecase direction
                       (forwards  (mc/furthest-region-end))
                       (backwards (mc/first-region-start))))
+	(end-char (cl-ecase direction
+                    (forwards  (or (mc/cursor-end (mc/nearest-cursor-before-point)) (point-min)))
+                    (backwards (or (mc/cursor-beg (mc/nearest-cursor-after-point)) (point-max)))))
         (search-function (cl-ecase direction
                            (forwards  'search-forward-regexp)
                            (backwards 'search-backward-regexp)))
@@ -126,12 +166,18 @@ Use like case-fold-search, don't recommend setting it globally.")
        (when skip-last
          (mc/remove-fake-cursor furthest-cursor))
        (if (funcall search-function re nil t)
-           (progn
-             (push-mark (funcall match-point-getter 0))
-             (when point-out-of-order
-               (exchange-point-and-mark))
-             (mc/create-fake-cursor-at-point))
-         (user-error "no more matches found."))))))
+           (mc--mark-more-like-this)
+         (when (mc/handle-more-like-this-no-match-condition "No more matches found.")
+	   (goto-char end-char)
+	   (if (/= right-bound (funcall search-function re nil t))
+	       (mc--mark-more-like-this)
+	     (message "No more matches found. Done looping."))))))))
+
+(defun mc--mark-more-like-this ()
+  (push-mark (funcall match-point-getter 0))
+  (when point-out-of-order
+    (exchange-point-and-mark))
+  (mc/create-fake-cursor-at-point))
 
 ;;;###autoload
 (defun mc/mark-next-like-this (arg)

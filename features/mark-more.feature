@@ -6,6 +6,32 @@ Feature: Marking multiple parts of the buffer
     And I press "C->"
     Then I should have 2 cursors
 
+  Scenario: Marking next like this, cursors, error
+    And I insert "This text has the word text in it text text"
+    And I select the last "text"
+    And I press "C->"
+    Then I should have 2 cursors
+
+  Scenario: Marking next like this, cursors, continue
+    When I set mc/more-like-this-no-match-behavior to continue
+    And I insert "This text has the word text in it text text"
+    And I select the last "text"
+    And I press "C->"
+    And I press "C->"
+    Then I should have 3 cursors
+
+  Scenario: Marking next like this, cursors, continue, overflow
+    When I set mc/more-like-this-no-match-behavior to continue
+    And I insert "This text has the word text in it text text"
+    And I select the last "text"
+    And I press "C->"
+    And I press "C->"
+    And I press "C->"
+    And I press "C->"
+    And I press "C->"
+    And I press "C->"
+    And I should have 4 cursors
+
   Scenario: Marking next like this, region
     Given I turn on delete-selection-mode
     When I insert "This text has the word text in it"
@@ -53,6 +79,34 @@ Feature: Marking multiple parts of the buffer
     And I select the last "text"
     And I press "C-<"
     Then I should have 2 cursors
+
+  Scenario: Marking prev like this, cursors, error
+    And I insert "This text has the word text in it text text"
+    And I select "text"
+    And I press "C-<"
+    Then I should have 2 cursors
+
+  Scenario: Marking prev like this, cursors, continue
+    When I set mc/more-like-this-no-match-behavior to continue
+    And I insert "This text has the word text in it text text"
+    And I select "text"
+    And I press "C-<"
+    And I press "C-<"
+    Then I should have 3 cursors
+
+  Scenario: Marking prev like this, cursors, continue, overflow
+    When I set mc/more-like-this-no-match-behavior to continue
+    And I insert "This text has the word text in it text text"
+    And I select "text"
+    And I press "C-<"
+    And I press "C-<"
+    And I press "C-<"
+    And I press "C-<"
+    And I press "C-<"
+    And I press "C-<"
+    And I should have 4 cursors
+
+I select the last
 
   Scenario: Marking prev like this, region
     Given I turn on delete-selection-mode
@@ -157,4 +211,3 @@ Feature: Marking multiple parts of the buffer
     And I press "C-f"
     And I press "<deletechar>"
     Then I should see "This text ontains the word text wice"
-
