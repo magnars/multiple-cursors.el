@@ -47,14 +47,14 @@
 (defun mc/cursor-end (cursor)
   (when cursor
     (if (overlay-get cursor 'mark-active)
-	(max (overlay-get cursor 'point)
+        (max (overlay-get cursor 'point)
              (overlay-get cursor 'mark))
       (overlay-get cursor 'point))))
 
 (defun mc/cursor-beg (cursor)
   (when cursor
     (if (overlay-get cursor 'mark-active)
-	(min (overlay-get cursor 'point)
+        (min (overlay-get cursor 'point)
              (overlay-get cursor 'mark))
       (overlay-get cursor 'point))))
 
@@ -72,7 +72,7 @@
 
 (defun mc/furthest-cursor-before-point ()
   (let ((beg (if mark-active (min (mark) (point)) (point)))
-	furthest)
+        furthest)
     (mc/for-each-fake-cursor
      (when (< (mc/cursor-beg cursor) beg)
        (setq beg (mc/cursor-beg cursor))
@@ -81,7 +81,7 @@
 
 (defun mc/furthest-cursor-after-point ()
   (let ((end (if mark-active (max (mark) (point)) (point)))
-	furthest)
+        furthest)
     (mc/for-each-fake-cursor
      (when (> (mc/cursor-end cursor) end)
        (setq end (mc/cursor-end cursor))
@@ -90,8 +90,8 @@
 
 (defun mc/nearest-cursor-before-point ()
   (let ((beg (if mark-active (min (mark) (point)) (point)))
-	(end (point-min))
-	nearest)
+        (end (point-min))
+        nearest)
     (mc/for-each-fake-cursor
      (when (and (< (mc/cursor-beg cursor) beg) (> (mc/cursor-end cursor) end))
        (setq end (mc/cursor-beg cursor))
@@ -100,8 +100,8 @@
 
 (defun mc/nearest-cursor-after-point ()
   (let ((beg (point-max))
-	(end (if mark-active (max (mark) (point)) (point)))
-	nearest)
+        (end (if mark-active (max (mark) (point)) (point)))
+        nearest)
     (mc/for-each-fake-cursor
      (when (and (> (mc/cursor-end cursor) end) (< (mc/cursor-beg cursor) beg))
        (setq beg (mc/cursor-end cursor))
@@ -140,7 +140,9 @@ Use like case-fold-search, don't recommend setting it globally.")
 (defun mc/mark-more-like-this (skip-last direction)
   (let ((case-fold-search nil)
         (re (regexp-opt (mc/region-strings) mc/enclose-search-term))
-	(right-bound (max (mark) (point)))
+        (region-start (cl-ecase direction
+                        (forwards  (max (point) (mark)))
+                        (backwards (min (point) (mark)))))
         (point-out-of-order (cl-ecase direction
                               (forwards       (< (point) (mark)))
                               (backwards (not (< (point) (mark))))))
@@ -150,7 +152,7 @@ Use like case-fold-search, don't recommend setting it globally.")
         (start-char (cl-ecase direction
                       (forwards  (mc/furthest-region-end))
                       (backwards (mc/first-region-start))))
-	(end-char (cl-ecase direction
+        (end-char (cl-ecase direction
                     (forwards  (or (mc/cursor-end (mc/nearest-cursor-before-point)) (point-min)))
                     (backwards (or (mc/cursor-beg (mc/nearest-cursor-after-point)) (point-max)))))
         (search-function (cl-ecase direction
@@ -165,19 +167,16 @@ Use like case-fold-search, don't recommend setting it globally.")
        (goto-char start-char)
        (when skip-last
          (mc/remove-fake-cursor furthest-cursor))
-       (if (funcall search-function re nil t)
-           (mc--mark-more-like-this)
-         (when (mc/handle-more-like-this-no-match-condition "No more matches found.")
-	   (goto-char end-char)
-	   (if (/= right-bound (funcall search-function re nil t))
-	       (mc--mark-more-like-this)
-	     (message "No more matches found. Done looping."))))))))
-
-(defun mc--mark-more-like-this ()
-  (push-mark (funcall match-point-getter 0))
-  (when point-out-of-order
-    (exchange-point-and-mark))
-  (mc/create-fake-cursor-at-point))
+       (if (or (funcall search-function re nil t)
+               (and (mc/handle-more-like-this-no-match-condition "No more matches found.")
+                    (goto-char end-char)
+                    (/= region-start (funcall search-function re nil t))))
+           (progn
+             (push-mark (funcall match-point-getter 0))
+             (when point-out-of-order
+               (exchange-point-and-mark))
+             (mc/create-fake-cursor-at-point))
+         (message "No more matches found. Done looping."))))))
 
 ;;;###autoload
 (defun mc/mark-next-like-this (arg)
@@ -188,9 +187,9 @@ With zero ARG, skip the last one and mark next."
   (interactive "p")
   (if (< arg 0)
       (let ((cursor (mc/furthest-cursor-after-point)))
-	(if cursor
-	    (mc/remove-fake-cursor cursor)
-	  (error "No cursors to be unmarked")))
+        (if cursor
+            (mc/remove-fake-cursor cursor)
+          (error "No cursors to be unmarked")))
     (if (region-active-p)
         (mc/mark-more-like-this (= arg 0) 'forwards)
       (mc/mark-lines arg 'forwards)))
@@ -205,9 +204,9 @@ With zero ARG, skip the last one and mark next."
   (interactive "p")
   (if (< arg 0)
       (let ((cursor (mc/furthest-cursor-after-point)))
-	(if cursor
-	    (mc/remove-fake-cursor cursor)
-	  (error "No cursors to be unmarked")))
+        (if cursor
+            (mc/remove-fake-cursor cursor)
+          (error "No cursors to be unmarked")))
     (if (region-active-p)
         (mc/mark-more-like-this (= arg 0) 'forwards)
       (mc--select-thing-at-point 'word)
@@ -222,9 +221,9 @@ With zero ARG, skip the last one and mark next."
   (interactive "p")
   (if (< arg 0)
       (let ((cursor (mc/furthest-cursor-after-point)))
-	(if cursor
-	    (mc/remove-fake-cursor cursor)
-	  (error "No cursors to be unmarked")))
+        (if cursor
+            (mc/remove-fake-cursor cursor)
+          (error "No cursors to be unmarked")))
     (if (region-active-p)
         (mc/mark-more-like-this (= arg 0) 'forwards)
       (mc--select-thing-at-point 'symbol)
@@ -263,9 +262,9 @@ With zero ARG, skip the last one and mark next."
   (interactive "p")
   (if (< arg 0)
       (let ((cursor (mc/furthest-cursor-before-point)))
-	(if cursor
-	    (mc/remove-fake-cursor cursor)
-	  (error "No cursors to be unmarked")))
+        (if cursor
+            (mc/remove-fake-cursor cursor)
+          (error "No cursors to be unmarked")))
     (if (region-active-p)
         (mc/mark-more-like-this (= arg 0) 'backwards)
       (mc/mark-lines arg 'backwards)))
@@ -280,9 +279,9 @@ With zero ARG, skip the last one and mark previous."
   (interactive "p")
   (if (< arg 0)
       (let ((cursor (mc/furthest-cursor-after-point)))
-	(if cursor
-	    (mc/remove-fake-cursor cursor)
-	  (error "No cursors to be unmarked")))
+        (if cursor
+            (mc/remove-fake-cursor cursor)
+          (error "No cursors to be unmarked")))
     (if (region-active-p)
         (mc/mark-more-like-this (= arg 0) 'backwards)
       (mc--select-thing-at-point 'word)
@@ -297,9 +296,9 @@ With zero ARG, skip the last one and mark previous."
   (interactive "p")
   (if (< arg 0)
       (let ((cursor (mc/furthest-cursor-after-point)))
-	(if cursor
-	    (mc/remove-fake-cursor cursor)
-	  (error "No cursors to be unmarked")))
+        (if cursor
+            (mc/remove-fake-cursor cursor)
+          (error "No cursors to be unmarked")))
     (if (region-active-p)
         (mc/mark-more-like-this (= arg 0) 'backwards)
       (mc--select-thing-at-point 'symbol)
@@ -333,8 +332,8 @@ With zero ARG, skip the last one and mark next."
   (dotimes (i (if (= num-lines 0) 1 num-lines))
     (mc/save-excursion
      (let ((furthest-cursor (cl-ecase direction
-			      (forwards  (mc/furthest-cursor-after-point))
-			      (backwards (mc/furthest-cursor-before-point)))))
+                              (forwards  (mc/furthest-cursor-after-point))
+                              (backwards (mc/furthest-cursor-before-point)))))
        (when (overlayp furthest-cursor)
          (goto-char (overlay-get furthest-cursor 'point))
          (when (= num-lines 0)
