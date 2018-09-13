@@ -396,7 +396,7 @@ With zero ARG, skip the last one and mark next."
         (while (search-forward search end t)
           (push-mark (match-beginning 0))
           (mc/create-fake-cursor-at-point))
-        (let ((first (car (mc/all-fake-cursors))))
+        (let ((first (car (last (mc/all-fake-cursors)))))
           (if (not first)
               (error "Search failed for %S" search)
             (mc/pop-state-from-overlay first)))
