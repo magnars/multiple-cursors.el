@@ -704,6 +704,30 @@ already there."
   (save-excursion
     (not (null (sgml-get-context)))))
 
+(defun mc/split-region (beg end search)
+  "Split region each time SEARCH occurs in the buffer.
+
+This can be thought of as an inverse to `mc/mark-all-in-region'."
+  (interactive "r\nsSplit on: ")
+  (let ((case-fold-search nil))
+    (if (string= search "")
+        (user-error "Empty search term")
+      (progn
+        (mc/remove-fake-cursors)
+        (goto-char beg)
+        (push-mark beg)
+        (while (search-forward search end t)
+          (save-excursion
+            (goto-char (match-beginning 0))
+            (mc/create-fake-cursor-at-point))
+          (push-mark (match-end 0)))
+        (unless (= (point) end)
+          (goto-char end))
+        (mc/create-fake-cursor-at-point)
+        (if (> (mc/num-cursors) 1)
+            (multiple-cursors-mode 1)
+          (multiple-cursors-mode 0))))))
+
 (provide 'mc-mark-more)
 
 ;;; mc-mark-more.el ends here
