@@ -75,11 +75,11 @@
 
 (defun mc--number-to-letters (number)
   (let ((letter
-     (char-to-string
-      (+ (mod number 26) ?a)))
-    (number2 (/ number 26)))
+         (char-to-string
+          (+ (mod number 26) ?a)))
+        (number2 (/ number 26)))
     (if (> number2 0)
-    (concat (mc--number-to-letters (- number2 1)) letter)
+        (concat (mc--number-to-letters (- number2 1)) letter)
       letter)))
 
 (defun mc--insert-letter-and-increase ()
@@ -137,19 +137,14 @@ Might not behave as intended if more than one cursors are on the same line."
      (lambda ()
        (interactive)
        (let ((missing-spaces (- rightest-column (current-column))))
-     (save-excursion (insert (make-string missing-spaces character)))
-     (forward-char missing-spaces)
-     )
-       ))
-      )
-    )
+         (save-excursion (insert (make-string missing-spaces character)))
+         (forward-char missing-spaces))))))
 
 ;;;###autoload
 (defun mc/vertical-align-with-space ()
   "Aligns all cursors with whitespace like `mc/vertical-align' does"
   (interactive)
-  (mc/vertical-align 32)
-  )
+  (mc/vertical-align 32))
 
 (provide 'mc-separate-operations)
 ;;; mc-separate-operations.el ends here
