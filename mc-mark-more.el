@@ -56,7 +56,7 @@
 
 (defun mc/furthest-cursor-before-point ()
   (let ((beg (if mark-active (min (mark) (point)) (point)))
-	furthest)
+        furthest)
     (mc/for-each-fake-cursor
      (when (< (mc/cursor-beg cursor) beg)
        (setq beg (mc/cursor-beg cursor))
@@ -65,7 +65,7 @@
 
 (defun mc/furthest-cursor-after-point ()
   (let ((end (if mark-active (max (mark) (point)) (point)))
-	furthest)
+        furthest)
     (mc/for-each-fake-cursor
      (when (> (mc/cursor-end cursor) end)
        (setq end (mc/cursor-end cursor))
@@ -142,9 +142,9 @@ With zero ARG, skip the last one and mark next."
   (interactive "p")
   (if (< arg 0)
       (let ((cursor (mc/furthest-cursor-after-point)))
-	(if cursor
-	    (mc/remove-fake-cursor cursor)
-	  (error "No cursors to be unmarked")))
+        (if cursor
+            (mc/remove-fake-cursor cursor)
+          (error "No cursors to be unmarked")))
     (if (region-active-p)
         (mc/mark-more-like-this (= arg 0) 'forwards)
       (mc/mark-lines arg 'forwards)))
@@ -159,9 +159,9 @@ With zero ARG, skip the last one and mark next."
   (interactive "p")
   (if (< arg 0)
       (let ((cursor (mc/furthest-cursor-after-point)))
-	(if cursor
-	    (mc/remove-fake-cursor cursor)
-	  (error "No cursors to be unmarked")))
+        (if cursor
+            (mc/remove-fake-cursor cursor)
+          (error "No cursors to be unmarked")))
     (if (region-active-p)
         (mc/mark-more-like-this (= arg 0) 'forwards)
       (mc--select-thing-at-point 'word)
@@ -176,9 +176,9 @@ With zero ARG, skip the last one and mark next."
   (interactive "p")
   (if (< arg 0)
       (let ((cursor (mc/furthest-cursor-after-point)))
-	(if cursor
-	    (mc/remove-fake-cursor cursor)
-	  (error "No cursors to be unmarked")))
+        (if cursor
+            (mc/remove-fake-cursor cursor)
+          (error "No cursors to be unmarked")))
     (if (region-active-p)
         (mc/mark-more-like-this (= arg 0) 'forwards)
       (mc--select-thing-at-point 'symbol)
@@ -217,9 +217,9 @@ With zero ARG, skip the last one and mark next."
   (interactive "p")
   (if (< arg 0)
       (let ((cursor (mc/furthest-cursor-before-point)))
-	(if cursor
-	    (mc/remove-fake-cursor cursor)
-	  (error "No cursors to be unmarked")))
+        (if cursor
+            (mc/remove-fake-cursor cursor)
+          (error "No cursors to be unmarked")))
     (if (region-active-p)
         (mc/mark-more-like-this (= arg 0) 'backwards)
       (mc/mark-lines arg 'backwards)))
@@ -234,9 +234,9 @@ With zero ARG, skip the last one and mark previous."
   (interactive "p")
   (if (< arg 0)
       (let ((cursor (mc/furthest-cursor-after-point)))
-	(if cursor
-	    (mc/remove-fake-cursor cursor)
-	  (error "No cursors to be unmarked")))
+        (if cursor
+            (mc/remove-fake-cursor cursor)
+          (error "No cursors to be unmarked")))
     (if (region-active-p)
         (mc/mark-more-like-this (= arg 0) 'backwards)
       (mc--select-thing-at-point 'word)
@@ -251,9 +251,9 @@ With zero ARG, skip the last one and mark previous."
   (interactive "p")
   (if (< arg 0)
       (let ((cursor (mc/furthest-cursor-after-point)))
-	(if cursor
-	    (mc/remove-fake-cursor cursor)
-	  (error "No cursors to be unmarked")))
+        (if cursor
+            (mc/remove-fake-cursor cursor)
+          (error "No cursors to be unmarked")))
     (if (region-active-p)
         (mc/mark-more-like-this (= arg 0) 'backwards)
       (mc--select-thing-at-point 'symbol)
@@ -287,8 +287,8 @@ With zero ARG, skip the last one and mark next."
   (dotimes (i (if (= num-lines 0) 1 num-lines))
     (mc/save-excursion
      (let ((furthest-cursor (cl-ecase direction
-			      (forwards  (mc/furthest-cursor-after-point))
-			      (backwards (mc/furthest-cursor-before-point)))))
+                              (forwards  (mc/furthest-cursor-after-point))
+                              (backwards (mc/furthest-cursor-before-point)))))
        (when (overlayp furthest-cursor)
          (goto-char (overlay-get furthest-cursor 'point))
          (when (= num-lines 0)
@@ -425,7 +425,7 @@ With zero ARG, skip the last one and mark next."
               (forward-char)))
           (unless lastmatch
             (error "Search failed for %S" search)))
-          (goto-char (match-end 0))
+        (goto-char (match-end 0))
         (if (< (mc/num-cursors) 3)
             (multiple-cursors-mode 0)
           (mc/pop-state-from-overlay (mc/furthest-cursor-before-point))
@@ -583,7 +583,7 @@ If the region is inactive or on a single line, it will behave like
                    (line-number-at-pos (region-end)))))
       (if arg
           (call-interactively 'mc/edit-lines)
-       (call-interactively 'mc/mark-all-in-region))
+        (call-interactively 'mc/mark-all-in-region))
     (progn
       (setq this-command 'mc/mark-all-like-this-dwim)
       (mc/mark-all-like-this-dwim arg))))
