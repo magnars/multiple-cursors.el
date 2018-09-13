@@ -29,6 +29,14 @@
 
 (require 'multiple-cursors-core)
 
+(defcustom mc/insert-numbers-default 0
+  "The default number at which to start counting for
+`mc/insert-numbers'"
+  :type 'integer
+  :group 'multiple-cursors)
+
+(defvar mc--insert-numbers-number 0)
+
 ;;;###autoload
 (defun mc/insert-numbers (arg)
   "Insert increasing numbers for each cursor, starting at
@@ -38,14 +46,6 @@
                                       mc/insert-numbers-default))
   (mc/for-each-cursor-ordered
    (mc/execute-command-for-fake-cursor 'mc--insert-number-and-increase cursor)))
-
-(defcustom mc/insert-numbers-default 0
-  "The default number at which to start counting for
-`mc/insert-numbers'"
-  :type 'integer
-  :group 'multiple-cursors)
-
-(defvar mc--insert-numbers-number 0)
 
 (defun mc--insert-number-and-increase ()
   (interactive)
@@ -61,6 +61,8 @@
                             (mc/cursor-end cursor)) strings))))
     (nreverse strings)))
 
+(defvar mc--insert-letters-number 0)
+
 ;;;###autoload
 (defun mc/insert-letters (arg)
   "Insert increasing letters for each cursor, starting at 0 or ARG.
@@ -73,14 +75,12 @@
 
 (defun mc--number-to-letters (number)
   (let ((letter
-	 (char-to-string
-	  (+ (mod number 26) ?a)))
-	(number2 (/ number 26)))
+     (char-to-string
+      (+ (mod number 26) ?a)))
+    (number2 (/ number 26)))
     (if (> number2 0)
-	(concat (mc--number-to-letters (- number2 1)) letter)
+    (concat (mc--number-to-letters (- number2 1)) letter)
       letter)))
-
-(defvar mc--insert-letters-number 0)
 
 (defun mc--insert-letter-and-increase ()
   (interactive)
@@ -137,9 +137,9 @@ Might not behave as intended if more than one cursors are on the same line."
      (lambda ()
        (interactive)
        (let ((missing-spaces (- rightest-column (current-column))))
-	 (save-excursion (insert (make-string missing-spaces character)))
-	 (forward-char missing-spaces)
-	 )
+     (save-excursion (insert (make-string missing-spaces character)))
+     (forward-char missing-spaces)
+     )
        ))
       )
     )
