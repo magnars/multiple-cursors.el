@@ -27,6 +27,7 @@
 ;;; Code:
 
 (require 'multiple-cursors-core)
+(require 'mc-mark-more)
 
 (defun mc/next-fake-cursor-after-point ()
   (let ((pos (point))

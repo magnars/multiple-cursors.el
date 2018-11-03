@@ -28,6 +28,7 @@
 ;;; Code:
 
 (require 'multiple-cursors-core)
+(require 'mc-mark-more)
 
 (defcustom mc/insert-numbers-default 0
   "The default number at which to start counting for
