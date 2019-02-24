@@ -149,7 +149,18 @@ highlights the entire width of the window."
                                   autopair-action
                                   autopair-wrap-action
                                   temporary-goal-column
-                                  er/history)
+                                  er/history
+                                  dabbrev--abbrev-char-regexp
+                                  dabbrev--check-other-buffers
+                                  dabbrev--friend-buffer-list
+                                  dabbrev--last-abbrev-location
+                                  dabbrev--last-abbreviation
+                                  dabbrev--last-buffer
+                                  dabbrev--last-buffer-found
+                                  dabbrev--last-direction
+                                  dabbrev--last-expansion
+                                  dabbrev--last-expansion-location
+                                  dabbrev--last-table)
   "A list of vars that need to be tracked on a per-cursor basis.")
 
 (defun mc/store-current-state-in-overlay (o)
