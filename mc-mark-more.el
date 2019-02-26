@@ -723,10 +723,7 @@ This can be thought of as an inverse to `mc/mark-all-in-region'."
           (push-mark (match-end 0)))
         (unless (= (point) end)
           (goto-char end))
-        (mc/create-fake-cursor-at-point)
-        (if (> (mc/num-cursors) 1)
-            (multiple-cursors-mode 1)
-          (multiple-cursors-mode 0))))))
+        (mc/maybe-multiple-cursors-mode)))))
 
 (provide 'mc-mark-more)
 
