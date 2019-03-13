@@ -435,6 +435,10 @@ the original cursor, to inform about the lack of support."
                   (message "%S is not supported with multiple cursors%s"
                            original-command
                            (get original-command 'mc--unsupported))
+
+                ;; lazy-load the user's list file
+                (mc/load-lists)
+
                 (when (and original-command
                            (not (memq original-command mc--default-cmds-to-run-once))
                            (not (memq original-command mc/cmds-to-run-once))
@@ -612,6 +616,15 @@ from being executed if in multiple-cursors-mode."
 for running commands with multiple cursors."
   :type 'file
   :group 'multiple-cursors)
+
+(defvar mc--list-file-loaded nil
+  "Whether the list file has already been loaded.")
+
+(defun mc/load-lists ()
+  "Loads preferences for running commands with multiple cursors from `mc/list-file'"
+  (unless mc--list-file-loaded
+    (load mc/list-file 'noerror 'nomessage)
+    (setq mc--list-file-loaded t)))
 
 (defun mc/dump-list (list-symbol)
   "Insert (setq 'LIST-SYMBOL LIST-VALUE) to current buffer."
@@ -816,10 +829,6 @@ for running commands with multiple cursors."
 
 (defvar mc/cmds-to-run-for-all nil
   "Commands to run for all cursors in multiple-cursors-mode")
-
-;; load, but no errors if it does not exist yet please, and no message
-;; while loading
-(load mc/list-file 'noerror 'nomessage)
 
 (provide 'multiple-cursors-core)
 
