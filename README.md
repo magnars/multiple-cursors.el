@@ -19,6 +19,8 @@ happily use this package, just like I do. If it doesn't work for you, then I'm
 sorry. Thankfully Emacs is infinitely malleable, you can probably fix it
 yourself.
 
+TLDR: *I am still maintaining this package*, but I am no longer crowdsourcing a list of issues.
+
 ## Installation
 
 I highly recommend installing multiple-cursors through `package.el`.
