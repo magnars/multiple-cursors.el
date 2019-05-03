@@ -579,8 +579,8 @@ If the region is inactive or on a single line, it will behave like
   (interactive "P")
   (if (and (use-region-p)
            (not (> (mc/num-cursors) 1))
-           (not (= (line-number-at-pos (region-beginning))
-                   (line-number-at-pos (region-end)))))
+           (not (= (mc/line-number-at-pos (region-beginning))
+                   (mc/line-number-at-pos (region-end)))))
       (if arg
           (call-interactively 'mc/edit-lines)
         (call-interactively 'mc/mark-all-in-region))
