@@ -54,8 +54,8 @@ other non-nil value will cause short lines to be padded."
     (error "Mark a set of lines first"))
   (mc/remove-fake-cursors)
   (let* ((col (current-column))
-         (point-line (line-number-at-pos))
-         (mark-line (progn (exchange-point-and-mark) (line-number-at-pos)))
+         (point-line (mc/line-number-at-pos))
+         (mark-line (progn (exchange-point-and-mark) (mc/line-number-at-pos)))
          (direction (if (< point-line mark-line) :up :down))
          (style (cond
                  ;; called from lisp
@@ -71,7 +71,7 @@ other non-nil value will cause short lines to be padded."
       (previous-logical-line 1 nil)
       (move-to-column col))
     ;; Add the cursors
-    (while (not (eq (line-number-at-pos) point-line))
+    (while (not (eq (mc/line-number-at-pos) point-line))
       ;; Pad the line
       (when (eq style 'pad)
         (while (< (current-column) col)
