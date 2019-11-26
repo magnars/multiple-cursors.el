@@ -124,7 +124,7 @@
 ;;;###autoload
 (defun mc/vertical-align (character)
   "Aligns all cursors vertically with a given CHARACTER to the one with the
-highest colum number (the rightest).
+highest column number (the rightest).
 Might not behave as intended if more than one cursors are on the same line."
   (interactive "c")
   (let ((rightest-column (current-column)))
