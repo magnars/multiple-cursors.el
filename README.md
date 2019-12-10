@@ -1,7 +1,7 @@
 # multiple-cursors.el [![Build Status](https://secure.travis-ci.org/magnars/multiple-cursors.el.png)](http://travis-ci.org/magnars/multiple-cursors.el)
 
 Multiple cursors for Emacs. This is some pretty crazy functionality, so yes,
-there are kinks. Don't be afraid tho, I've been using it since 2011 with
+there are kinks. Don't be afraid though, I've been using it since 2011 with
 great success and much merriment.
 
 ## Maintenance warning
@@ -82,7 +82,7 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
  - `mc/mark-previous-like-this-symbol`: Adds a cursor and region at the next part of the buffer backwards that matches the current region, if  no region is selected it selects the symbol at the point.
  - `mc/mark-previous-word-like-this`: Like `mc/mark-previous-like-this` but only for whole words.
  - `mc/mark-previous-symbol-like-this`: Like `mc/mark-previous-like-this` but only for whole symbols.
- - `mc/mark-more-like-this-extended`: Use arrow keys to quickly mark/skip next/previous occurances.
+ - `mc/mark-more-like-this-extended`: Use arrow keys to quickly mark/skip next/previous occurrences.
  - `mc/add-cursor-on-click`: Bind to a mouse event to add cursors by clicking. See tips-section.
  - `mc/mark-pop`: Set a cursor at the current point and move to the next (different) position on the mark stack.  This allows for fine grained control over the placement of cursors.
 
@@ -90,8 +90,8 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
 
  - `mc/unmark-next-like-this`: Remove the cursor furthest down in the buffer.
  - `mc/unmark-previous-like-this`: Remove the cursor furthest up in the buffer.
- - `mc/skip-to-next-like-this`: Remove the cursor furthest down, marking the next occurance down.
- - `mc/skip-to-previous-like-this`: Remove the cursor furthest up, marking the next occurance up.
+ - `mc/skip-to-next-like-this`: Remove the cursor furthest down, marking the next occurrence down.
+ - `mc/skip-to-previous-like-this`: Remove the cursor furthest up, marking the next occurrence up.
 
 ### Mark many occurrences
 
@@ -134,7 +134,7 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
 
 - Try pressing `mc/mark-next-like-this-word` or
   `mc/mark-next-like-this-symbol` with no region selected. It will
-  mark the word or symbol and add a cursor at the next occurance
+  mark the word or symbol and add a cursor at the next occurrence
 
 - Try pressing `mc/mark-all-like-this-dwim` on a tagname in html-mode.
 

@@ -73,7 +73,7 @@ mode. To leave this mode press <return> or \"C-g\""
   :group 'multiple-cursors)
 
 (defcustom hum/placeholder "..."
-  "Placeholder which will be placed insted of hiden text"
+  "Placeholder which will be placed instead of hidden text"
   :type '(string)
   :group 'multiple-cursors)
 
