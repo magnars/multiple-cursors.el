@@ -190,7 +190,7 @@ With zero ARG, skip the last one and mark next."
 (defun mc/mark-next-word-like-this (arg)
   "Find and mark the next word of the buffer matching the currently active region
 The matching region must be a whole word to be a match
-If no region is active, mark the symbol at the point and find the next match
+If no region is active add a cursor on the next line
 With negative ARG, delete the last one instead.
 With zero ARG, skip the last one and mark next."
   (interactive "p")
@@ -201,7 +201,7 @@ With zero ARG, skip the last one and mark next."
 (defun mc/mark-next-symbol-like-this (arg)
   "Find and mark the next symbol of the buffer matching the currently active region
 The matching region must be a whole symbol to be a match
-If no region is active, mark the symbol at the point and find the next match
+If no region is active add a cursor on the next line
 With negative ARG, delete the last one instead.
 With zero ARG, skip the last one and mark next."
   (interactive "p")
