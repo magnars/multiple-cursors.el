@@ -1,4 +1,4 @@
-;;; mc-hide-unmatched-lines.el
+;;; mc-hide-unmatched-lines-mode.el
 
 ;; Copyright (C) 2014 Aleksey Fedotov
 
@@ -103,5 +103,6 @@ mode. To leave this mode press <return> or \"C-g\""
 (defun hum/unhide-unmatched-lines ()
   (remove-overlays nil nil hum/invisible-overlay-name t))
 
-(provide 'mc-hide-unmatched-lines-mode)
 (define-key mc/keymap (kbd "C-'") 'mc-hide-unmatched-lines-mode)
+
+(provide 'mc-hide-unmatched-lines-mode)

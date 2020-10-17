@@ -844,6 +844,8 @@ for running commands with multiple cursors."
   "Commands to run for all cursors in multiple-cursors-mode")
 
 (provide 'multiple-cursors-core)
+(require 'mc-cycle-cursors)
+(require 'mc-hide-unmatched-lines-mode)
 
 ;; Local Variables:
 ;; coding: utf-8

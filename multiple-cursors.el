@@ -191,12 +191,10 @@
   :group 'editing)
 
 (require 'mc-edit-lines)
-(require 'mc-cycle-cursors)
 (require 'mc-mark-more)
 (require 'mc-mark-pop)
 (require 'rectangular-region-mode)
 (require 'mc-separate-operations)
-(require 'mc-hide-unmatched-lines-mode)
 
 (provide 'multiple-cursors)
 
