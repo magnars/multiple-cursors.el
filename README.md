@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/magnars/multiple-cursors.el.png)](http://travis-ci.org/magnars/multiple-cursors.el)
+[![Build Status](https://secure.travis-ci.org/magnars/multiple-cursors.el.png)](https://travis-ci.org/magnars/multiple-cursors.el)
 [![MELPA](https://melpa.org/packages/multiple-cursors-badge.svg)](https://melpa.org/#/multiple-cursors)
 [![MELPA Stable](https://stable.melpa.org/packages/multiple-cursors-badge.svg)](https://stable.melpa.org/#/multiple-cursors)
 
