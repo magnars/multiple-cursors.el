@@ -1,4 +1,4 @@
-(require 'cl) ;; For lexical-let
+;; -*- lexical-binding: t -*-
 
 (When "^I mark next like this$"
       (lambda () (call-interactively 'mc/mark-next-like-this)))
@@ -108,27 +108,23 @@
 
 
 (When "^I copy \"\\(.+\\)\" in another program$"
-       (lambda (text)
-         (lexical-let ((text text))
-           (setq interprogram-paste-function
-                 #'(lambda () (let ((r text)) (setq text nil) r))))))
+      (lambda (text)
+        (setq interprogram-paste-function
+              #'(lambda () (let ((r text)) (setq text nil) r)))))
 
 (Given "^I have bound C-! to a lambda that inserts \"\\(.+\\)\"$"
        (lambda (ins)
-         (lexical-let ((ins ins))
-           (global-set-key (kbd "C-!") #'(lambda () (interactive) (insert ins))))))
+         (global-set-key (kbd "C-!") #'(lambda () (interactive) (insert ins)))))
 
 (Given "^I have bound C-! to a new command that inserts \"\\(.+\\)\"$"
        (lambda (ins)
-         (lexical-let ((ins ins))
-           (defun mc-test-temp-command () (interactive) (insert ins))
-           (global-set-key (kbd "C-!") 'mc-test-temp-command))))
+         (defun mc-test-temp-command () (interactive) (insert ins))
+         (global-set-key (kbd "C-!") 'mc-test-temp-command)))
 
 (Given "^I have bound C-! to another new command that inserts \"\\(.+\\)\"$"
        (lambda (ins)
-         (lexical-let ((ins ins))
-           (defun mc-test-temp-command-2 () (interactive) (insert ins))
-           (global-set-key (kbd "C-!") 'mc-test-temp-command-2))))
+         (defun mc-test-temp-command-2 () (interactive) (insert ins))
+         (global-set-key (kbd "C-!") 'mc-test-temp-command-2)))
 
 (Given "^I have bound C-! to a keyboard macro that insert \"_\"$"
        (lambda ()
