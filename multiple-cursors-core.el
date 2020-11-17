@@ -40,6 +40,18 @@
   "The face used for fake cursors if the cursor-type is bar"
   :group 'multiple-cursors)
 
+(defcustom mc/match-cursor-style t
+  "If non-nil, attempt to match the cursor style that the user
+has selected.  Namely, use vertical bars the user has configured
+Emacs to use that cursor.
+
+If nil, just use standard rectangle cursors for all fake cursors.
+
+In some modes/themes, the bar fake cursors are either not
+rendered or shift text."
+  :type '(boolean)
+  :group 'multiple-cursors)
+
 (defface mc/region-face
   '((t :inherit region))
   "The face used for fake regions"
@@ -125,7 +137,7 @@
 (defun mc/make-cursor-overlay-at-eol (pos)
   "Create overlay to look like cursor at end of line."
   (let ((overlay (make-overlay pos pos nil nil nil)))
-    (if (mc/cursor-is-bar)
+    (if (and mc/match-cursor-style (mc/cursor-is-bar))
 	(overlay-put overlay 'before-string (propertize "|" 'face 'mc/cursor-bar-face))
       (overlay-put overlay 'after-string (propertize " " 'face 'mc/cursor-face)))
     overlay))
@@ -133,7 +145,7 @@
 (defun mc/make-cursor-overlay-inline (pos)
   "Create overlay to look like cursor inside text."
   (let ((overlay (make-overlay pos (1+ pos) nil nil nil)))
-    (if (mc/cursor-is-bar)
+    (if (and mc/match-cursor-style (mc/cursor-is-bar))
 	(overlay-put overlay 'before-string (propertize "|" 'face 'mc/cursor-bar-face))
       (overlay-put overlay 'face 'mc/cursor-face))
     overlay))
