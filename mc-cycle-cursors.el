@@ -88,7 +88,7 @@
 (cl-defun mc/cycle (next-cursor fallback-cursor loop-message)
   (when (null next-cursor)
     (when (eql 'stop (mc/handle-loop-condition loop-message))
-      (return-from mc/cycle nil))
+      (cl-return-from mc/cycle nil))
     (setf next-cursor fallback-cursor))
   (mc/create-fake-cursor-at-point)
   (mc/pop-state-from-overlay next-cursor)
