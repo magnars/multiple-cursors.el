@@ -35,4 +35,4 @@ jobs:
     - name: Install dependencies with Cask
       run: cask
     - name: Run tests
-      run: ./run-tests.sh
+      run: script -e -c /bin/bash -c 'TERM=xterm ./run-tests.sh'
