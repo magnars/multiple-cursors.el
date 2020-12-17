@@ -38,18 +38,29 @@
 (defvar mc--insert-numbers-number 0)
 
 ;;;###autoload
-(defun mc/insert-numbers (arg)
+(defun mc/insert-numbers-with-format (first-number format-string)
+  "Insert increasing numbers for each cursor, starting at
+`mc/insert-numbers-default' or ARG. A `format` compatible
+format string is queried as input parameter"
+  (interactive "P\nsformat string: ")
+  (setq mc--insert-numbers-number (or (and first-number (prefix-numeric-value first-number))
+                                      mc/insert-numbers-default))
+  (mc/for-each-cursor-ordered
+   (mc/execute-command-for-fake-cursor
+    (lambda () (interactive)
+      (funcall (apply-partially 'mc--insert-number-and-increase format-string)))
+    cursor)))
+
+;;;###autoload
+(defun mc/insert-numbers (first-number)
   "Insert increasing numbers for each cursor, starting at
 `mc/insert-numbers-default' or ARG."
   (interactive "P")
-  (setq mc--insert-numbers-number (or (and arg (prefix-numeric-value arg))
-                                      mc/insert-numbers-default))
-  (mc/for-each-cursor-ordered
-   (mc/execute-command-for-fake-cursor 'mc--insert-number-and-increase cursor)))
+  (mc/insert-numbers-with-format first-number "%d"))
 
-(defun mc--insert-number-and-increase ()
+(defun mc--insert-number-and-increase (format-string)
   (interactive)
-  (insert (number-to-string mc--insert-numbers-number))
+  (insert (format format-string mc--insert-numbers-number))
   (setq mc--insert-numbers-number (1+ mc--insert-numbers-number)))
 
 (defun mc--ordered-region-strings ()
