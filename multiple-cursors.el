@@ -5,6 +5,7 @@
 ;; Author: Magnar Sveen <magnars@gmail.com>
 ;; Version: 1.4.0
 ;; Keywords: editing cursors
+;; Homepage: https://github.com/magnars/multiple-cursors.el
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
