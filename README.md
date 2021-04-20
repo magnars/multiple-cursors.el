@@ -119,6 +119,8 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
  - `mc/insert-letters`: Insert increasing letters for each cursor, top to bottom.
  - `mc/sort-regions`: Sort the marked regions alphabetically.
  - `mc/reverse-regions`: Reverse the order of the marked regions.
+ - `mc/vertical-align`: Aligns all cursors vertically with a given CHARACTER to the one with the highest column number (the rightest). (Might not behave as intended if more than one cursors are on the same line.)
+ - `mc/vertical-align-with-space`: Aligns all cursors with whitespace like `mc/vertical-align` does.
 
 ## Tips and tricks
 
