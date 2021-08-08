@@ -1,6 +1,7 @@
 [![Build Status](https://secure.travis-ci.org/magnars/multiple-cursors.el.png)](https://travis-ci.org/magnars/multiple-cursors.el)
 [![MELPA](https://melpa.org/packages/multiple-cursors-badge.svg)](https://melpa.org/#/multiple-cursors)
 [![MELPA Stable](https://stable.melpa.org/packages/multiple-cursors-badge.svg)](https://stable.melpa.org/#/multiple-cursors)
+[![NonGNU ELPA](https://elpa.nongnu.org/nongnu/multiple-cursors.svg)](https://elpa.nongnu.org/nongnu/multiple-cursors.html)
 
 # multiple-cursors.el
 
@@ -29,7 +30,9 @@ TLDR: *I am still maintaining this package*, but I am no longer crowdsourcing a 
 
 I highly recommend installing multiple-cursors through `package.el`.
 
-It's available on [MELPA](http://melpa.org/) and [MELPA Stable](http://stable.melpa.org):
+It's available on [MELPA](http://melpa.org/), [MELPA Stable](http://stable.melpa.org) and 
+[NonGNU ELPA](https://elpa.nongnu.org/nongnu/multiple-cursors.html) (enabled by default
+from Emacs 28 onwards):
 
     M-x package-install multiple-cursors
 
