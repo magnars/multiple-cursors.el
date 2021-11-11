@@ -433,9 +433,7 @@ the original cursor, to inform about the lack of support."
   (unless mc--executing-command-for-fake-cursor
 
     (if (eq 1 (mc/num-cursors)) ;; no fake cursors? disable mc-mode
-        (progn
-          (multiple-cursors-mode 0)
-          (run-hooks 'multiple-cursors-mode-disabled-hook))
+        (mc/disable-multiple-cursors-mode)
       (when this-original-command
         (let ((original-command (or mc--this-command
                                     (command-remapping this-original-command)
@@ -489,9 +487,7 @@ you should disable multiple-cursors-mode."
   "Deactivate mark if there are any active, otherwise exit multiple-cursors-mode."
   (interactive)
   (if (not (use-region-p))
-      (progn
-        (multiple-cursors-mode 0)
-        (run-hooks 'multiple-cursors-mode-disabled-hook))
+      (mc/disable-multiple-cursors-mode)
     (deactivate-mark)))
 
 (defun mc/repeat-command ()
@@ -592,18 +588,18 @@ They are temporarily disabled when multiple-cursors are active.")
     (mc/enable-temporarily-disabled-minor-modes)
     (run-hooks 'multiple-cursors-mode-disabled-hook)))
 
-(add-hook 'after-revert-hook
-          #'(lambda () (progn
-                         (multiple-cursors-mode 0)
-                         (run-hooks 'multiple-cursors-mode-disabled-hook))))
+(defun mc/disable-multiple-cursors-mode ()
+  "Disable multiple-cursors-mode and run the corresponding hook."
+  (multiple-cursors-mode 0)
+  (run-hooks 'multiple-cursors-mode-disabled-hook))
+
+(add-hook 'after-revert-hook 'mc/disable-multiple-cursors-mode)
 
 (defun mc/maybe-multiple-cursors-mode ()
   "Enable multiple-cursors-mode if there is more than one currently active cursor."
   (if (> (mc/num-cursors) 1)
       (multiple-cursors-mode 1)
-    (progn
-      (multiple-cursors-mode 0)
-      (run-hooks 'multiple-cursors-mode-disabled-hook))))
+    (mc/disable-multiple-cursors-mode)))
 
 (defmacro unsupported-cmd (cmd msg)
   "Adds command to list of unsupported commands and prevents it
