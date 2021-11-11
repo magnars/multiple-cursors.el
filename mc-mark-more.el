@@ -355,7 +355,9 @@ With zero ARG, skip the last one and mark next."
        (when point-first (exchange-point-and-mark)))))
   (if (> (mc/num-cursors) 1)
       (multiple-cursors-mode 1)
-    (multiple-cursors-mode 0)))
+    (progn
+      (multiple-cursors-mode 0)
+      (run-hooks 'multiple-cursors-mode-disabled-hook))))
 
 (defun mc--select-thing-at-point (thing)
   (let ((bound (bounds-of-thing-at-point thing)))
@@ -402,7 +404,9 @@ With zero ARG, skip the last one and mark next."
             (mc/pop-state-from-overlay first)))
         (if (> (mc/num-cursors) 1)
             (multiple-cursors-mode 1)
-          (multiple-cursors-mode 0))))))
+          (progn
+            (multiple-cursors-mode 0)
+            (run-hooks 'multiple-cursors-mode-disabled-hook)))))))
 
 ;;;###autoload
 (defun mc/mark-all-in-region-regexp (beg end)
@@ -427,7 +431,9 @@ With zero ARG, skip the last one and mark next."
             (error "Search failed for %S" search)))
         (goto-char (match-end 0))
         (if (< (mc/num-cursors) 3)
-            (multiple-cursors-mode 0)
+            (progn
+              (multiple-cursors-mode 0)
+              (run-hooks 'multiple-cursors-mode-disabled-hook))
           (mc/pop-state-from-overlay (mc/furthest-cursor-before-point))
           (multiple-cursors-mode 1))))))
 
