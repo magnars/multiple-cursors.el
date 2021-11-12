@@ -162,6 +162,10 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
 - If you would like to keep the global bindings clean, and get custom keybindings
   when the region is active, you can try [region-bindings-mode](https://github.com/fgallina/region-bindings-mode).
 
+- There is a special hook that is run when the mode is diabled
+  (which is equivalent to the number of cursors going back to 1):
+  `multiple-cursors-mode-disabled-hook`
+
 BTW, I highly recommend adding `mc/mark-next-like-this` to a key binding that's
 right next to the key for `er/expand-region`.
 
