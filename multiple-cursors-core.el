@@ -121,18 +121,20 @@ rendered or shift text."
     (and (listp cursor-type)
          (eq (car cursor-type) 'bar))))
 
-(defun mc/line-number-at-pos (&optional pos absolute)
-  "Faster implementation of `line-number-at-pos'."
-  (if pos
-      (save-excursion
-        (if absolute
-            (save-restriction
-              (widen)
-              (goto-char pos)
-              (string-to-number (format-mode-line "%l")))
-          (goto-char pos)
-          (string-to-number (format-mode-line "%l"))))
-    (string-to-number (format-mode-line "%l"))))
+(if (>= emacs-major-version 28)
+    (defalias 'mc/line-number-at-pos #'line-number-at-pos)
+  (defun mc/line-number-at-pos (&optional pos absolute)
+    "Faster implementation of `line-number-at-pos'."
+    (if pos
+        (save-excursion
+          (if absolute
+              (save-restriction
+                (widen)
+                (goto-char pos)
+                (string-to-number (format-mode-line "%l")))
+            (goto-char pos)
+            (string-to-number (format-mode-line "%l"))))
+      (string-to-number (format-mode-line "%l")))))
 
 (defun mc/make-cursor-overlay-at-eol (pos)
   "Create overlay to look like cursor at end of line."
