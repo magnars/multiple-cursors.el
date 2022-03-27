@@ -54,8 +54,9 @@ also hum/lines-to-expand below and above) To make use of this
 mode press \"C-'\" while multiple-cursor-mode is active. You can
 still edit lines while you are in mc-hide-unmatched-lines
 mode. To leave this mode press <return> or \"C-g\""
-  nil " hu"
-  hum/hide-unmatched-lines-mode-map
+  :init-value nil
+  :lighter " hu"
+  :keymap hum/hide-unmatched-lines-mode-map
   (if mc-hide-unmatched-lines-mode
       ;;just in case if mc mode will be disabled while hide-unmatched-lines is active
       (progn

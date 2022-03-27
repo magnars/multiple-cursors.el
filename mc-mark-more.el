@@ -210,9 +210,13 @@ With zero ARG, skip the last one and mark next."
 
 ;;;###autoload
 (defun mc/mark-previous-like-this (arg)
-  "Find and mark the previous part of the buffer matching the currently active region
-If no region is active add a cursor on the previous line
+  "Find and mark the previous part of the buffer matching the
+currently active region.
+
+If no region is active ,add a cursor on the previous line.
+
 With negative ARG, delete the last one instead.
+
 With zero ARG, skip the last one and mark next."
   (interactive "p")
   (if (< arg 0)
@@ -227,9 +231,14 @@ With zero ARG, skip the last one and mark next."
 
 ;;;###autoload
 (defun mc/mark-previous-like-this-word (arg)
-  "Find and mark the previous part of the buffer matching the currently active region
-If no region is active, mark the word at the point and find the previous match
+  "Find and mark the previous part of the buffer matching the
+currently active region.
+
+If no region is active, mark the word at the point and find the
+previous match.
+
 With negative ARG, delete the last one instead.
+
 With zero ARG, skip the last one and mark previous."
   (interactive "p")
   (if (< arg 0)
@@ -244,9 +253,14 @@ With zero ARG, skip the last one and mark previous."
   (mc/maybe-multiple-cursors-mode))
 
 (defun mc/mark-previous-like-this-symbol (arg)
-  "Find and mark the previous part of the buffer matching the currently active region
-If no region is active, mark the symbol at the point and find the previous match
+  "Find and mark the previous part of the buffer matching the
+currently active region.
+
+If no region is active, mark the symbol at the point and find the
+previous match.
+
 With negative ARG, delete the last one instead.
+
 With zero ARG, skip the last one and mark previous."
   (interactive "p")
   (if (< arg 0)
@@ -263,10 +277,15 @@ With zero ARG, skip the last one and mark previous."
 
 ;;;###autoload
 (defun mc/mark-previous-word-like-this (arg)
-  "Find and mark the previous part of the buffer matching the currently active region
-The matching region must be a whole word to be a match
-If no region is active add a cursor on the previous line
+  "Find and mark the previous part of the buffer matching the
+currently active region.
+
+The matching region must be a whole word to be a match.
+
+If no region is active, add a cursor on the previous line.
+
 With negative ARG, delete the last one instead.
+
 With zero ARG, skip the last one and mark next."
   (interactive "p")
   (let ((mc/enclose-search-term 'words))
@@ -274,10 +293,15 @@ With zero ARG, skip the last one and mark next."
 
 ;;;###autoload
 (defun mc/mark-previous-symbol-like-this (arg)
-  "Find and mark the previous part of the buffer matching the currently active region
-The matching region must be a whole symbol to be a match
-If no region is active add a cursor on the previous line
+  "Find and mark the previous part of the buffer matching
+the currently active region.
+
+The matching region must be a whole symbol to be a match.
+
+If no region is active add a cursor on the previous line.
+
 With negative ARG, delete the last one instead.
+
 With zero ARG, skip the last one and mark next."
   (interactive "p")
   (let ((mc/enclose-search-term 'symbols))
@@ -324,13 +348,15 @@ With zero ARG, skip the last one and mark next."
 
 ;;;###autoload
 (defun mc/skip-to-next-like-this ()
-  "Skip the current one and select the next part of the buffer matching the currently active region."
+  "Skip the current one and select the next part of the buffer
+matching the currently active region."
   (interactive)
   (mc/mark-next-like-this 0))
 
 ;;;###autoload
 (defun mc/skip-to-previous-like-this ()
-  "Skip the current one and select the prev part of the buffer matching the currently active region."
+  "Skip the current one and select the prev part of the buffer
+matching the currently active region."
   (interactive)
   (mc/mark-previous-like-this 0))
 
@@ -471,7 +497,7 @@ remove the keymap depends on user input and KEEP-PRED:
 
 ;;;###autoload
 (defun mc/mark-more-like-this-extended ()
-  "Like mark-more-like-this, but then lets you adjust with arrows key.
+  "Like mark-more-like-this, but then lets you adjust with arrow keys.
 The adjustments work like this:
 
    <up>    Mark previous like this and set direction to 'up
@@ -487,13 +513,15 @@ If direction is 'down:
    <left>  Remove the cursor furthest down
    <right> Skip past the cursor furthest down
 
-The bindings for these commands can be changed. See `mc/mark-more-like-this-extended-keymap'."
+The bindings for these commands can be changed.
+See `mc/mark-more-like-this-extended-keymap'."
   (interactive)
   (mc/mmlte--down)
-  (set-temporary-overlay-map mc/mark-more-like-this-extended-keymap t))
+  (set-transient-map mc/mark-more-like-this-extended-keymap t))
 
 (defvar mc/mark-more-like-this-extended-direction nil
-  "When using mc/mark-more-like-this-extended are we working on the next or previous cursors?")
+  "When using mc/mark-more-like-this-extended
+are we working on the next or previous cursors?")
 
 (make-variable-buffer-local 'mc/mark-more-like-this-extended)
 
@@ -639,7 +667,7 @@ If the region is inactive or on a single line, it will behave like
    (last
     (progn
       (when (looking-at "<") (forward-char 1))
-      (when (looking-back ">") (forward-char -1))
+      (when (looking-back ">" 100) (forward-char -1))
       (sgml-get-context)))))
 
 (defun mc--on-tag-name-p ()
