@@ -52,8 +52,9 @@
 (defun set-rectangular-region-anchor ()
   "Anchors the rectangular region at point.
 
-Think of this one as `set-mark' except you're marking a rectangular region. It is
-an exceedingly quick way of adding multiple cursors to multiple lines."
+Think of this one as `set-mark' except you're marking a
+rectangular region. It is an exceedingly quick way of adding
+multiple cursors to multiple lines."
   (interactive)
   (set-marker rrm/anchor (point))
   (push-mark (point))
@@ -111,7 +112,9 @@ an exceedingly quick way of adding multiple cursors to multiple lines."
 ;;;###autoload
 (define-minor-mode rectangular-region-mode
   "A mode for creating a rectangular region to edit"
-  nil " rr" rectangular-region-mode-map
+  :init-value nil
+  :lighter " rr"
+  :keymap rectangular-region-mode-map
   (if rectangular-region-mode
       (progn
         (add-hook 'after-change-functions 'rrm/switch-to-multiple-cursors t t)

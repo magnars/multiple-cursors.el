@@ -92,7 +92,7 @@
        ((fboundp 'cl-return-from)
         (cl-return-from mc/cycle nil))
        ((fboundp 'return-from)
-        (return-from mc/cycle nil))))
+        (cl-return-from mc/cycle nil))))
     (setf next-cursor fallback-cursor))
   (mc/create-fake-cursor-at-point)
   (mc/pop-state-from-overlay next-cursor)
