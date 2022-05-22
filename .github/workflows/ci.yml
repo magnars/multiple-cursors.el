@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    paths-ignore:
+    - '**.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        emacs_version:
+          - 24.3
+          - 24.4
+          - 24.5
+          - 25.1
+          - 25.2
+          - 25.3
+          - 26.1
+          - 26.2
+          - 26.3
+          - 27.2
+          - 28.1
+          - snapshot
+    steps:
+    - uses: purcell/setup-emacs@master
+      with:
+        version: ${{ matrix.emacs_version }}
+    - name: Install Cask
+      run: curl -fsSkL https://raw.github.com/cask/cask/master/go | python
+    - name: Add Cask to PATH
+      run: echo "$HOME/.cask/bin" >> $GITHUB_PATH
+    - uses: actions/checkout@v2
+    - name: Install dependencies with Cask
+      run: cask
+    - name: Run tests
+      run: script -e -c /bin/bash -c 'TERM=xterm ./run-tests.sh'
