@@ -753,6 +753,8 @@ for running commands with multiple cursors."
                                      redo
                                      undo-tree-undo
                                      undo-tree-redo
+                                     undo-fu-only-undo
+                                     undo-fu-only-redo
                                      universal-argument
                                      universal-argument-more
                                      universal-argument-other-key
