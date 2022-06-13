@@ -52,6 +52,11 @@ rendered or shift text."
   :type '(boolean)
   :group 'multiple-cursors)
 
+(defcustom mc--reset-read-variables '()
+  "A list of cache variable names to reset by multiple-cursors."
+  :type '(list symbol)
+  :group 'multiple-cursors)
+
 (defface mc/region-face
   '((t :inherit region))
   "The face used for fake regions"
@@ -317,26 +322,32 @@ cursor with updated info."
 ;; Intercept some reading commands so you won't have to
 ;; answer them for every single cursor
 
-(defvar mc--read-char nil)
 (defvar multiple-cursors-mode nil)
-(defadvice read-char (around mc-support activate)
-  (if (not multiple-cursors-mode)
-      ad-do-it
-    (unless mc--read-char
-      (setq mc--read-char ad-do-it))
-    (setq ad-return-value mc--read-char)))
-
-(defvar mc--read-quoted-char nil)
-(defadvice read-quoted-char (around mc-support activate)
-  (if (not multiple-cursors-mode)
-      ad-do-it
-    (unless mc--read-quoted-char
-      (setq mc--read-quoted-char ad-do-it))
-    (setq ad-return-value mc--read-quoted-char)))
 
 (defun mc--reset-read-prompts ()
-  (setq mc--read-char nil)
-  (setq mc--read-quoted-char nil))
+  (mapc (lambda (var) (set var nil))
+        mc--reset-read-variables))
+
+(defmacro mc--cache-input-function (fn-name)
+  "Advise FN-NAME to cache its value in a private variable. Cache
+is to be used by mc/execute-command-for-all-fake-cursors and
+caches will be reset by mc--reset-read-prompts."
+  (let ((mc-name (intern (concat "mc--" (symbol-name fn-name)))))
+    `(progn
+       (defvar ,mc-name nil)
+       (defun ,mc-name (orig-fun &rest args)
+         (if (not multiple-cursors-mode)
+             (apply orig-fun args)
+           (unless ,mc-name
+             (setq ,mc-name (apply orig-fun args)))
+           ,mc-name))
+       (advice-add ',fn-name :around #',mc-name)
+       (add-to-list 'mc--reset-read-variables ',mc-name))))
+
+(mc--cache-input-function read-char)
+(mc--cache-input-function read-quoted-char)
+(mc--cache-input-function register-read-with-preview) ; used by insert-register
+(mc--cache-input-function read-char-from-minibuffer)  ; used by zap-to-char
 
 (mc--reset-read-prompts)
 
