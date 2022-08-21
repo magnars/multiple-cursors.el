@@ -419,16 +419,18 @@ matching the currently active region."
       (progn
         (mc/remove-fake-cursors)
         (goto-char beg)
-        (while (search-forward search end t)
-          (push-mark (match-beginning 0))
-          (mc/create-fake-cursor-at-point))
-        (let ((first (mc/furthest-cursor-before-point)))
-          (if (not first)
-              (error "Search failed for %S" search)
-            (mc/pop-state-from-overlay first)))
-        (if (> (mc/num-cursors) 1)
-            (multiple-cursors-mode 1)
-          (mc/disable-multiple-cursors-mode))))))
+	(let ((lastmatch))
+          (while (search-forward search end t)
+            (push-mark (match-beginning 0))
+            (mc/create-fake-cursor-at-point)
+	    (setq lastmatch t))
+          (unless lastmatch
+	    (error "Search failed for %S" search)))
+	(goto-char (match-end 0))
+	(if (< (mc/num-cursors) 3)
+            (mc/disable-multiple-cursors-mode)
+          (mc/pop-state-from-overlay (mc/furthest-cursor-before-point))
+          (multiple-cursors-mode 1))))))
 
 ;;;###autoload
 (defun mc/mark-all-in-region-regexp (beg end)
