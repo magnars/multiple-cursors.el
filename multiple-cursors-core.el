@@ -122,9 +122,13 @@ rendered or shift text."
 
 (defun mc/cursor-is-bar ()
   "Return non-nil if the cursor is a bar."
-  (or (eq cursor-type 'bar)
-    (and (listp cursor-type)
-         (eq (car cursor-type) 'bar))))
+  (let ((cursor-type
+         (if (eq cursor-type t)
+             (frame-parameter nil 'cursor-type)
+           cursor-type)))
+    (or (eq cursor-type 'bar)
+        (and (listp cursor-type)
+             (eq (car cursor-type) 'bar)))))
 
 (defun mc/line-number-at-pos (&optional pos absolute)
   "Faster implementation of `line-number-at-pos'."
