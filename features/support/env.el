@@ -45,6 +45,8 @@
  (subword-mode 0)
  (wrap-region-mode 0)
  (setq set-mark-default-inactive nil)
- (deactivate-mark))
+ (deactivate-mark)
+ (setq mc/cmds-to-run-for-all nil)
+ (setq mc/cmds-to-run-once nil))
 
 (After)
