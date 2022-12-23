@@ -669,7 +669,7 @@ If the region is inactive or on a single line, it will behave like
    (last
     (progn
       (when (looking-at "<") (forward-char 1))
-      (when (looking-back ">" 100) (forward-char -1))
+      (when (looking-back ">" 1) (forward-char -1))
       (sgml-get-context)))))
 
 (defun mc--on-tag-name-p ()
