@@ -29,7 +29,7 @@ jobs:
       with:
         version: ${{ matrix.emacs_version }}
     - name: Install Cask
-      run: curl -fsSkL https://raw.github.com/cask/cask/master/go | python
+      run: git clone https://github.com/cask/cask ~/.cask
     - name: Add Cask to PATH
       run: echo "$HOME/.cask/bin" >> $GITHUB_PATH
     - uses: actions/checkout@v2
