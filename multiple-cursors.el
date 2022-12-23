@@ -153,7 +153,6 @@
 
 ;; * isearch-forward and isearch-backward aren't supported with multiple cursors.
 ;;   You should feel free to add a simplified version that can work with it.
-;; * Commands run with `M-x` won't be repeated for all cursors.
 ;; * All key bindings that refer to lambdas are always run for all cursors. If you
 ;;   need to limit it, you will have to give it a name.
 ;; * Redo might screw with your cursors. Undo works very well.

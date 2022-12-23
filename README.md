@@ -67,10 +67,6 @@ To get out of multiple-cursors-mode, press `<return>` or `C-g`. The latter will
 first disable multiple regions before disabling multiple cursors. If you want to
 insert a newline in multiple-cursors-mode, use `C-j`.
 
-## Important note
-
-Multiple cursors does not do well when you invoke its commands with `M-x`. It needs to be bound to keys to work properly. Pull request to fix this is welcome.
-
 ## Video
 
 You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.com/e13.html).
@@ -204,7 +200,6 @@ run once to `mc/cmds-to-run-once` in ".mc-lists.el".
 
 * isearch-forward and isearch-backward aren't supported with multiple cursors.
   If you want this functionality, you can use [phi-search](https://github.com/zk-phi/phi-search).
-* Commands run with `M-x` won't be repeated for all cursors.
 * All key bindings that refer to lambdas are always run for all cursors. If you
   need to limit it, you will have to give it a name.
 * Redo might screw with your cursors. Undo works very well.
