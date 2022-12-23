@@ -50,7 +50,7 @@ that symbol is used instead of `mc/edit-lines-empty-lines'.
 Otherwise, if ARG negative, short lines will be ignored.  Any
 other non-nil value will cause short lines to be padded."
   (interactive "P")
-  (when (not (and mark-active (/= (point) (mark))))
+  (unless mark-active
     (error "Mark a set of lines first"))
   (mc/remove-fake-cursors)
   (let* ((col (current-column))
