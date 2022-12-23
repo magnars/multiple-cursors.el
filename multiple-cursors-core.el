@@ -664,6 +664,20 @@ from being executed if in multiple-cursors-mode."
            (overlay-put cursor 'kill-ring kill-ring)
            (overlay-put cursor 'kill-ring-yank-pointer kill-ring-yank-pointer)))))))
 
+(defadvice execute-extended-command (after execute-extended-command-for-all-cursors () activate)
+  (when multiple-cursors-mode
+    (unless (or mc/always-run-for-all
+                (not (symbolp this-command))
+                (memq this-command mc/cmds-to-run-for-all)
+                (memq this-command mc/cmds-to-run-once)
+                (memq this-command mc--default-cmds-to-run-for-all)
+                (memq this-command mc--default-cmds-to-run-once))
+      (mc/prompt-for-inclusion-in-whitelist this-command))
+    (when (or mc/always-run-for-all
+              (memq this-command mc/cmds-to-run-for-all)
+              (memq this-command mc--default-cmds-to-run-for-all))
+      (mc/execute-command-for-all-fake-cursors this-command))))
+
 (defcustom mc/list-file (locate-user-emacs-file ".mc-lists.el")
   "The position of the file that keeps track of your preferences
 for running commands with multiple cursors."

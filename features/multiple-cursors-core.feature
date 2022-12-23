@@ -57,6 +57,28 @@ Feature: Multiple cursors core
     And I press "C-!"
     Then I should see "This aatext contains the word text twice"
 
+  Scenario: Multiple supported M-x command (forward-word in this case)
+    Given I have cursors at "text" in "This text contains the word text twice"
+    And I type "("
+    And I press "M-x forward-word"
+    And I press "M-x forward-word"
+    And I type ")"
+    Then I should see "This (text contains) the word (text twice)"
+
+  Scenario: Unknown M-x command: yes, do for all
+    Given I have cursors at "text" in "This text contains the word text twice"
+    And I press "C-SPC"
+    And I press "M-f"
+    And I press "M-x upcase-dwim RET y"
+    Then I should see "This TEXT contains the word TEXT twice"
+
+  Scenario: Unknown M-x command: no, don't do for all
+    Given I have cursors at "text" in "This text contains the word text twice"
+    And I press "C-SPC"
+    And I press "M-f"
+    And I press "M-x upcase-dwim RET n"
+    Then I should see "This TEXT contains the word text twice"
+
   Scenario: Undo
     Given I have cursors at "text" in "This text contains the word text twice"
     When I press "M-f"

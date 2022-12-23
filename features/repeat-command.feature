@@ -8,6 +8,7 @@ Feature: Repeat last interactive command for fake cursors (mc/repeat-command)
     And I press "RET"
     And I type "21"
     And I press "RET"
+    And I type "n"
     And I press "C-:"
     And I press "y"
     And I execute the action chain
@@ -27,6 +28,7 @@ Feature: Repeat last interactive command for fake cursors (mc/repeat-command)
   Scenario: Disable prompt
     Given I have cursors at "text" in "This text/0000 contains the word text/1111 thrice (text/2222)"
     When I set mc/always-repeat-command to t
+    When I set mc/always-run-for-all to t
     When I start an action chain
     And I press "M-x"
     And I type "zap-to-char"
