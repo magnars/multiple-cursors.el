@@ -394,6 +394,185 @@ which action is being undone."
   :type '(boolean)
   :group 'multiple-cursors)
 
+(defvar mc/cmds-to-run-once nil
+  "Commands to run only once in multiple-cursors-mode.")
+
+(defvar mc--default-cmds-to-run-once nil
+  "Default set of commands to run only once in multiple-cursors-mode.")
+
+(setq mc--default-cmds-to-run-once '(mc/edit-lines
+                                     mc/edit-ends-of-lines
+                                     mc/edit-beginnings-of-lines
+                                     mc/mark-next-like-this
+                                     mc/mark-next-like-this-word
+                                     mc/mark-next-like-this-symbol
+                                     mc/mark-next-word-like-this
+                                     mc/mark-next-symbol-like-this
+                                     mc/mark-previous-like-this
+                                     mc/mark-previous-like-this-word
+                                     mc/mark-previous-like-this-symbol
+                                     mc/mark-previous-word-like-this
+                                     mc/mark-previous-symbol-like-this
+                                     mc/mark-all-like-this
+                                     mc/mark-all-words-like-this
+                                     mc/mark-all-symbols-like-this
+                                     mc/mark-more-like-this-extended
+                                     mc/mark-all-like-this-in-defun
+                                     mc/mark-all-words-like-this-in-defun
+                                     mc/mark-all-symbols-like-this-in-defun
+                                     mc/mark-all-like-this-dwim
+                                     mc/mark-all-dwim
+                                     mc/mark-sgml-tag-pair
+                                     mc/insert-numbers
+                                     mc/insert-letters
+                                     mc/sort-regions
+                                     mc/reverse-regions
+                                     mc/cycle-forward
+                                     mc/cycle-backward
+                                     mc/add-cursor-on-click
+                                     mc/mark-pop
+                                     mc/add-cursors-to-all-matches
+                                     mc/mmlte--left
+                                     mc/mmlte--right
+                                     mc/mmlte--up
+                                     mc/mmlte--down
+                                     mc/unmark-next-like-this
+                                     mc/unmark-previous-like-this
+                                     mc/skip-to-next-like-this
+                                     mc/skip-to-previous-like-this
+                                     rrm/switch-to-multiple-cursors
+                                     mc-hide-unmatched-lines-mode
+                                     mc/repeat-command
+                                     hum/keyboard-quit
+                                     hum/unhide-invisible-overlays
+                                     save-buffer
+                                     ido-exit-minibuffer
+                                     ivy-done
+                                     exit-minibuffer
+                                     minibuffer-complete-and-exit
+                                     execute-extended-command
+                                     eval-expression
+                                     undo
+                                     redo
+                                     undo-tree-undo
+                                     undo-tree-redo
+                                     undo-fu-only-undo
+                                     undo-fu-only-redo
+                                     universal-argument
+                                     universal-argument-more
+                                     universal-argument-other-key
+                                     negative-argument
+                                     digit-argument
+                                     top-level
+                                     recenter-top-bottom
+                                     describe-mode
+                                     describe-key-1
+                                     describe-function
+                                     describe-bindings
+                                     describe-prefix-bindings
+                                     view-echo-area-messages
+                                     other-window
+                                     kill-buffer-and-window
+                                     split-window-right
+                                     split-window-below
+                                     delete-other-windows
+                                     toggle-window-split
+                                     mwheel-scroll
+                                     scroll-up-command
+                                     scroll-down-command
+                                     mouse-set-point
+                                     mouse-drag-region
+                                     quit-window
+                                     toggle-read-only
+                                     windmove-left
+                                     windmove-right
+                                     windmove-up
+                                     windmove-down
+                                     repeat-complex-command))
+
+(defvar mc/cmds-to-run-for-all nil
+  "Commands to run for all cursors in multiple-cursors-mode")
+
+(defvar mc--default-cmds-to-run-for-all nil
+  "Default set of commands that should be mirrored by all cursors")
+
+(setq mc--default-cmds-to-run-for-all '(mc/keyboard-quit
+                                        self-insert-command
+                                        quoted-insert
+                                        previous-line
+                                        next-line
+                                        newline
+                                        newline-and-indent
+                                        open-line
+                                        delete-blank-lines
+                                        transpose-chars
+                                        transpose-lines
+                                        transpose-paragraphs
+                                        transpose-regions
+                                        join-line
+                                        right-char
+                                        right-word
+                                        forward-char
+                                        forward-word
+                                        left-char
+                                        left-word
+                                        backward-char
+                                        backward-word
+                                        forward-paragraph
+                                        backward-paragraph
+                                        upcase-word
+                                        downcase-word
+                                        capitalize-word
+                                        forward-list
+                                        backward-list
+                                        hippie-expand
+                                        hippie-expand-lines
+                                        yank
+                                        yank-pop
+                                        append-next-kill
+                                        kill-word
+                                        kill-line
+                                        kill-whole-line
+                                        backward-kill-word
+                                        backward-delete-char-untabify
+                                        delete-char delete-forward-char
+                                        delete-backward-char
+                                        py-electric-backspace
+                                        c-electric-backspace
+                                        org-delete-backward-char
+                                        cperl-electric-backspace
+                                        python-indent-dedent-line-backspace
+                                        paredit-backward-delete
+                                        autopair-backspace
+                                        just-one-space
+                                        zap-to-char
+                                        end-of-line
+                                        set-mark-command
+                                        exchange-point-and-mark
+                                        cua-set-mark
+                                        cua-replace-region
+                                        cua-delete-region
+                                        move-end-of-line
+                                        beginning-of-line
+                                        move-beginning-of-line
+                                        kill-ring-save
+                                        back-to-indentation
+                                        subword-forward
+                                        subword-backward
+                                        subword-mark
+                                        subword-kill
+                                        subword-backward-kill
+                                        subword-transpose
+                                        subword-capitalize
+                                        subword-upcase
+                                        subword-downcase
+                                        er/expand-region
+                                        er/contract-region
+                                        smart-forward
+                                        smart-backward
+                                        smart-up
+                                        smart-down))
+
 (defun mc/prompt-for-inclusion-in-whitelist (original-command)
   "Asks the user, then adds the command either to the once-list or the all-list."
   (let ((all-p (y-or-n-p (format "Do %S for all cursors?" original-command))))
@@ -719,185 +898,6 @@ for running commands with multiple cursors."
     (mc/dump-list 'mc/cmds-to-run-for-all)
     (newline)
     (mc/dump-list 'mc/cmds-to-run-once)))
-
-(defvar mc/cmds-to-run-once nil
-  "Commands to run only once in multiple-cursors-mode.")
-
-(defvar mc--default-cmds-to-run-once nil
-  "Default set of commands to run only once in multiple-cursors-mode.")
-
-(setq mc--default-cmds-to-run-once '(mc/edit-lines
-                                     mc/edit-ends-of-lines
-                                     mc/edit-beginnings-of-lines
-                                     mc/mark-next-like-this
-                                     mc/mark-next-like-this-word
-                                     mc/mark-next-like-this-symbol
-                                     mc/mark-next-word-like-this
-                                     mc/mark-next-symbol-like-this
-                                     mc/mark-previous-like-this
-                                     mc/mark-previous-like-this-word
-                                     mc/mark-previous-like-this-symbol
-                                     mc/mark-previous-word-like-this
-                                     mc/mark-previous-symbol-like-this
-                                     mc/mark-all-like-this
-                                     mc/mark-all-words-like-this
-                                     mc/mark-all-symbols-like-this
-                                     mc/mark-more-like-this-extended
-                                     mc/mark-all-like-this-in-defun
-                                     mc/mark-all-words-like-this-in-defun
-                                     mc/mark-all-symbols-like-this-in-defun
-                                     mc/mark-all-like-this-dwim
-                                     mc/mark-all-dwim
-                                     mc/mark-sgml-tag-pair
-                                     mc/insert-numbers
-                                     mc/insert-letters
-                                     mc/sort-regions
-                                     mc/reverse-regions
-                                     mc/cycle-forward
-                                     mc/cycle-backward
-                                     mc/add-cursor-on-click
-                                     mc/mark-pop
-                                     mc/add-cursors-to-all-matches
-                                     mc/mmlte--left
-                                     mc/mmlte--right
-                                     mc/mmlte--up
-                                     mc/mmlte--down
-                                     mc/unmark-next-like-this
-                                     mc/unmark-previous-like-this
-                                     mc/skip-to-next-like-this
-                                     mc/skip-to-previous-like-this
-                                     rrm/switch-to-multiple-cursors
-                                     mc-hide-unmatched-lines-mode
-                                     mc/repeat-command
-                                     hum/keyboard-quit
-                                     hum/unhide-invisible-overlays
-                                     save-buffer
-                                     ido-exit-minibuffer
-                                     ivy-done
-                                     exit-minibuffer
-                                     minibuffer-complete-and-exit
-                                     execute-extended-command
-                                     eval-expression
-                                     undo
-                                     redo
-                                     undo-tree-undo
-                                     undo-tree-redo
-                                     undo-fu-only-undo
-                                     undo-fu-only-redo
-                                     universal-argument
-                                     universal-argument-more
-                                     universal-argument-other-key
-                                     negative-argument
-                                     digit-argument
-                                     top-level
-                                     recenter-top-bottom
-                                     describe-mode
-                                     describe-key-1
-                                     describe-function
-                                     describe-bindings
-                                     describe-prefix-bindings
-                                     view-echo-area-messages
-                                     other-window
-                                     kill-buffer-and-window
-                                     split-window-right
-                                     split-window-below
-                                     delete-other-windows
-                                     toggle-window-split
-                                     mwheel-scroll
-                                     scroll-up-command
-                                     scroll-down-command
-                                     mouse-set-point
-                                     mouse-drag-region
-                                     quit-window
-                                     toggle-read-only
-                                     windmove-left
-                                     windmove-right
-                                     windmove-up
-                                     windmove-down
-                                     repeat-complex-command))
-
-(defvar mc--default-cmds-to-run-for-all nil
-  "Default set of commands that should be mirrored by all cursors")
-
-(setq mc--default-cmds-to-run-for-all '(mc/keyboard-quit
-                                        self-insert-command
-                                        quoted-insert
-                                        previous-line
-                                        next-line
-                                        newline
-                                        newline-and-indent
-                                        open-line
-                                        delete-blank-lines
-                                        transpose-chars
-                                        transpose-lines
-                                        transpose-paragraphs
-                                        transpose-regions
-                                        join-line
-                                        right-char
-                                        right-word
-                                        forward-char
-                                        forward-word
-                                        left-char
-                                        left-word
-                                        backward-char
-                                        backward-word
-                                        forward-paragraph
-                                        backward-paragraph
-                                        upcase-word
-                                        downcase-word
-                                        capitalize-word
-                                        forward-list
-                                        backward-list
-                                        hippie-expand
-                                        hippie-expand-lines
-                                        yank
-                                        yank-pop
-                                        append-next-kill
-                                        kill-word
-                                        kill-line
-                                        kill-whole-line
-                                        backward-kill-word
-                                        backward-delete-char-untabify
-                                        delete-char delete-forward-char
-                                        delete-backward-char
-                                        py-electric-backspace
-                                        c-electric-backspace
-                                        org-delete-backward-char
-                                        cperl-electric-backspace
-                                        python-indent-dedent-line-backspace
-                                        paredit-backward-delete
-                                        autopair-backspace
-                                        just-one-space
-                                        zap-to-char
-                                        end-of-line
-                                        set-mark-command
-                                        exchange-point-and-mark
-                                        cua-set-mark
-                                        cua-replace-region
-                                        cua-delete-region
-                                        move-end-of-line
-                                        beginning-of-line
-                                        move-beginning-of-line
-                                        kill-ring-save
-                                        back-to-indentation
-                                        subword-forward
-                                        subword-backward
-                                        subword-mark
-                                        subword-kill
-                                        subword-backward-kill
-                                        subword-transpose
-                                        subword-capitalize
-                                        subword-upcase
-                                        subword-downcase
-                                        er/expand-region
-                                        er/contract-region
-                                        smart-forward
-                                        smart-backward
-                                        smart-up
-                                        smart-down))
-
-(defvar mc/cmds-to-run-for-all nil
-  "Commands to run for all cursors in multiple-cursors-mode")
 
 (provide 'multiple-cursors-core)
 (require 'mc-cycle-cursors)
