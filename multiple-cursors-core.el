@@ -368,6 +368,7 @@ caches will be reset by mc--reset-read-prompts."
 (defvar mc--stored-state-for-undo nil
   "Variable to keep the state of the real cursor while undoing a fake one")
 
+;;;###autoload
 (defun activate-cursor-for-undo (id)
   "Called when undoing to temporarily activate the fake cursor
 which action is being undone."
