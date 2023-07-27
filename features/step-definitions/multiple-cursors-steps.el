@@ -130,6 +130,11 @@
            (defun mc-test-temp-command-2 () (interactive) (insert ins))
            (global-set-key (kbd "C-!") 'mc-test-temp-command-2))))
 
+(Given "^I have bound C-! to a new command that inserts two read-chars$"
+       (lambda ()
+         (defun mc-test-temp-command-3 () (interactive) (insert (read-char "first: ")) (insert (read-char "second: ")))
+         (global-set-key (kbd "C-!") 'mc-test-temp-command-3)))
+
 (Given "^I have bound C-! to a keyboard macro that insert \"_\"$"
        (lambda ()
          (fset 'mc-test-temp-kmacro "\C-q_")

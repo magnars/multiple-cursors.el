@@ -50,6 +50,13 @@ Feature: Multiple cursors core
     And I press "C-!"
     Then I should see "This aatext contains the word aatext twice"
 
+Scenario: Unknown command with multiple read: yes, do for all
+    Given I have bound C-! to a new command that inserts two read-chars
+    And I have cursors at "text" in "This text contains the word text twice"
+    When I press "C-! b c y"
+    And I press "C-! d e"
+    Then I should see "This bcdetext contains the word bcdetext twice"
+
   Scenario: Unknown command: no, don't do for all
     Given I have bound C-! to another new command that inserts "a"
     And I have cursors at "text" in "This text contains the word text twice"
