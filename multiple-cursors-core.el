@@ -28,8 +28,6 @@
 (require 'cl-lib)
 (require 'rect)
 
-(defvar mc--read-char)
-
 (defface mc/cursor-face
   '((t (:inverse-video t)))
   "The face used for fake cursors"
@@ -50,11 +48,6 @@ If nil, just use standard rectangle cursors for all fake cursors.
 In some modes/themes, the bar fake cursors are either not
 rendered or shift text."
   :type '(boolean)
-  :group 'multiple-cursors)
-
-(defcustom mc--reset-read-variables '()
-  "A list of cache variable names to reset by multiple-cursors."
-  :type '(list symbol)
   :group 'multiple-cursors)
 
 (defface mc/region-face
@@ -326,34 +319,35 @@ cursor with updated info."
 ;; Intercept some reading commands so you won't have to
 ;; answer them for every single cursor
 
-(defvar multiple-cursors-mode nil)
+(defvar mc--input-function-cache nil)
 
 (defun mc--reset-read-prompts ()
-  (mapc (lambda (var) (set var nil))
-        mc--reset-read-variables))
+  (setq mc--input-function-cache nil))
 
-(defmacro mc--cache-input-function (fn-name)
+(defmacro mc--cache-input-function (fn-name args-cache-key-fn)
   "Advise FN-NAME to cache its value in a private variable. Cache
 is to be used by mc/execute-command-for-all-fake-cursors and
-caches will be reset by mc--reset-read-prompts."
+caches will be reset by mc--reset-read-prompts. ARGS-CACHE-KEY-FN
+should transform FN-NAME's args to a unique cache-key so that
+different calls to FN-NAME during a command can return multiple
+values."
   (let ((mc-name (intern (concat "mc--" (symbol-name fn-name)))))
     `(progn
-       (defvar ,mc-name nil)
        (defun ,mc-name (orig-fun &rest args)
          (if (not multiple-cursors-mode)
              (apply orig-fun args)
-           (unless ,mc-name
-             (setq ,mc-name (apply orig-fun args)))
-           ,mc-name))
-       (advice-add ',fn-name :around #',mc-name)
-       (add-to-list 'mc--reset-read-variables ',mc-name))))
+           (let* ((cache-key (cons ,(symbol-name fn-name) (,args-cache-key-fn args)))
+                  (cached-value (assoc cache-key mc--input-function-cache))
+                  (return-value (if cached-value (cdr cached-value) (apply orig-fun args))))
+             (unless cached-value
+               (push (cons cache-key return-value) mc--input-function-cache))
+             return-value)))
+       (advice-add ',fn-name :around #',mc-name))))
 
-(mc--cache-input-function read-char)
-(mc--cache-input-function read-quoted-char)
-(mc--cache-input-function register-read-with-preview) ; used by insert-register
-(mc--cache-input-function read-char-from-minibuffer)  ; used by zap-to-char
-
-(mc--reset-read-prompts)
+(mc--cache-input-function read-char car)
+(mc--cache-input-function read-quoted-char car)
+(mc--cache-input-function register-read-with-preview car) ; used by insert-register
+(mc--cache-input-function read-char-from-minibuffer car)  ; used by zap-to-char
 
 (defun mc/fake-cursor-p (o)
   "Predicate to check if an overlay is a fake cursor"
