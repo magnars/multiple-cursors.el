@@ -29,6 +29,9 @@
 
 (require 'multiple-cursors-core)
 (require 'thingatpt)
+(require 'sgml-mode)
+
+(defvar mc/mark-more-like-this-extended-keymap (make-sparse-keymap))
 
 (defun mc/cursor-end (cursor)
   (if (overlay-get cursor 'mark-active)
@@ -96,8 +99,8 @@ to (point)), or nil."
   "How should mc/mark-more-* search for more matches?
 
 Match everything: nil
-Match only whole words: 'words
-Match only whole symbols: 'symbols
+Match only whole words: \\='words
+Match only whole symbols: \\='symbols
 
 Use like case-fold-search, don't recommend setting it globally.")
 
@@ -502,15 +505,15 @@ remove the keymap depends on user input and KEEP-PRED:
   "Like mark-more-like-this, but then lets you adjust with arrow keys.
 The adjustments work like this:
 
-   <up>    Mark previous like this and set direction to 'up
-   <down>  Mark next like this and set direction to 'down
+   <up>    Mark previous like this and set direction to \\='up
+   <down>  Mark next like this and set direction to \\='down
 
-If direction is 'up:
+If direction is \\='up:
 
    <left>  Skip past the cursor furthest up
    <right> Remove the cursor furthest up
 
-If direction is 'down:
+If direction is \\='down:
 
    <left>  Remove the cursor furthest down
    <right> Skip past the cursor furthest down
@@ -557,8 +560,6 @@ are we working on the next or previous cursors?")
       (mc/unmark-previous-like-this)
     (mc/skip-to-next-like-this))
   (mc/mmlte--message))
-
-(defvar mc/mark-more-like-this-extended-keymap (make-sparse-keymap))
 
 (define-key mc/mark-more-like-this-extended-keymap (kbd "<up>") 'mc/mmlte--up)
 (define-key mc/mark-more-like-this-extended-keymap (kbd "<down>") 'mc/mmlte--down)
