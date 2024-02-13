@@ -31,8 +31,6 @@
 (require 'thingatpt)
 (require 'sgml-mode)
 
-(defvar mc/mark-more-like-this-extended-keymap (make-sparse-keymap))
-
 (defun mc/cursor-end (cursor)
   (if (overlay-get cursor 'mark-active)
       (max (overlay-get cursor 'point)
@@ -500,6 +498,13 @@ remove the keymap depends on user input and KEEP-PRED:
 
       (push alist emulation-mode-map-alists))))
 
+(defvar mc/mark-more-like-this-extended-keymap (make-sparse-keymap))
+
+(define-key mc/mark-more-like-this-extended-keymap (kbd "<up>") 'mc/mmlte--up)
+(define-key mc/mark-more-like-this-extended-keymap (kbd "<down>") 'mc/mmlte--down)
+(define-key mc/mark-more-like-this-extended-keymap (kbd "<left>") 'mc/mmlte--left)
+(define-key mc/mark-more-like-this-extended-keymap (kbd "<right>") 'mc/mmlte--right)
+
 ;;;###autoload
 (defun mc/mark-more-like-this-extended ()
   "Like mark-more-like-this, but then lets you adjust with arrow keys.
@@ -560,11 +565,6 @@ are we working on the next or previous cursors?")
       (mc/unmark-previous-like-this)
     (mc/skip-to-next-like-this))
   (mc/mmlte--message))
-
-(define-key mc/mark-more-like-this-extended-keymap (kbd "<up>") 'mc/mmlte--up)
-(define-key mc/mark-more-like-this-extended-keymap (kbd "<down>") 'mc/mmlte--down)
-(define-key mc/mark-more-like-this-extended-keymap (kbd "<left>") 'mc/mmlte--left)
-(define-key mc/mark-more-like-this-extended-keymap (kbd "<right>") 'mc/mmlte--right)
 
 (defvar mc--restrict-mark-all-to-symbols nil)
 
