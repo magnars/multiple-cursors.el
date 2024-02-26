@@ -34,7 +34,7 @@
   :group 'multiple-cursors)
 
 (defface mc/cursor-bar-face
-  `((t (:height 1 :background ,(face-attribute 'cursor :background))))
+  `((t (:height 1 :inherit cursor)))
   "The face used for fake cursors if the cursor-type is bar"
   :group 'multiple-cursors)
 
