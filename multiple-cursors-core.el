@@ -743,7 +743,7 @@ They are temporarily disabled when multiple-cursors are active.")
 
 (defun mc/temporarily-disable-minor-mode (mode)
   "If MODE is available and turned on, remember that and turn it off."
-  (when (and (boundp mode) (eval mode))
+  (when (and (boundp mode) (symbol-value mode))
     (add-to-list 'mc/temporarily-disabled-minor-modes mode)
     (funcall mode -1)))
 
