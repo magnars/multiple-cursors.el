@@ -75,51 +75,59 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
 
 ### Mark one more occurrence
 
- - `mc/mark-next-like-this`: Adds a cursor and region at the next part of the buffer forwards that matches the current region.
- - `mc/mark-next-like-this-word`: Adds a cursor and region at the next part of the buffer forwards that matches the current region, if  no region is selected it selects the word at the point.
- - `mc/mark-next-like-this-symbol`: Adds a cursor and region at the next part of the buffer forwards that matches the current region, if  no region is selected it selects the symbol at the point.
- - `mc/mark-next-word-like-this`: Like `mc/mark-next-like-this` but only for whole words.
- - `mc/mark-next-symbol-like-this`: Like `mc/mark-next-like-this` but only for whole symbols.
- - `mc/mark-previous-like-this`: Adds a cursor and region at the next part of the buffer backwards that matches the current region.
- - `mc/mark-previous-like-this-word`: Adds a cursor and region at the next part of the buffer backwards that matches the current region, if  no region is selected it selects the word at the point.
- - `mc/mark-previous-like-this-symbol`: Adds a cursor and region at the next part of the buffer backwards that matches the current region, if  no region is selected it selects the symbol at the point.
- - `mc/mark-previous-word-like-this`: Like `mc/mark-previous-like-this` but only for whole words.
- - `mc/mark-previous-symbol-like-this`: Like `mc/mark-previous-like-this` but only for whole symbols.
- - `mc/mark-more-like-this-extended`: Use arrow keys to quickly mark/skip next/previous occurrences.
- - `mc/add-cursor-on-click`: Bind to a mouse event to add cursors by clicking. See tips-section.
- - `mc/mark-pop`: Set a cursor at the current point and move to the next (different) position on the mark stack.  This allows for fine grained control over the placement of cursors.
+| Command                             | Description                                                                                                                                                         |
+|-------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `mc/mark-next-like-this`            | Adds a cursor and region at the next part of the buffer forwards that matches the current region.                                                                   |
+| `mc/mark-next-like-this-word`       | Adds a cursor and region at the next part of the buffer forwards that matches the current region, if  no region is selected it selects the word at the point.       |
+| `mc/mark-next-like-this-symbol`     | Adds a cursor and region at the next part of the buffer forwards that matches the current region, if  no region is selected it selects the symbol at the point.     |
+| `mc/mark-next-word-like-this`       | Like `mc/mark-next-like-this` but only for whole words.                                                                                                             |
+| `mc/mark-next-symbol-like-this`     | Like `mc/mark-next-like-this` but only for whole symbols.                                                                                                           |
+| `mc/mark-previous-like-this`        | Adds a cursor and region at the next part of the buffer backwards that matches the current region.                                                                  |
+| `mc/mark-previous-like-this-word`   | Adds a cursor and region at the next part of the buffer backwards that matches the current region, if  no region is selected it selects the word at the point.      |
+| `mc/mark-previous-like-this-symbol` | Adds a cursor and region at the next part of the buffer backwards that matches the current region, if  no region is selected it selects the symbol at the point.    |
+| `mc/mark-previous-word-like-this`   | Like `mc/mark-previous-like-this` but only for whole words.                                                                                                         |
+| `mc/mark-previous-symbol-like-this` | Like `mc/mark-previous-like-this` but only for whole symbols.                                                                                                       |
+| `mc/mark-more-like-this-extended`   | Use arrow keys to quickly mark/skip next/previous occurrences.                                                                                                      |
+| `mc/add-cursor-on-click`            | Bind to a mouse event to add cursors by clicking. See tips-section.                                                                                                 |
+| `mc/mark-pop`                       | Set a cursor at the current point and move to the next (different) position on the mark stack.  This allows for fine grained control over the placement of cursors. |
 
 ### Juggle around with the current cursors
 
- - `mc/unmark-next-like-this`: Remove the cursor furthest down in the buffer.
- - `mc/unmark-previous-like-this`: Remove the cursor furthest up in the buffer.
- - `mc/skip-to-next-like-this`: Remove the cursor furthest down, marking the next occurrence down.
- - `mc/skip-to-previous-like-this`: Remove the cursor furthest up, marking the next occurrence up.
+| Command                         | Description                                                        |
+|---------------------------------|--------------------------------------------------------------------|
+| `mc/unmark-next-like-this`      | Remove the cursor furthest down in the buffer.                     |
+| `mc/unmark-previous-like-this`  | Remove the cursor furthest up in the buffer.                       |
+| `mc/skip-to-next-like-this`     | Remove the cursor furthest down, marking the next occurrence down. |
+| `mc/skip-to-previous-like-this` | Remove the cursor furthest up, marking the next occurrence up.     |
 
 ### Mark many occurrences
 
- - `mc/edit-lines`: Adds one cursor to each line in the current region.
- - `mc/edit-beginnings-of-lines`: Adds a cursor at the start of each line in the current region.
- - `mc/edit-ends-of-lines`: Adds a cursor at the end of each line in the current region.
- - `mc/mark-all-like-this`: Marks all parts of the buffer that matches the current region.
- - `mc/mark-all-words-like-this`: Like `mc/mark-all-like-this` but only for whole words.
- - `mc/mark-all-symbols-like-this`: Like `mc/mark-all-like-this` but only for whole symbols.
- - `mc/mark-all-in-region`: Prompts for a string to match in the region, adding cursors to all of them.
- - `mc/mark-all-like-this-in-defun`: Marks all parts of the current defun that matches the current region.
- - `mc/mark-all-words-like-this-in-defun`: Like `mc/mark-all-like-this-in-defun` but only for whole words.
- - `mc/mark-all-symbols-like-this-in-defun`: Like `mc/mark-all-like-this-in-defun` but only for whole symbols.
- - `mc/mark-all-dwim`: Tries to be smart about marking everything you want. Can be pressed multiple times.
+| Command                                  | Description                                                                         |
+|------------------------------------------|-------------------------------------------------------------------------------------|
+| `mc/edit-lines`                          | Adds one cursor to each line in the current region.                                 |
+| `mc/edit-beginnings-of-lines`            | Adds a cursor at the start of each line in the current region.                      |
+| `mc/edit-ends-of-lines`                  | Adds a cursor at the end of each line in the current region.                        |
+| `mc/mark-all-like-this`                  | Marks all parts of the buffer that matches the current region.                      |
+| `mc/mark-all-words-like-this`            | Like `mc/mark-all-like-this` but only for whole words.                              |
+| `mc/mark-all-symbols-like-this`          | Like `mc/mark-all-like-this` but only for whole symbols.                            |
+| `mc/mark-all-in-region`                  | Prompts for a string to match in the region, adding cursors to all of them.         |
+| `mc/mark-all-like-this-in-defun`         | Marks all parts of the current defun that matches the current region.               |
+| `mc/mark-all-words-like-this-in-defun`   | Like `mc/mark-all-like-this-in-defun` but only for whole words.                     |
+| `mc/mark-all-symbols-like-this-in-defun` | Like `mc/mark-all-like-this-in-defun` but only for whole symbols.                   |
+| `mc/mark-all-dwim`                       | Tries to be smart about marking everything you want. Can be pressed multiple times. |
 
 ### Special
 
- - `set-rectangular-region-anchor`: Think of this one as `set-mark` except you're marking a rectangular region.
- - `mc/mark-sgml-tag-pair`: Mark the current opening and closing tag.
- - `mc/insert-numbers`: Insert increasing numbers for each cursor, top to bottom.
- - `mc/insert-letters`: Insert increasing letters for each cursor, top to bottom.
- - `mc/sort-regions`: Sort the marked regions alphabetically.
- - `mc/reverse-regions`: Reverse the order of the marked regions.
- - `mc/vertical-align`: Aligns all cursors vertically with a given CHARACTER to the one with the highest column number (the rightest). (Might not behave as intended if more than one cursors are on the same line.)
- - `mc/vertical-align-with-space`: Aligns all cursors with whitespace like `mc/vertical-align` does.
+| Command                         | Description                                                                                                                                                                                  |
+|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `set-rectangular-region-anchor` | Think of this one as `set-mark` except you're marking a rectangular region.                                                                                                                  |
+| `mc/mark-sgml-tag-pair`         | Mark the current opening and closing tag.                                                                                                                                                    |
+| `mc/insert-numbers`             | Insert increasing numbers for each cursor, top to bottom.                                                                                                                                    |
+| `mc/insert-letters`             | Insert increasing letters for each cursor, top to bottom.                                                                                                                                    |
+| `mc/sort-regions`               | Sort the marked regions alphabetically.                                                                                                                                                      |
+| `mc/reverse-regions`            | Reverse the order of the marked regions.                                                                                                                                                     |
+| `mc/vertical-align`             | Aligns all cursors vertically with a given CHARACTER to the one with the highest column number (the rightest). (Might not behave as intended if more than one cursors are on the same line.) |
+| `mc/vertical-align-with-space`  | Aligns all cursors with whitespace like `mc/vertical-align` does.                                                                                                                            |
 
 ## Tips and tricks
 
