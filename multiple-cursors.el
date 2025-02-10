@@ -3,7 +3,7 @@
 ;; Copyright (C) 2012-2016 Magnar Sveen
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
-;; Version: 1.4.0
+;; Package-Version: 1.5.0
 ;; Package-Requires: ((cl-lib "0.5"))
 ;; Keywords: editing cursors
 ;; Homepage: https://github.com/magnars/multiple-cursors.el
