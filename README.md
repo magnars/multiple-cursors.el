@@ -30,7 +30,7 @@ TLDR: *I am still maintaining this package*, but I am no longer crowdsourcing a 
 
 I highly recommend installing multiple-cursors through `package.el`.
 
-It's available on [MELPA](http://melpa.org/), [MELPA Stable](http://stable.melpa.org) and 
+It's available on [MELPA](http://melpa.org/), [MELPA Stable](http://stable.melpa.org) and
 [NonGNU ELPA](https://elpa.nongnu.org/nongnu/multiple-cursors.html) (enabled by default
 from Emacs 28 onwards):
 
@@ -166,7 +166,7 @@ You can [watch an intro to multiple-cursors at Emacs Rocks](http://emacsrocks.co
 - If you would like to keep the global bindings clean, and get custom keybindings
   when the region is active, you can try [region-bindings-mode](https://github.com/fgallina/region-bindings-mode).
 
-- There is a special hook that is run when the mode is diabled
+- There is a special hook that is run when the mode is disabled
   (which is equivalent to the number of cursors going back to 1):
   `multiple-cursors-mode-disabled-hook`
 
